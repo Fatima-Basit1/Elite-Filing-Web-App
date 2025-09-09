@@ -3,6 +3,10 @@ import { Routes, Route } from 'react-router-dom';
 
 // Pages
 import Home from './pages/Home/Home';
+import BusinessSolutions from './pages/BusinessSolutions/BusinessSolutions';
+import CompanyServices from './pages/CompanyServices/CompanyServices';
+import Ecommerce from './pages/Ecommerce/Ecommerce';
+import Contact from './pages/Contact/Contact';
 import NotFound from './pages/NotFound/NotFound';
 
 function App() {
@@ -10,6 +14,10 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/business-solutions" element={<BusinessSolutions />} />
+        <Route path="/company-services" element={<CompanyServices />} />
+        <Route path="/ecommerce" element={<Ecommerce />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
