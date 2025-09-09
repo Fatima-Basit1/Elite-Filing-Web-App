@@ -1,6 +1,5 @@
 # Elite Filing Web Application
 
-A professional business services website built with React, Tailwind CSS, Express, and MongoDB. Elite Filing simplifies and enhances your business path with expert solutions in incorporation, taxation, trademarks, and more.
 
 ## Features
 
