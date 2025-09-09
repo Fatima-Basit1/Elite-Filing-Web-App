@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser, clearError } from '../../store/slices/authSlice';
 import { addNotification } from '../../store/slices/uiSlice';
+import Navigation from '../../components/Navigation/Navigation';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -91,7 +92,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen pt-24">
+      <Navigation />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-primary-100">
@@ -194,6 +197,7 @@ const Login = () => {
             </button>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );

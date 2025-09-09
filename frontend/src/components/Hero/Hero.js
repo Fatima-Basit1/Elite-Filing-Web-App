@@ -17,7 +17,7 @@ const Hero = () => {
       {/* Main Content */}
       <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-          <span className="text-yellow-400">ELITE FILING</span>{' '}
+          <span className="text-blue-400">ELITE FILING</span>{' '}
           <span className="block mt-2">SIMPLIFYING AND</span>
           <span className="block">ENHANCING YOUR BUSINESS PATH</span>
         </h1>
@@ -26,7 +26,7 @@ const Hero = () => {
           Elite Filing simplifies your business operations with expert solutions in incorporation, taxation, trademarks, and more—ensuring a smooth and stress-free path to success. Rely on us to manage the complexities while you concentrate on driving growth.
         </p>
         
-        <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
           BEGIN YOUR BUSINESS TODAY ▶
         </button>
       </div>
@@ -34,20 +34,20 @@ const Hero = () => {
       {/* Decorative Elements */}
       <div className="absolute top-1/2 right-10 transform -translate-y-1/2 z-20">
         <div className="w-24 h-24 bg-white bg-opacity-10 rounded-lg flex items-center justify-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-400 via-yellow-400 to-blue-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-xl">★</span>
           </div>
         </div>
       </div>
 
       {/* Navigation Arrows */}
-      <button className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 text-white hover:text-yellow-400 transition-colors duration-300">
+      <button className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 text-white hover:text-blue-400 transition-colors duration-300">
         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
       
-      <button className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 text-white hover:text-yellow-400 transition-colors duration-300">
+      <button className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 text-white hover:text-blue-400 transition-colors duration-300">
         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
