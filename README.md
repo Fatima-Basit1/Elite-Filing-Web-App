@@ -1,5 +1,15 @@
 # Elite Filing Web Application
 
+## Features
+
+- 🏢 Professional business services landing page
+- 🎨 Modern responsive UI with Tailwind CSS
+- 📱 Mobile-responsive design
+- 💬 Interactive chat widget
+- 🧭 Professional navigation with service categories
+- 🚀 RESTful API with Express.js (ready for future features)
+- 🗄️ MongoDB database integration (ready for future features)
+- ⚡ Fast loading and optimized performance
 ## Tech Stack
 
 ### Frontend
