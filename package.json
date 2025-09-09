@@ -1,0 +1,42 @@
+{
+  "name": "elite-filing-web-app",
+  "version": "1.0.0",
+  "description": "Elite Filing Web Application with React, Redux, Tailwind CSS, Express, and MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "build:server": "cd backend && npm run build",
+    "build:all": "npm run build && npm run build:server",
+    "test": "concurrently \"npm run test:server\" \"npm run test:client\"",
+    "test:server": "cd backend && npm test",
+    "test:client": "cd frontend && npm test -- --watchAll=false",
+    "install-server": "cd backend && npm install",
+    "install-client": "cd frontend && npm install",
+    "install-all": "npm install && npm run install-server && npm run install-client",
+    "start": "cd backend && npm start",
+    "start:prod": "npm run build:all && npm start",
+    "clean": "concurrently \"npm run clean:server\" \"npm run clean:client\"",
+    "clean:server": "cd backend && rm -rf node_modules",
+    "clean:client": "cd frontend && rm -rf node_modules build",
+    "lint": "concurrently \"npm run lint:server\" \"npm run lint:client\"",
+    "lint:server": "cd backend && npm run lint",
+    "lint:client": "cd frontend && npm run lint",
+    "heroku-postbuild": "npm run install-all && npm run build"
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "tailwind",
+    "express",
+    "mongodb",
+    "nodejs"
+  ],
+  "author": "Elite Filing Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
