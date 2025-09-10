@@ -1,270 +1,426 @@
 import React, { useState } from 'react';
-import { ChevronDownIcon, Bars3Icon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
+import { ChevronDownIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const Navigation = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [activeNestedDropdown, setActiveNestedDropdown] = useState(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSubDropdown, setActiveSubDropdown] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
-    { name: 'HOME', href: '/' },
+    { name: 'Home', href: '/' },
     { 
-      name: 'BUSINESS SOLUTIONS', 
-      href: '#',
+      name: 'Business Solutions', 
+      href: '/business-solutions',
       hasDropdown: true,
       dropdownItems: [
-        { name: 'Company Logo Creation', href: '#', icon: '🎨' },
-        { name: 'Registered Agent Service', href: '#', icon: '👤' },
-        { name: 'UK Shared Office', href: '#', icon: '🏢' },
-        { name: 'Trademark Registration UK', href: '#', icon: '®️' }
+        { name: 'Company Logo Creation', href: '/business-solutions/logo-creation' },
+        { name: 'Registered Agent Services', href: '/business-solutions/registered-agent' },
+        { name: 'UK Shared Offices', href: '/business-solutions/uk-shared-offices' },
+        { name: 'Trademark Registration UK', href: '/business-solutions/trademark-uk' }
       ]
     },
     { 
-      name: 'COMPANY FORMATION', 
-      href: '#',
+      name: 'Company Formation', 
+      href: '/company-formation',
       hasDropdown: true,
+      hasNestedDropdown: true,
       dropdownItems: [
         { 
           name: 'USA', 
-          href: '#', 
-          icon: '🇺🇸', 
-          hasNested: true,
-          nestedItems: [
-            { name: 'LLC Formation', href: '#', icon: '🏛️' },
-            { name: 'USA Tax', href: '#', icon: '📊' },
-            { name: 'ITIN', href: '#', icon: '🆔' },
-            { name: 'Trademark', href: '#', icon: '®️' },
-            { name: 'Complete Package', href: '#', icon: '📦' }
+          href: '/company-formation/usa', 
+          flag: (
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+              <defs>
+                <clipPath id="us-flag">
+                  <path d="M0 0h640v480H0z"/>
+                </clipPath>
+              </defs>
+              <g clipPath="url(#us-flag)">
+                <path fill="#bd3d44" d="M0 0h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640z"/>
+                <path fill="#fff" d="M0 37h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640z"/>
+                <path fill="#192f5d" d="M0 0h364v259H0z"/>
+              </g>
+            </svg>
+          ),
+          hasSubDropdown: true,
+          subItems: [
+            { name: 'LLC Formation', href: '/company-formation/usa/llc' },
+            { name: 'USA Tax', href: '/company-formation/usa/tax' },
+            { name: 'ITIN', href: '/company-formation/usa/itin' },
+            { name: 'Trademark', href: '/company-formation/usa/trademark' },
+            { name: 'Complete Package', href: '/company-formation/usa/complete-package' }
           ]
         },
         { 
           name: 'UK', 
-          href: '#', 
-          icon: '🇬🇧', 
-          hasNested: true,
-          nestedItems: [
-            { name: 'Company Registration', href: '#', icon: '🏢' },
-            { name: 'Company Annual Accounts Filing', href: '#', icon: '📋' },
-            { name: 'Company Closure Dissolution', href: '#', icon: '🔒' },
-            { name: 'Company Name Change', href: '#', icon: '✏️' },
-            { name: 'Company Structural Change', href: '#', icon: '🔄' },
-            { name: 'Confirmation Statement Filing', href: '#', icon: '✅' },
-            { name: 'EORI Number Application', href: '#', icon: '🆔' },
-            { name: 'VAT Number Registration', href: '#', icon: '💰' },
-            { name: 'VAT Return Filing', href: '#', icon: '📄' },
-            { name: 'UK Bank Accounts', href: '#', icon: '🏦' }
+          href: '/company-formation/uk', 
+          flag: (
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+              <defs>
+                <clipPath id="uk-flag">
+                  <path d="M0 0h640v480H0z"/>
+                </clipPath>
+              </defs>
+              <g clipPath="url(#uk-flag)">
+                <path fill="#012169" d="M0 0h640v480H0z"/>
+                <path fill="#fff" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-178L0 64V0h75z"/>
+                <path fill="#c8102e" d="m424 281 216 159v40L369 281h55zm-184 20 6 35L54 480H0l246-179zM640 0v3L391 191l2-44L590 0h50zM0 0l239 176h-60L0 42V0z"/>
+                <path fill="#fff" d="M241 0v480h160V0H241zM0 160v160h640V160H0z"/>
+                <path fill="#c8102e" d="M0 193v96h640v-96H0zM273 0v480h96V0h-96z"/>
+              </g>
+            </svg>
+          ),
+          hasSubDropdown: true,
+          subItems: [
+            { name: 'Company Registration', href: '/company-formation/uk/registration' },
+            { name: 'Company Annual Accounts Filing', href: '/company-formation/uk/annual-accounts' },
+            { name: 'Company Closure Dissolution', href: '/company-formation/uk/closure' },
+            { name: 'Company Name Change', href: '/company-formation/uk/name-change' },
+            { name: 'Company Structural Change', href: '/company-formation/uk/structural-change' },
+            { name: 'Confirmation Statement Filing', href: '/company-formation/uk/confirmation-statement' },
+            { name: 'EORI Number Application', href: '/company-formation/uk/eori' },
+            { name: 'VAT Number Registration', href: '/company-formation/uk/vat-registration' },
+            { name: 'VAT Return Filing', href: '/company-formation/uk/vat-return' },
+            { name: 'UK Bank Accounts', href: '/company-formation/uk/bank-accounts' }
           ]
         },
         { 
           name: 'Pakistan', 
-          href: '#', 
-          icon: '🇵🇰', 
-          hasNested: true,
-          nestedItems: [
-            { name: 'SECP', href: '#', icon: '🏛️' },
-            { name: 'PSEB', href: '#', icon: '⚡' },
-            { name: 'FBR', href: '#', icon: '📊' }
+          href: '/company-formation/pakistan', 
+          flag: (
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+              <defs>
+                <clipPath id="pk-flag">
+                  <path d="M0 0h640v480H0z"/>
+                </clipPath>
+              </defs>
+              <g clipPath="url(#pk-flag)">
+                <path fill="#01411c" d="M0 0h640v480H0z"/>
+                <path fill="#fff" d="M0 0h160v480H0z"/>
+                <g fill="#fff">
+                  <path d="m423 237 24 73h-76l62-46-62-46h76zm-81 91a50 50 0 1 1 0-100 50 50 0 0 1 0 100z"/>
+                </g>
+              </g>
+            </svg>
+          ),
+          hasSubDropdown: true,
+          subItems: [
+            { name: 'SECP', href: '/company-formation/pakistan/secp' },
+            { name: 'PSEB', href: '/company-formation/pakistan/pseb' },
+            { name: 'FBR', href: '/company-formation/pakistan/fbr' }
           ]
         },
         { 
           name: 'UAE', 
-          href: '#', 
-          icon: '🇦🇪', 
-          hasNested: true,
-          nestedItems: [
-            { name: 'SPC Free Zone', href: '#', icon: '🏢' }
+          href: '/company-formation/uae', 
+          flag: (
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+              <defs>
+                <clipPath id="ae-flag">
+                  <path d="M0 0h640v480H0z"/>
+                </clipPath>
+              </defs>
+              <g clipPath="url(#ae-flag)">
+                <path fill="#00732f" d="M0 0h640v160H0z"/>
+                <path fill="#fff" d="M0 160h640v160H0z"/>
+                <path fill="#000" d="M0 320h640v160H0z"/>
+                <path fill="#ce1126" d="M0 0h220v480H0z"/>
+              </g>
+            </svg>
+          ),
+          hasSubDropdown: true,
+          subItems: [
+            { name: 'SPC Free Zone', href: '/company-formation/uae/spc-free-zone' }
           ]
         },
-        { name: 'Canada (Coming Soon)', href: '#', icon: '🇨🇦', subtitle: 'Complete Package' },
-        { name: 'Turkey (Coming Soon)', href: '#', icon: '🇹🇷', subtitle: 'Complete Package' }
+        { 
+          name: 'Canada (Coming Soon)', 
+          href: '/company-formation/canada', 
+          flag: (
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+              <defs>
+                <clipPath id="ca-flag">
+                  <path d="M0 0h640v480H0z"/>
+                </clipPath>
+              </defs>
+              <g clipPath="url(#ca-flag)">
+                <path fill="#fff" d="M0 0h640v480H0z"/>
+                <path fill="#ff0000" d="M0 0h160v480H0zm480 0h160v480H480z"/>
+                <path fill="#ff0000" d="m320 100-24 76h-32l24-76-24-76h32l24 76 24-76h32l-24 76 24 76h-32z"/>
+              </g>
+            </svg>
+          ), 
+          isDisabled: true 
+        },
+        { 
+          name: 'Turkey (Coming Soon)', 
+          href: '/company-formation/turkey', 
+          flag: (
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+              <defs>
+                <clipPath id="tr-flag">
+                  <path d="M0 0h640v480H0z"/>
+                </clipPath>
+              </defs>
+              <g clipPath="url(#tr-flag)">
+                <path fill="#e30a17" d="M0 0h640v480H0z"/>
+                <circle cx="200" cy="240" r="60" fill="#fff"/>
+                <circle cx="220" cy="240" r="48" fill="#e30a17"/>
+                <path fill="#fff" d="m280 200 15 46h48l-39 28 15 46-39-28-39 28 15-46-39-28h48z"/>
+              </g>
+            </svg>
+          ), 
+          isDisabled: true 
+        }
       ]
     },
     { 
-      name: 'ECOMMERCE', 
-      href: '#',
+      name: 'E-commerce', 
+      href: '/ecommerce',
       hasDropdown: true,
       dropdownItems: [
-        { name: 'Amazon', href: '#', icon: '📦' },
-        { name: 'Walmart', href: '#', icon: '🛒' },
-        { name: 'Etsy', href: '#', icon: '🎨' }
+        { name: 'Amazon', href: '/ecommerce/amazon' },
+        { name: 'Walmart', href: '/ecommerce/walmart' },
+        { name: 'Etsy', href: '/ecommerce/etsy' }
       ]
     },
-    { name: 'CONTACT US', href: '#' },
-    { name: 'ABOUT US', href: '#' }
+    { name: 'Contact Us', href: '/contact' },
+    { name: 'About Us', href: '/about' }
   ];
 
   return (
-    <nav className="nav-container">
-      <div className="nav-content">
-        <div className="nav-wrapper">
-          {/* Enhanced Logo */}
-          <div className="nav-logo-container">
-            <div className="flex items-center">
-              <div className="nav-logo-icon">
-                <span className="text-white font-bold text-xl">EF</span>
-              </div>
-              <div>
-                <div className="nav-logo-text">ELITE FILING</div>
-                <div className="text-sm text-gray-500 font-medium tracking-wide">Business Solutions</div>
-              </div>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20">
+          {/* Logo */}
+          <div className="flex items-center space-x-4">
+            <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
+              <span className="text-white font-semibold text-sm">E</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-gray-900 font-semibold text-xl tracking-tight">Elite Filing</span>
+              <span className="text-gray-500 text-sm font-normal">Professional Services</span>
             </div>
           </div>
 
-          {/* Enhanced Navigation Menu */}
-          <div className="nav-menu">
-            <div className="nav-menu-list">
+          {/* Navigation Menu */}
+          <div className="hidden lg:block">
+            <div className="flex items-center space-x-8">
               {menuItems.map((item, index) => (
-                <div key={index} className="nav-menu-item">
-                  <button
-                    className={`nav-menu-button ${
-                      activeDropdown === index ? 'bg-gradient-to-r from-yellow-50 to-yellow-100 text-yellow-600' : ''
-                    }`}
-                    onMouseEnter={() => item.hasDropdown && setActiveDropdown(index)}
-                    onMouseLeave={() => !item.hasDropdown && setActiveDropdown(null)}
-                    onClick={() => !item.hasDropdown && (window.location.href = item.href)}
-                  >
-                    <span className="tracking-wide">{item.name}</span>
-                    {item.hasDropdown && (
-                      <ChevronDownIcon 
-                        className={`nav-chevron ${
-                          activeDropdown === index ? 'nav-chevron-active' : ''
-                        }`} 
-                      />
-                    )}
-                  </button>
-                  
-                  {/* Enhanced Dropdown Menu */}
-                  {item.hasDropdown && activeDropdown === index && (
-                    <div 
-                      className="nav-dropdown"
+                <div key={index} className="relative group">
+                  {item.hasDropdown ? (
+                    <button
+                      className="text-gray-600 hover:text-gray-900 px-1 py-2 text-sm font-medium flex items-center transition-colors duration-200"
                       onMouseEnter={() => setActiveDropdown(index)}
-                      onMouseLeave={() => {
-                        setActiveDropdown(null);
-                        setActiveNestedDropdown(null);
-                      }}
+                      onMouseLeave={() => setActiveDropdown(null)}
                     >
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <div className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                          {item.name}
-                        </div>
-                      </div>
-                      {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
-                        <div key={dropdownIndex} className="relative">
-                          <a
-                            href={dropdownItem.href}
-                            className="nav-dropdown-item flex items-center justify-between"
-                            onMouseEnter={() => dropdownItem.hasNested && setActiveNestedDropdown(dropdownIndex)}
-                            onMouseLeave={() => !dropdownItem.hasNested && setActiveNestedDropdown(null)}
-                          >
-                            <div className="flex items-center">
-                              <span className="mr-3 text-lg">{dropdownItem.icon}</span>
-                              <div>
-                                <div className="font-semibold text-lg">{dropdownItem.name}</div>
-                                <div className="text-sm text-gray-500">
-                                  {dropdownItem.subtitle || 'Professional services'}
-                                </div>
-                              </div>
-                            </div>
-                            {dropdownItem.hasNested && (
-                              <ChevronRightIcon className="h-4 w-4 text-gray-400" />
-                            )}
-                          </a>
-                          
-                          {/* Nested Dropdown */}
-                          {dropdownItem.hasNested && activeNestedDropdown === dropdownIndex && (
-                            <div 
-                              className="absolute left-full top-0 ml-2 w-64 py-3 bg-white rounded-xl shadow-2xl border border-gray-200 z-60"
-                              onMouseEnter={() => setActiveNestedDropdown(dropdownIndex)}
-                              onMouseLeave={() => setActiveNestedDropdown(null)}
-                            >
-                              {dropdownItem.nestedItems.map((nestedItem, nestedIndex) => (
-                                <a
-                                  key={nestedIndex}
-                                  href={nestedItem.href}
-                                  className="block px-6 py-3 text-base font-medium transition-all duration-300 flex items-center hover:bg-yellow-50 hover:text-yellow-600"
-                                  style={{color: '#000E3D'}}
-                                >
-                                  <span className="mr-3 text-sm">{nestedItem.icon}</span>
-                                  {nestedItem.name}
-                                </a>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      <div className="px-4 py-3 border-t border-gray-100 bg-gradient-to-r from-yellow-50 to-yellow-100">
-                        <button className="text-sm font-semibold text-yellow-600 hover:text-yellow-700 transition-colors">
-                          View All Services →
-                        </button>
-                      </div>
-                    </div>
+                      <span>{item.name}</span>
+                      <ChevronDownIcon className={`ml-1 h-4 w-4 transition-transform duration-200 ${activeDropdown === index ? 'rotate-180' : ''}`} />
+                    </button>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      className="text-gray-600 hover:text-gray-900 px-1 py-2 text-sm font-medium transition-colors duration-200 block"
+                    >
+                      <span>{item.name}</span>
+                    </Link>
                   )}
+                  
+                  {/* Dropdown Menu */}
+                  {item.hasDropdown && activeDropdown === index && (
+                        <div 
+                          className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                          onMouseEnter={() => setActiveDropdown(index)}
+                          onMouseLeave={() => {
+                            setActiveDropdown(null);
+                            setActiveSubDropdown(null);
+                          }}
+                        >
+                          {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
+                            item.hasNestedDropdown ? (
+                              <div key={dropdownIndex} className="relative">
+                                <div
+                                  className={`flex items-center justify-between px-4 py-3 text-sm transition-colors duration-200 cursor-pointer ${
+                                    dropdownItem.isDisabled 
+                                      ? 'text-gray-400 cursor-not-allowed' 
+                                      : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                                  }`}
+                                  onMouseEnter={() => dropdownItem.hasSubDropdown && setActiveSubDropdown(dropdownIndex)}
+                                  onClick={dropdownItem.isDisabled ? (e) => e.preventDefault() : undefined}
+                                >
+                                  <div className="flex items-center">
+                                    {dropdownItem.flag && <div className="mr-3">{dropdownItem.flag}</div>}
+                                    {dropdownItem.name}
+                                  </div>
+                                  {dropdownItem.hasSubDropdown && (
+                                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                  )}
+                                </div>
+                                
+                                {dropdownItem.hasSubDropdown && activeSubDropdown === dropdownIndex && (
+                                  <div className="absolute left-full top-0 ml-1 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                                    {dropdownItem.subItems.map((subItem, subIndex) => (
+                                      <Link
+                                        key={subIndex}
+                                        to={subItem.href}
+                                        className="block px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200"
+                                      >
+                                        {subItem.name}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <Link
+                                key={dropdownIndex}
+                                to={dropdownItem.href}
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200"
+                              >
+                                {dropdownItem.name}
+                              </Link>
+                            )
+                          ))}
+                        </div>
+                      )}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Enhanced Mobile menu button */}
-          <div className="md:hidden">
-            <button 
-              className="nav-mobile-button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              <Bars3Icon className="h-6 w-6" />
-            </button>
+          {/* CTA Button & Mobile menu button */}
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:block">
+              <Link
+                  to="/get-started"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-md text-sm font-medium transition-colors duration-200"
+                  >
+                    Get Started
+               </Link>
+            </div>
+            <div className="lg:hidden">
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-gray-600 hover:text-gray-900 p-2 transition-colors duration-200"
+              >
+                {isMobileMenuOpen ? (
+                  <XMarkIcon className="w-6 h-6" />
+                ) : (
+                  <Bars3Icon className="w-6 h-6" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Menu - Enhanced for nested items */}
-        {mobileMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-white/95 backdrop-blur-lg rounded-b-xl border-t border-gray-100">
-              {menuItems.map((item, index) => (
-                <div key={index}>
-                  <a
-                    href={item.href}
-                    className="block px-4 py-3 text-2xl font-bold hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-300"
-                    style={{color: '#000E3D'}}
+      {/* Mobile Navigation */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden bg-white border-t border-gray-100">
+          <div className="px-6 py-4 space-y-1">
+            {menuItems.map((item, index) => (
+              <div key={index}>
+                {item.hasDropdown ? (
+                  <div>
+                    <button
+                      onClick={() => setActiveDropdown(activeDropdown === index ? null : index)}
+                      className="w-full text-left text-gray-600 hover:text-gray-900 py-3 text-sm font-medium transition-colors duration-200 flex items-center justify-between"
+                    >
+                      <span>{item.name}</span>
+                      <ChevronDownIcon className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === index ? 'rotate-180' : ''}`} />
+                    </button>
+                    
+                    {activeDropdown === index && (
+                      <div className="pl-4 space-y-1 mt-2 max-h-64 overflow-y-auto">
+                        {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
+                          item.hasNestedDropdown ? (
+                            <div key={dropdownIndex}>
+                              <div 
+                                className={`flex items-center justify-between px-3 py-3 text-sm rounded-md transition-colors duration-200 cursor-pointer ${
+                                  dropdownItem.isDisabled 
+                                    ? 'text-gray-400 cursor-not-allowed' 
+                                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                                }`}
+                                onClick={() => {
+                                  if (!dropdownItem.isDisabled && dropdownItem.hasSubDropdown) {
+                                    setActiveSubDropdown(activeSubDropdown === dropdownIndex ? null : dropdownIndex);
+                                  }
+                                }}
+                              >
+                                <div className="flex items-center">
+                                  {dropdownItem.flag && <div className="mr-3">{dropdownItem.flag}</div>}
+                                  {dropdownItem.name}
+                                </div>
+                                {dropdownItem.hasSubDropdown && (
+                                  <svg 
+                                    className={`w-4 h-4 ml-2 transition-transform duration-200 ${
+                                      activeSubDropdown === dropdownIndex ? 'rotate-90' : ''
+                                    }`} 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                )}
+                              </div>
+                              
+                              {dropdownItem.hasSubDropdown && activeSubDropdown === dropdownIndex && (
+                                <div className="pl-6 space-y-1 mt-2">
+                                  {dropdownItem.subItems.map((subItem, subIndex) => (
+                                    <Link
+                                      key={subIndex}
+                                      to={subItem.href}
+                                      className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors duration-200"
+                                      onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                      {subItem.name}
+                                    </Link>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <Link
+                              key={dropdownIndex}
+                              to={dropdownItem.href}
+                              className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors duration-200"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {dropdownItem.name}
+                            </Link>
+                          )
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link 
+                    to={item.href} 
+                    className="block text-gray-600 hover:text-gray-900 py-3 text-sm font-medium transition-colors duration-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
-                  </a>
-                  {item.hasDropdown && (
-                    <div className="ml-4 space-y-1">
-                      {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
-                        <div key={dropdownIndex}>
-                          <a
-                            href={dropdownItem.href}
-                            className="block px-4 py-2 text-xl hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-300 flex items-center"
-                            style={{color: '#000E3D'}}
-                          >
-                            <span className="mr-2 text-lg">{dropdownItem.icon}</span>
-                            {dropdownItem.name}
-                          </a>
-                          {dropdownItem.hasNested && (
-                            <div className="ml-6 space-y-1">
-                              {dropdownItem.nestedItems.map((nestedItem, nestedIndex) => (
-                                <a
-                                  key={nestedIndex}
-                                  href={nestedItem.href}
-                                  className="block px-4 py-2 text-lg hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-300 flex items-center"
-                                  style={{color: '#000E3D'}}
-                                >
-                                  <span className="mr-2 text-sm">{nestedItem.icon}</span>
-                                  {nestedItem.name}
-                                </a>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+                  </Link>
+                )}
+              </div>
+            ))}
+            
+            <div className="pt-4">
+              <Link
+                to="/get-started"
+                className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md text-sm font-medium transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Get Started
+              </Link>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 };
