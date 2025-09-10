@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 const Statistics = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [counts, setCounts] = useState({ clients: 0, projects: 0, advisors: 0 });
   const sectionRef = useRef(null);
 
-  const finalCounts = {
+  const finalCounts = useMemo(() => ({
     clients: 150,
     projects: 400,
     advisors: 75
-  };
+  }), []);
 
   // Intersection Observer to trigger animation when section is visible
   useEffect(() => {
@@ -22,13 +22,14 @@ const Statistics = () => {
       { threshold: 0.3 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    const currentRef = sectionRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, [isVisible]);
@@ -59,7 +60,7 @@ const Statistics = () => {
 
       return () => clearInterval(timer);
     }
-  }, [isVisible]);
+  }, [isVisible, finalCounts]);
 
   const stats = [
     {

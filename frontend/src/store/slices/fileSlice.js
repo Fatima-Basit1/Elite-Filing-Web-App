@@ -84,7 +84,7 @@ export const downloadFile = createAsyncThunk(
   async (fileId, { rejectWithValue }) => {
     try {
       // For now, just simulate download - in real app this would trigger actual download
-      const response = await api.get(`/files/${fileId}/download`, {
+      await api.get(`/files/${fileId}/download`, {
         responseType: 'blob'
       });
       return { fileId, success: true };
