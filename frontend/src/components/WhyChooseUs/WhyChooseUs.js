@@ -1,116 +1,224 @@
+
 import React from 'react';
+import videoFile from '../../assets/IMG_8578.MOV'; // Make sure this path is correct
 
 const WhyChooseUs = () => {
   const features = [
     {
-      icon: (
-        <svg className="w-16 h-16 mx-auto mb-4" viewBox="0 0 64 64" fill="none">
-          <rect x="8" y="16" width="48" height="32" rx="4" fill="#FCD34D" stroke="#F59E0B" strokeWidth="2"/>
-          <rect x="12" y="20" width="8" height="6" fill="#F59E0B"/>
-          <rect x="12" y="28" width="12" height="2" fill="#F59E0B"/>
-          <rect x="12" y="32" width="16" height="2" fill="#F59E0B"/>
-          <rect x="12" y="36" width="10" height="2" fill="#F59E0B"/>
-          <circle cx="44" cy="32" r="8" fill="#10B981" stroke="#059669" strokeWidth="2"/>
-          <path d="M40 32l3 3 6-6" stroke="white" strokeWidth="2" fill="none"/>
-        </svg>
-      ),
-      title: 'RELIABLE',
-      description: 'Our process is designed with precision, guaranteeing seamless accuracy and transparency at every stage of your business registration.'
+      icon: "👍",
+      title: "Reliable",
+      description: "Our process is designed with utmost care, guaranteeing consistency, accuracy, and transparency at every step of your business registration."
     },
     {
-      icon: (
-        <svg className="w-16 h-16 mx-auto mb-4" viewBox="0 0 64 64" fill="none">
-          <circle cx="32" cy="32" r="24" fill="#10B981" stroke="#059669" strokeWidth="2"/>
-          <circle cx="32" cy="32" r="16" fill="#34D399"/>
-          <rect x="28" y="20" width="8" height="24" fill="#059669"/>
-          <rect x="20" y="28" width="24" height="8" fill="#059669"/>
-          <circle cx="32" cy="32" r="4" fill="white"/>
-        </svg>
-      ),
-      title: 'TRUSTED',
-      description: 'Hundreds of entrepreneurs and businesses choose Elite Filing because we combine expertise, professionalism, and exceptional service.'
+      icon: "🏆",
+      title: "Trusted",
+      description: "Hundreds of entrepreneurs and businesses choose Elite Filing because we've built a reputation for reliability and exceptional service."
     },
     {
-      icon: (
-        <svg className="w-16 h-16 mx-auto mb-4" viewBox="0 0 64 64" fill="none">
-          <circle cx="32" cy="32" r="24" fill="#10B981" stroke="#059669" strokeWidth="2"/>
-          <path d="M20 32l8 8 16-16" stroke="white" strokeWidth="3" fill="none"/>
-        </svg>
-      ),
-      title: 'AUTHORIZED',
-      description: 'Elite Filing is officially authorized by compliance review ensuring our clients complete formation is carried out under strict approval and with complete credibility.'
+      icon: "✅",
+      title: "Authorized",
+      description: "Elite Filing is officially authorized by Companies House, ensuring that every company formation is carried out under legal guidance and with complete credibility."
     },
     {
-      icon: (
-        <svg className="w-16 h-16 mx-auto mb-4" viewBox="0 0 64 64" fill="none">
-          <rect x="8" y="20" width="48" height="24" rx="4" fill="#3B82F6" stroke="#1D4ED8" strokeWidth="2"/>
-          <rect x="12" y="24" width="8" height="16" fill="#60A5FA"/>
-          <rect x="24" y="28" width="8" height="12" fill="#60A5FA"/>
-          <rect x="36" y="26" width="8" height="14" fill="#60A5FA"/>
-          <rect x="48" y="30" width="8" height="10" fill="#60A5FA"/>
-          <circle cx="52" r="6" fill="#FCD34D" stroke="#F59E0B" strokeWidth="2"/>
-          <circle cx="52" cy="8" r="2" fill="#F59E0B"/>
-        </svg>
-      ),
-      title: 'EFFICIENT',
-      description: 'With our advanced technological systems, we provide a seamless experience that saves you time and paperwork and accelerates company setup.'
+      icon: "⚡",
+      title: "Efficient",
+      description: "With our advanced in-house system, we provide a streamlined experience that saves time, reduces paperwork, and accelerates company setup."
     }
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 px-4 relative overflow-hidden" style={{
+      background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)'
+    }}>
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-10 left-10 w-32 h-32 rounded-full" style={{
+          background: 'linear-gradient(135deg, #f8bd0a, #041e72)'
+        }}></div>
+        <div className="absolute bottom-20 right-20 w-24 h-24 rounded-full" style={{
+          background: 'linear-gradient(135deg, #041e72, #f8bd0a)'
+        }}></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-yellow-500 mb-8">WHY CHOOSE US</h2>
+          <h2 className="text-5xl font-bold mb-6" style={{
+            background: 'linear-gradient(135deg, #f8bd0a 0%, #041e72 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}>
+            WHY CHOOSE US
+          </h2>
+          <div className="w-24 h-1 mx-auto rounded-full" style={{
+            background: 'linear-gradient(90deg, #f8bd0a, #041e72)'
+          }}></div>
         </div>
-        
-        {/* Top row - Reliable and Trusted */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16 max-w-4xl mx-auto">
-          {features.slice(0, 2).map((feature, index) => (
-            <div key={index} className="text-center px-4">
-              <div className="flex justify-center mb-6">
-                {feature.icon}
+
+        {/* Content Arrangement: Features flanking the Video */}
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 mb-8">
+          
+          {/* Left Column - Features */}
+          <div className="grid grid-cols-1 gap-8 w-full lg:w-1/3 xl:w-1/3">
+            {features.slice(0, 2).map((feature, index) => (
+              <div
+                key={index}
+                className="group relative p-8 rounded-2xl transition-all duration-500 hover:scale-105 hover:shadow-2xl cursor-pointer overflow-hidden"
+                style={{
+                  background: index % 2 === 0 
+                    ? 'linear-gradient(135deg, #f8bd0a15, #f8bd0a25)' 
+                    : 'linear-gradient(135deg, #041e7215, #041e7225)',
+                  border: `2px solid ${index % 2 === 0 ? '#f8bd0a40' : '#041e7240'}`,
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                {/* Accent Line */}
+                <div 
+                  className="absolute top-0 left-0 w-full h-1 transition-all duration-300 group-hover:h-2"
+                  style={{
+                    background: index % 2 === 0 
+                      ? 'linear-gradient(90deg, #f8bd0a, #041e72)' 
+                      : 'linear-gradient(90deg, #041e72, #f8bd0a)'
+                  }}
+                ></div>
+
+                {/* Icon */}
+                <div className="mb-6 transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                  <div 
+                    className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shadow-lg"
+                    style={{
+                      background: index % 2 === 0 
+                        ? 'linear-gradient(135deg, #f8bd0a, #ffd700)' 
+                        : 'linear-gradient(135deg, #041e72, #385cd4)',
+                      color: '#ffffff'
+                    }}
+                  >
+                    {feature.icon}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div>
+                  <h3 
+                    className="text-2xl font-bold mb-4 transition-colors duration-300"
+                    style={{
+                      color: index % 2 === 0 ? '#041e72' : '#f8bd0a'
+                    }}
+                  >
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-700 leading-relaxed group-hover:text-gray-800 transition-colors duration-300">
+                    {feature.description}
+                  </p>
+                </div>
+
+                {/* Hover Glow Effect */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-2xl"
+                  style={{
+                    background: index % 2 === 0 
+                      ? 'radial-gradient(circle at center, #f8bd0a, transparent)' 
+                      : 'radial-gradient(circle at center, #041e72, transparent)'
+                  }}
+                ></div>
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4">{feature.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed max-w-xs mx-auto">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-        
-        {/* Video Section */}
-        <div className="flex justify-center mb-16">
-          <div className="relative w-80 h-64 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg overflow-hidden shadow-lg">
-            <div className="absolute inset-4 bg-black rounded-lg overflow-hidden">
-              <img 
-                src="/api/placeholder/300/200" 
-                alt="Professional woman in business attire"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                <button className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all">
-                  <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                </button>
-              </div>
-              <div className="absolute bottom-2 left-2 text-white text-xs">
-                0:01 / 0:17
+            ))}
+          </div>
+
+          {/* Center Column - Video */}
+          <div className="w-full lg:w-1/2 xl:w-2/5 flex justify-center">
+            <div className="w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-yellow-400 to-blue-900 p-1">
+              <div className="bg-black rounded-2xl overflow-hidden">
+                <video 
+                  className="w-full h-auto object-cover" // object-cover ensures the video scales correctly
+                  controls
+                  autoPlay // Added for immediate playback if desired, remove if not
+                  muted // Muted by default for autoPlay, remove if you want sound on load
+                  loop // Added for continuous playback if desired
+                  playsInline // Important for mobile playback
+                  style={{
+                    minHeight: '200px', // Maintain a minimum height
+                    maxHeight: '400px', // Allow video to be larger if needed
+                    width: '100%' // Ensure it takes full width of its container
+                  }}
+                >
+                  <source src={videoFile} type="video/mp4" />
+                  <source src={videoFile} type="video/quicktime" /> 
+                  {/* Add more sources if you have other formats */}
+                  Your browser does not support the video tag.
+                </video>
               </div>
             </div>
           </div>
-        </div>
-        
-        {/* Bottom row - Authorized and Efficient */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-4xl mx-auto">
-          {features.slice(2, 4).map((feature, index) => (
-            <div key={index + 2} className="text-center px-4">
-              <div className="flex justify-center mb-6">
-                {feature.icon}
+
+          {/* Right Column - Features */}
+          <div className="grid grid-cols-1 gap-8 w-full lg:w-1/3 xl:w-1/3">
+            {features.slice(2, 4).map((feature, index) => (
+              <div
+                key={index + 2}
+                className="group relative p-8 rounded-2xl transition-all duration-500 hover:scale-105 hover:shadow-2xl cursor-pointer overflow-hidden"
+                style={{
+                  background: index % 2 === 0 
+                    ? 'linear-gradient(135deg, #041e7215, #041e7225)' // Swapped for visual variety
+                    : 'linear-gradient(135deg, #f8bd0a15, #f8bd0a25)', // Swapped for visual variety
+                  border: `2px solid ${index % 2 === 0 ? '#041e7240' : '#f8bd0a40'}`, // Swapped for visual variety
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                {/* Accent Line */}
+                <div 
+                  className="absolute top-0 left-0 w-full h-1 transition-all duration-300 group-hover:h-2"
+                  style={{
+                    background: index % 2 === 0 
+                      ? 'linear-gradient(90deg, #041e72, #f8bd0a)' // Swapped for visual variety
+                      : 'linear-gradient(90deg, #f8bd0a, #041e72)' // Swapped for visual variety
+                  }}
+                ></div>
+
+                {/* Icon */}
+                <div className="mb-6 transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                  <div 
+                    className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shadow-lg"
+                    style={{
+                      background: index % 2 === 0 
+                        ? 'linear-gradient(135deg, #041e72, #385cd4)' // Swapped for visual variety
+                        : 'linear-gradient(135deg, #f8bd0a, #ffd700)', // Swapped for visual variety
+                      color: '#ffffff'
+                    }}
+                  >
+                    {features[index + 2].icon}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div>
+                  <h3 
+                    className="text-2xl font-bold mb-4 transition-colors duration-300"
+                    style={{
+                      color: index % 2 === 0 ? '#f8bd0a' : '#041e72' // Swapped for visual variety
+                    }}
+                  >
+                    {features[index + 2].title}
+                  </h3>
+                  <p className="text-gray-700 leading-relaxed group-hover:text-gray-800 transition-colors duration-300">
+                    {features[index + 2].description}
+                  </p>
+                </div>
+
+                {/* Hover Glow Effect */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-2xl"
+                  style={{
+                    background: index % 2 === 0 
+                      ? 'radial-gradient(circle at center, #041e72, transparent)' // Swapped for visual variety
+                      : 'radial-gradient(circle at center, #f8bd0a, transparent)' // Swapped for visual variety
+                  }}
+                ></div>
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4">{feature.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed max-w-xs mx-auto">{feature.description}</p>
-            </div>
-          ))}
+            ))}
+          </div>
+
         </div>
       </div>
     </section>
