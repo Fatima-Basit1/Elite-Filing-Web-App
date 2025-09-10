@@ -190,12 +190,12 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed top-4 left-8 right-8 lg:left-16 lg:right-16 xl:left-32 xl:right-32 z-50">
-      <div className="bg-white/95 backdrop-blur-xl shadow-2xl rounded-full border border-gray-200/50 px-6 py-2">
-          <div className="flex justify-between items-center h-8">
+    <nav className="fixed top-0 sm:top-2 md:top-4 left-0 right-0 sm:left-2 sm:right-2 md:left-4 md:right-4 lg:left-8 lg:right-8 xl:left-16 xl:right-16 z-50">
+      <div className="bg-white/95 backdrop-blur-xl shadow-2xl rounded-none sm:rounded-xl md:rounded-full border border-gray-200/50 px-3 sm:px-5 md:px-8 lg:px-10 py-2 max-w-[1400px] mx-auto">
+          <div className="flex justify-between items-center h-10 sm:h-8">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 flex items-center justify-center rounded-full">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full">
               <img 
                 src="https://elite-filing.com/wp-content/uploads/2025/07/cropped-httpselite-filing-logo.webp" 
                 alt="Elite Filing Logo" 
@@ -203,18 +203,18 @@ const Navigation = () => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-blue-600 font-bold text-lg tracking-tight">Elite Filing</span>
+              <span className="text-blue-600 font-bold text-sm sm:text-base md:text-lg tracking-tight">Elite Filing</span>
             </div>
           </div>
 
           {/* Navigation Menu */}
           <div className="hidden lg:block">
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4">
               {menuItems.map((item, index) => (
                 <div key={index} className="relative group">
                   {item.hasDropdown ? (
                     <button
-                      className="text-gray-600 hover:text-blue-700 px-4 py-2 text-sm font-medium flex items-center transition-all duration-300 hover:bg-blue-50 rounded-full"
+                      className="text-gray-600 hover:text-blue-700 px-2 md:px-3 py-1.5 text-xs md:text-sm font-medium flex items-center transition-all duration-300 hover:bg-blue-50 rounded-full"
                       onMouseEnter={() => setActiveDropdown(index)}
                       onMouseLeave={() => setActiveDropdown(null)}
                     >
@@ -224,7 +224,7 @@ const Navigation = () => {
                   ) : (
                     <Link
                       to={item.href}
-                      className="text-gray-600 hover:text-blue-700 px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-blue-50 rounded-full block"
+                      className="text-gray-600 hover:text-blue-700 px-2 md:px-3 py-1.5 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-blue-50 rounded-full block"
                     >
                       <span>{item.name}</span>
                     </Link>
@@ -233,7 +233,7 @@ const Navigation = () => {
                   {/* Dropdown Menu */}
                   {item.hasDropdown && activeDropdown === index && (
                         <div 
-                          className="absolute top-full left-0 mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
+                          className="absolute top-full left-0 mt-3 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
                           onMouseEnter={() => setActiveDropdown(index)}
                           onMouseLeave={() => {
                             setActiveDropdown(null);
@@ -264,7 +264,7 @@ const Navigation = () => {
                                 </div>
                                 
                                 {dropdownItem.hasSubDropdown && activeSubDropdown === dropdownIndex && (
-                                  <div className="absolute left-full top-0 ml-2 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50">
+                                  <div className="absolute left-full top-0 ml-2 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50">
                                     {dropdownItem.subItems.map((subItem, subIndex) => (
                                       <Link
                                         key={subIndex}
@@ -295,14 +295,14 @@ const Navigation = () => {
           </div>
 
           {/* CTA Button & Mobile menu button */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3 sm:space-x-4">
             <div className="hidden md:block">
               <Link
                   to="/get-started"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl mb-0.5"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 sm:px-6 md:px-7 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center justify-center min-w-[100px] sm:min-w-[120px]"
                 >
-                    Get Started
-               </Link>
+                  Get Started
+              </Link>
             </div>
             <div className="lg:hidden">
               <button 
@@ -321,16 +321,17 @@ const Navigation = () => {
       </div>
 
       {/* Mobile Navigation */}
+      {/* Mobile Navigation - Improved positioning and styling */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100">
-          <div className="px-6 py-4 space-y-1">
+        <div className="fixed lg:hidden bg-white/95 backdrop-blur-xl shadow-2xl border border-gray-200/50 mt-1 sm:mt-2 rounded-b-xl mx-0 sm:mx-2 left-0 right-0 sm:left-2 sm:right-2 md:left-4 md:right-4 lg:left-8 lg:right-8 z-40 max-w-[1400px] mx-auto">
+          <div className="px-4 sm:px-6 py-4 space-y-1 max-h-[70vh] overflow-y-auto">
             {menuItems.map((item, index) => (
               <div key={index}>
                 {item.hasDropdown ? (
                   <div>
                     <button
                       onClick={() => setActiveDropdown(activeDropdown === index ? null : index)}
-                      className="w-full text-left text-gray-600 hover:text-blue-700 py-3 text-sm font-medium transition-colors duration-200 flex items-center justify-between"
+                      className="w-full text-left text-gray-600 hover:text-blue-700 py-2.5 text-sm font-medium transition-colors duration-200 flex items-center justify-between"
                     >
                       <span>{item.name}</span>
                       <ChevronDownIcon className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === index ? 'rotate-180' : ''}`} />
@@ -403,7 +404,7 @@ const Navigation = () => {
                 ) : (
                   <Link 
                     to={item.href} 
-                    className="block text-gray-600 hover:text-blue-700 py-3 text-sm font-medium transition-colors duration-200"
+                    className="block text-gray-600 hover:text-blue-700 py-2.5 text-sm font-medium transition-colors duration-200"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
@@ -412,10 +413,10 @@ const Navigation = () => {
               </div>
             ))}
             
-            <div className="pt-4">
+            <div className="pt-4 px-2">
               <Link
                 to="/get-started"
-                className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md text-sm font-medium transition-colors duration-200"
+                className="block w-full max-w-[280px] mx-auto text-center bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Get Started
