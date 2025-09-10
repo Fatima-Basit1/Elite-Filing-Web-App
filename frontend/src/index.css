@@ -6,6 +6,7 @@
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px; /* Slightly increased from 12px */
   }
   
   body {
@@ -14,6 +15,19 @@
   
   * {
     @apply border-gray-200;
+  }
+  
+  /* Responsive font sizing */
+  @media (min-width: 768px) {
+    html {
+      font-size: 14px;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    html {
+      font-size: 15px;
+    }
   }
 }
 
@@ -47,7 +61,7 @@
   }
   
 .nav-logo-text {
-    @apply text-3xl font-bold;
+    @apply text-2xl font-bold;
     background: linear-gradient(135deg, #000e3d 0%, #f8bd0a 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -68,7 +82,7 @@
   }
 
  .nav-menu-button {
-    @apply relative text-xl font-semibold transition-all duration-300 px-4 py-2 rounded-lg;
+    @apply relative text-sm font-semibold transition-all duration-300 px-2.5 py-2 rounded-lg;
     color: #041e72;
     position: relative;
   }
@@ -179,31 +193,31 @@
   }
   
   .hero-title {
-    @apply text-4xl sm:text-5xl lg:text-6xl font-bold text-white;
+    @apply text-2xl sm:text-3xl lg:text-5xl font-bold text-white;
     color: #f8bd0a;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     letter-spacing: -0.01em;
     line-height: 1.15;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.75rem;
   }
   
   .hero-subtitle {
-    @apply text-xl sm:text-2xl lg:text-2xl text-gray-100 max-w-5xl mx-auto font-normal;
+    @apply text-base sm:text-lg lg:text-xl text-gray-100 max-w-5xl mx-auto font-normal;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-    line-height: 1.75;
+    line-height: 1.6;
     letter-spacing: 0.025em;
-    font-size: 1.375rem;
-    margin-bottom: 3.5rem;
+    font-size: 1.125rem;
+    margin-bottom: 2.25rem;
     padding: 0 1rem;
   }
   
   
  .hero-cta-button {
-    @apply inline-flex items-center px-12 py-5 text-xl font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl;
+    @apply inline-flex items-center px-7 py-3.5 text-base font-bold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl;
     background: linear-gradient(135deg, #041e72 0%, #385cd4 100%);
     color: white !important;
-    box-shadow: 0 15px 40px rgba(72, 126, 242, 0.4);
-    border: 2px solid rgba(104, 126, 251, 0.3);
+    box-shadow: 0 10px 25px rgba(72, 126, 242, 0.4);
+    border: 1px solid rgba(104, 126, 251, 0.3);
   }
   
    .hero-cta-button:hover {
@@ -266,15 +280,15 @@
   }
   
   .unified-button-sm {
-    @apply unified-button px-4 py-2 text-sm;
+    @apply unified-button px-2.5 py-1.5 text-xs;
   }
   
   .unified-button-md {
-    @apply unified-button px-6 py-3 text-base;
+    @apply unified-button px-4.5 py-2.5 text-sm;
   }
   
   .unified-button-lg {
-    @apply unified-button px-8 py-4 text-lg;
+    @apply unified-button px-6 py-3 text-base;
   }
 
   /* Dashboard specific styles */
@@ -359,15 +373,15 @@
   }
   
   .card-header {
-    @apply px-4 py-5 sm:px-6 border-b border-gray-200;
+    @apply px-2 py-3 sm:px-4 border-b border-gray-200;
   }
   
   .card-body {
-    @apply px-4 py-5 sm:p-6;
+    @apply px-2 py-3 sm:p-4;
   }
   
   .card-footer {
-    @apply px-4 py-4 sm:px-6 border-t border-gray-200;
+    @apply px-2 py-2 sm:px-4 border-t border-gray-200;
   }
   
   .alert {
@@ -422,97 +436,97 @@
 /* Enhanced mobile responsiveness */
 @media (max-width: 768px) {
   .nav-menu-list {
-    @apply space-x-4;
+    @apply space-x-2;
   }
   
   .nav-logo-icon {
-    @apply w-12 h-12;
+    @apply w-8 h-8;
   }
   
   .nav-logo-text {
-    @apply text-3xl;
+    @apply text-lg;
   }
   
 .nav-menu-button {
-    @apply text-2xl font-medium;
+    @apply text-xs font-medium;
   }
   
   .nav-dropdown {
-    @apply w-80;
+    @apply w-56;
   }
   
   .nav-dropdown-item {
-    @apply text-3xl font-black px-8 py-6;
+    @apply text-base font-bold px-4 py-3;
     
     color: #000e3d;
   }
 
   .mobile-menu-item {
-    @apply text-3xl;
+    @apply text-lg;
   }
 
   .mobile-dropdown-item {
-    @apply text-2xl;
+    @apply text-sm;
   }
   
   .hero-title {
-    @apply text-4xl leading-tight;
+    @apply text-xl leading-tight;
   }
   
  .hero-subtitle {
-    @apply text-lg mb-8;
-    line-height: 1.7;
-    font-size: 1.25rem;
+    @apply text-sm mb-4;
+    line-height: 1.5;
+    font-size: 0.875rem;
   }
   
   .hero-cta-button {
-    @apply px-8 py-4 text-lg;
+    @apply px-4 py-2 text-sm;
   }
 }
 
 @media (max-width: 480px) {
   .nav-content {
-    @apply px-3;
+    @apply px-1.5;
   }
   
   .nav-logo-text {
-    @apply text-2xl;
+    @apply text-base;
   }
   
   .nav-menu-button {
-    @apply text-xl font-medium;
+    @apply text-xs font-medium;
     
   }
   
   .nav-dropdown {
-    @apply w-72;
+    @apply w-48;
   }
   
   .nav-dropdown-item {
-    @apply text-2xl font-black px-6 py-5;
+    @apply text-sm font-bold px-3 py-2;
     
     color: #000e3d;
   }
 
   .mobile-menu-item {
-    @apply text-2xl;
+    @apply text-base;
   }
 
   .mobile-dropdown-item {
-    @apply text-xl;
+    @apply text-xs;
   }
   
   .hero-content {
-    @apply px-3;
+    @apply px-1.5;
   }
   
   .hero-title {
-    @apply text-3xl;
+    @apply text-lg;
   }
   
   .hero-subtitle {
-    @apply text-base;
-    line-height: 1.6;
-    font-size: 1.125rem;
+    @apply text-xs;
+    line-height: 1.4;
+    font-size: 0.75rem;
   }
 }
