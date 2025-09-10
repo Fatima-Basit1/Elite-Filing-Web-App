@@ -6,93 +6,52 @@ const OurCollaborators = () => {
   const collaborators = [
     // First group of 4
     {
+      name: "Stripe",
+      logo: (
+        <img src="/images/stripe1.png" alt="Stripe" className="h-12 w-auto object-contain" />
+      )
+    },
+    {
+      name: "Payoneer",
+      logo: (
+        <img src="/images/payoneer.png" alt="Payoneer" className="h-12 w-auto object-contain" />
+      )
+    },
+    {
+      name: "Meezan Bank",
+      logo: (
+        <img src="/images/Meezan.png" alt="Meezan Bank" className="h-14 w-auto object-contain" />
+      )
+    },
+    {
+      name: "Bank Al Habib",
+      logo: (
+        <img src="/images/BankAlHabib.png" alt="Bank Al Habib" className="h-14 w-auto object-contain" />
+      )
+    },
+    // Second group of 4
+    {
       name: "Tide",
       logo: (
-        <div className="w-32 h-20 bg-white rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full"></div>
-            <span className="text-blue-600 font-bold text-xl">tide</span>
-          </div>
-        </div>
-      )
-    },
-    {
-      name: "Bank of America",
-      logo: (
-        <div className="w-32 h-20 bg-white rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-          <div className="flex flex-col items-center">
-            <div className="flex space-x-1">
-              <div className="w-2 h-6 bg-red-600"></div>
-              <div className="w-2 h-6 bg-red-500"></div>
-              <div className="w-2 h-6 bg-blue-600"></div>
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      name: "MindBridge",
-      logo: (
-        <div className="w-32 h-20 bg-gray-800 rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="flex items-center">
-            <div className="w-6 h-6 bg-cyan-400 transform rotate-45 mr-2"></div>
-            <div className="w-6 h-6 bg-yellow-400 transform rotate-45 mr-2"></div>
-            <div className="w-6 h-6 bg-green-400 transform rotate-45"></div>
-          </div>
-        </div>
+        <img src="/images/tide.png" alt="Tide" className="h-20 w-auto object-contain" />
       )
     },
     {
       name: "HBL",
       logo: (
-        <div className="w-32 h-20 bg-white rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-          <span className="text-teal-600 font-bold text-2xl">HBL</span>
-        </div>
-      )
-    },
-    // Second group of 4
-    {
-      name: "Standard Chartered",
-      logo: (
-        <div className="w-32 h-20 bg-white rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-blue-800 rounded-full mr-2"></div>
-            <span className="text-blue-800 font-semibold text-sm">Standard<br/>Chartered</span>
-          </div>
-        </div>
+        <img src="/images/HBL.png" alt="HBL" className="h-20 w-auto object-contain" />
       )
     },
     {
-      name: "HSBC",
+      name: "Bank of America",
       logo: (
-        <div className="w-32 h-20 bg-white rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-          <div className="flex items-center">
-            <div className="w-6 h-6 bg-red-600 mr-2"></div>
-            <span className="text-red-600 font-bold text-xl">HSBC</span>
-          </div>
-        </div>
+        <img src="/images/BankofAmerica.png" alt="Bank of America" className="h-20 w-auto object-contain" />
       )
     },
     {
-      name: "Citibank",
+      name: "Monzo",
       logo: (
-        <div className="w-32 h-20 bg-white rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-          <div className="flex items-center">
-            <div className="w-6 h-6 bg-blue-600 rounded-full mr-2"></div>
-            <span className="text-blue-600 font-bold text-lg">Citi</span>
-          </div>
-        </div>
-      )
-    },
-    {
-      name: "JPMorgan Chase",
-      logo: (
-        <div className="w-32 h-20 bg-white rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-          <div className="flex items-center">
-            <div className="w-6 h-6 bg-blue-900 mr-2"></div>
-            <span className="text-blue-900 font-bold text-sm">JPMorgan<br/>Chase</span>
-          </div>
-        </div>
+        <img src="/images/Monzo.png" alt="Monzo" className="h-20 w-auto object-contain" />
       )
     }
   ];
@@ -118,11 +77,11 @@ const OurCollaborators = () => {
         </div>
         
         {/* Slider Container */}
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-80 overflow-hidden">
           <div className="absolute inset-0">
             {/* First Group */}
             <div 
-              className={`absolute inset-0 flex justify-center items-center space-x-8 md:space-x-16 transition-all duration-1200 ease-out ${
+              className={`absolute inset-0 flex justify-center items-center space-x-12 md:space-x-20 transition-all duration-1200 ease-out ${
                 currentSlide === 0 
                   ? 'opacity-100 scale-100 blur-0 z-10' 
                   : 'opacity-0 scale-95 blur-sm z-0'
@@ -152,7 +111,7 @@ const OurCollaborators = () => {
             
             {/* Second Group */}
             <div 
-              className={`absolute inset-0 flex justify-center items-center space-x-8 md:space-x-16 transition-all duration-1200 ease-out ${
+              className={`absolute inset-0 flex justify-center items-center space-x-12 md:space-x-20 transition-all duration-1200 ease-out ${
                 currentSlide === 1 
                   ? 'opacity-100 scale-100 blur-0 z-10' 
                   : 'opacity-0 scale-95 blur-sm z-0'
