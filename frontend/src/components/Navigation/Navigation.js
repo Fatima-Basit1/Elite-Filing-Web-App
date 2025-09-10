@@ -190,38 +190,41 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+    <nav className="fixed top-4 left-8 right-8 lg:left-16 lg:right-16 xl:left-32 xl:right-32 z-50">
+      <div className="bg-white/95 backdrop-blur-xl shadow-2xl rounded-full border border-gray-200/50 px-6 py-2">
+          <div className="flex justify-between items-center h-8">
           {/* Logo */}
-          <div className="flex items-center space-x-4">
-            <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">E</span>
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 flex items-center justify-center rounded-full">
+              <img 
+                src="https://elite-filing.com/wp-content/uploads/2025/07/cropped-httpselite-filing-logo.webp" 
+                alt="Elite Filing Logo" 
+                className="w-5 h-5 object-contain"
+              />
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-900 font-semibold text-xl tracking-tight">Elite Filing</span>
-              <span className="text-gray-500 text-sm font-normal">Professional Services</span>
+              <span className="text-blue-600 font-bold text-lg tracking-tight">Elite Filing</span>
             </div>
           </div>
 
           {/* Navigation Menu */}
           <div className="hidden lg:block">
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-6">
               {menuItems.map((item, index) => (
                 <div key={index} className="relative group">
                   {item.hasDropdown ? (
                     <button
-                      className="text-gray-600 hover:text-gray-900 px-1 py-2 text-sm font-medium flex items-center transition-colors duration-200"
+                      className="text-gray-600 hover:text-blue-700 px-4 py-2 text-sm font-medium flex items-center transition-all duration-300 hover:bg-blue-50 rounded-full"
                       onMouseEnter={() => setActiveDropdown(index)}
                       onMouseLeave={() => setActiveDropdown(null)}
                     >
                       <span>{item.name}</span>
-                      <ChevronDownIcon className={`ml-1 h-4 w-4 transition-transform duration-200 ${activeDropdown === index ? 'rotate-180' : ''}`} />
+                      <ChevronDownIcon className={`ml-2 h-4 w-4 transition-transform duration-300 ${activeDropdown === index ? 'rotate-180' : ''}`} />
                     </button>
                   ) : (
                     <Link
                       to={item.href}
-                      className="text-gray-600 hover:text-gray-900 px-1 py-2 text-sm font-medium transition-colors duration-200 block"
+                      className="text-gray-600 hover:text-blue-700 px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-blue-50 rounded-full block"
                     >
                       <span>{item.name}</span>
                     </Link>
@@ -230,7 +233,7 @@ const Navigation = () => {
                   {/* Dropdown Menu */}
                   {item.hasDropdown && activeDropdown === index && (
                         <div 
-                          className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                          className="absolute top-full left-0 mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
                           onMouseEnter={() => setActiveDropdown(index)}
                           onMouseLeave={() => {
                             setActiveDropdown(null);
@@ -241,10 +244,10 @@ const Navigation = () => {
                             item.hasNestedDropdown ? (
                               <div key={dropdownIndex} className="relative">
                                 <div
-                                  className={`flex items-center justify-between px-4 py-3 text-sm transition-colors duration-200 cursor-pointer ${
+                                  className={`flex items-center justify-between px-5 py-3 text-sm transition-all duration-300 cursor-pointer rounded-xl mx-2 ${
                                     dropdownItem.isDisabled 
                                       ? 'text-gray-400 cursor-not-allowed' 
-                                      : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                                      : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 hover:shadow-sm'
                                   }`}
                                   onMouseEnter={() => dropdownItem.hasSubDropdown && setActiveSubDropdown(dropdownIndex)}
                                   onClick={dropdownItem.isDisabled ? (e) => e.preventDefault() : undefined}
@@ -261,12 +264,12 @@ const Navigation = () => {
                                 </div>
                                 
                                 {dropdownItem.hasSubDropdown && activeSubDropdown === dropdownIndex && (
-                                  <div className="absolute left-full top-0 ml-1 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                                  <div className="absolute left-full top-0 ml-2 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50">
                                     {dropdownItem.subItems.map((subItem, subIndex) => (
                                       <Link
                                         key={subIndex}
                                         to={subItem.href}
-                                        className="block px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200"
+                                        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-xl mx-2 hover:shadow-sm"
                                       >
                                         {subItem.name}
                                       </Link>
@@ -278,7 +281,7 @@ const Navigation = () => {
                               <Link
                                 key={dropdownIndex}
                                 to={dropdownItem.href}
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200"
+                                className="block px-5 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-xl mx-2 hover:shadow-sm"
                               >
                                 {dropdownItem.name}
                               </Link>
@@ -296,8 +299,8 @@ const Navigation = () => {
             <div className="hidden md:block">
               <Link
                   to="/get-started"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-md text-sm font-medium transition-colors duration-200"
-                  >
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl mb-0.5"
+                >
                     Get Started
                </Link>
             </div>
@@ -327,7 +330,7 @@ const Navigation = () => {
                   <div>
                     <button
                       onClick={() => setActiveDropdown(activeDropdown === index ? null : index)}
-                      className="w-full text-left text-gray-600 hover:text-gray-900 py-3 text-sm font-medium transition-colors duration-200 flex items-center justify-between"
+                      className="w-full text-left text-gray-600 hover:text-blue-700 py-3 text-sm font-medium transition-colors duration-200 flex items-center justify-between"
                     >
                       <span>{item.name}</span>
                       <ChevronDownIcon className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === index ? 'rotate-180' : ''}`} />
@@ -400,7 +403,7 @@ const Navigation = () => {
                 ) : (
                   <Link 
                     to={item.href} 
-                    className="block text-gray-600 hover:text-gray-900 py-3 text-sm font-medium transition-colors duration-200"
+                    className="block text-gray-600 hover:text-blue-700 py-3 text-sm font-medium transition-colors duration-200"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
