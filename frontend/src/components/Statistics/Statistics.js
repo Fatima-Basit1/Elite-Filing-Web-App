@@ -29,6 +29,8 @@ const itemVariants = {
   }
 };
 
+
+
 const cardVariants = {
   hidden: { opacity: 0, scale: 0.8 },
   visible: {
@@ -70,11 +72,25 @@ const Statistics = () => {
   const controls = useAnimation();
   const servicesControls = useAnimation();
 
+
   const finalCounts = useMemo(() => ({
     clients: 150,
     projects: 400,
     advisors: 75,
   }), []);
+
+  // Animate controls
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    }
+  }, [isInView, controls]);
+
+  useEffect(() => {
+    if (servicesInView) {
+      servicesControls.start("visible");
+    }
+  }, [servicesInView, servicesControls]);
 
   // Animate counters
   useEffect(() => {
@@ -139,10 +155,10 @@ const Statistics = () => {
             className="grid grid-cols-1 sm:grid-cols-3 gap-8"
             variants={containerVariants}
             initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
+            animate={controls}
           >
             {stats.map((stat) => (
-              <motion.div key={stat.id} className="text-center" variants={itemVariants}>
+              <motion.div key={stat.id} className="text-center" variants={stat.id === 1 ? cardVariants : itemVariants}>
                 <div
                   className="w-16 h-0.5 mx-auto mb-4"
                   style={{
@@ -183,50 +199,68 @@ const Statistics = () => {
           </div>
 
           {/* Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <ServiceCard
-              image={cfImage}
-              title="Company Formation"
-              subtitle="From Only £12.99"
-              description="Comprehensive UK Limited Company formation services with Companies House approval."
-              variant="blue"
-            />
-            <ServiceCard
-              image={voImage}
-              title="Virtual Office Rental"
-              subtitle="From Only £8.88 (Inc. VAT)"
+          <motion.div 
+            ref={servicesRef}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={servicesVariants}
+            initial="hidden"
+            animate={servicesControls}
+          >
+            <motion.div variants={serviceCardVariants}>
+              <ServiceCard
+                image={cfImage}
+                title="Company Formation"
+                subtitle="From Only £12.99"
+                description="Comprehensive UK Limited Company formation services with Companies House approval."
+                variant="blue"
+              />
+            </motion.div>
+            <motion.div variants={serviceCardVariants}>
+              <ServiceCard
+                image={voImage}
+                title="Virtual Office Rental"
+                subtitle="From Only £8.88 (Inc. VAT)"
               description="Prestigious UK address with secure mail handling to boost your business credibility."
               variant="yellow"
             />
-            <ServiceCard
-              image={mcImage}
-              title="Multi-Currency Business Bank Accounts"
-              subtitle="With Up To £5k Cash Reward"
-              description="Manage global finances seamlessly and earn cash rewards on activation."
-              variant="blue"
-            />
-            <ServiceCard
-              image={acImage}
-              title="Accountancy Consultation"
-              subtitle="Free With Company Incorporation"
-              description="Get expert financial advice, tax compliance, and business setup support."
-              variant="yellow"
-            />
-            <ServiceCard
-              image={dmImage}
-              title="Domain Names"
-              subtitle="Free With Any Company Formation"
-              description="Secure a free professional domain name to establish your online presence."
-              variant="blue"
-            />
-            <ServiceCard
-              image={taImage}
-              title="Tax Filing & Audits"
-              subtitle="Free With Company Formation"
-              description="From reporting to audits and tax planning, we keep your business compliant."
-              variant="yellow"
-            />
-          </div>
+            </motion.div>
+            <motion.div variants={serviceCardVariants}>
+              <ServiceCard
+                image={mcImage}
+                title="Multi-Currency Business Bank Accounts"
+                subtitle="With Up To £5k Cash Reward"
+                description="Manage global finances seamlessly and earn cash rewards on activation."
+                variant="blue"
+              />
+            </motion.div>
+            <motion.div variants={serviceCardVariants}>
+              <ServiceCard
+                image={acImage}
+                title="Accountancy Consultation"
+                subtitle="Free With Company Incorporation"
+                description="Get expert financial advice, tax compliance, and business setup support."
+                variant="yellow"
+              />
+            </motion.div>
+            <motion.div variants={serviceCardVariants}>
+              <ServiceCard
+                image={dmImage}
+                title="Domain Names"
+                subtitle="Free With Any Company Formation"
+                description="Secure a free professional domain name to establish your online presence."
+                variant="blue"
+              />
+            </motion.div>
+            <motion.div variants={serviceCardVariants}>
+              <ServiceCard
+                image={taImage}
+                title="Tax Filing & Audits"
+                subtitle="Free With Company Formation"
+                description="From reporting to audits and tax planning, we keep your business compliant."
+                variant="yellow"
+              />
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
