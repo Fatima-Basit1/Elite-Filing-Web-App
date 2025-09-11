@@ -1,6 +1,6 @@
 
 import React from 'react';
-import videoFile from '../../assets/IMG_8578.MOV';
+import videoFile from '../../assets/IMG_8578.mp4';
 // Import icon files
 import reliableIcon from '../../assets/reliable.gif';
 import trustedIcon from '../../assets/trusted.gif';
@@ -154,7 +154,7 @@ const WhyChooseUs = () => {
                 >
                   <source src={videoFile} type="video/mp4" />
                   <source src={videoFile} type="video/quicktime" />
-                  <source src={require('../../assets/IMG_8578.MOV')} type="video/mp4" />
+                  <source src={require('../../assets/IMG_8578.mp4')} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               </div>
