@@ -4,6 +4,8 @@
 
 /* Custom base styles */
 @layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+  
   html {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 13px; /* Slightly increased from 12px */
@@ -175,56 +177,65 @@
   /* Hero specific styles */
   .hero-container {
     @apply relative min-h-screen flex items-center justify-center overflow-hidden;
-    background: linear-gradient(135deg, rgba(0, 14, 61, 0.7) 0%, rgba(0, 14, 61, 0.6) 100%), var(--hero-bg-image);
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background: linear-gradient(135deg, rgba(0, 14, 61, 0.7) 0%, rgba(0, 14, 61, 0.6) 100%);
+  }
+  
+  .hero-video {
+    @apply absolute inset-0 w-full h-full object-cover;
+    z-index: 1;
   }
   
  .hero-overlay {
     @apply absolute inset-0 z-10;
-    background: linear-gradient(135deg, rgba(0, 14, 61, 0.2) 0%, rgba(248, 189, 10, 0.05) 50%, rgba(0, 14, 61, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.8) 0%, rgba(59, 130, 246, 0.6) 100%);
   }
   
   .hero-content {
-    @apply relative z-20 text-center px-6 sm:px-8 lg:px-12 max-w-6xl mx-auto;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    @apply relative z-20 w-full;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
   }
   
   .hero-title {
-    @apply text-2xl sm:text-3xl lg:text-5xl font-bold text-white;
-    color: #f8bd0a;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    letter-spacing: -0.01em;
-    line-height: 1.15;
-    margin-bottom: 1.75rem;
+    font-family: 'Inter', sans-serif;
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white;
+    color: #ffffff;
+    text-shadow: none;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
   }
   
   .hero-subtitle {
+    font-family: 'Inter', sans-serif;
     @apply text-base sm:text-lg lg:text-xl text-gray-100 max-w-5xl mx-auto font-normal;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-    line-height: 1.6;
+    line-height: 1.5;
     letter-spacing: 0.025em;
     font-size: 1.125rem;
-    margin-bottom: 2.25rem;
+    margin-bottom: 2rem;
     padding: 0 1rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 400;
   }
   
   
  .hero-cta-button {
-    @apply inline-flex items-center px-7 py-3.5 text-base font-bold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl;
-    background: linear-gradient(135deg, #041e72 0%, #385cd4 100%);
-    color: white !important;
-    box-shadow: 0 10px 25px rgba(72, 126, 242, 0.4);
-    border: 1px solid rgba(104, 126, 251, 0.3);
+    font-family: 'Inter', sans-serif;
+    @apply inline-flex items-center px-6 py-3 text-sm font-medium rounded-full transition-all duration-200;
+    background: white;
+    color: #1e3a8a !important;
+    border: 1px solid white;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
   }
   
    .hero-cta-button:hover {
-    box-shadow: 0 20px 50px rgba(248, 189, 10, 0.5);
-    transform: translateY(-3px) scale(1.08);
-    background: linear-gradient(135deg, #ffd700 0%, #f8bd0a 100%);
-    color: white !important;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+    color: #1e3a8a !important;
   }
   
   .hero-decorative-element {
@@ -469,14 +480,21 @@
     @apply text-sm;
   }
   
+  .hero-content {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  
   .hero-title {
-    @apply text-xl leading-tight;
+    @apply text-xl sm:text-2xl leading-tight;
+    font-family: 'Poppins', sans-serif;
   }
   
  .hero-subtitle {
-    @apply text-sm mb-4;
+    @apply text-base mb-4;
     line-height: 1.5;
-    font-size: 0.875rem;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
   }
   
   .hero-cta-button {
@@ -517,16 +535,19 @@
   }
   
   .hero-content {
-    @apply px-1.5;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
   }
   
   .hero-title {
     @apply text-lg;
+    font-family: 'Poppins', sans-serif;
   }
   
   .hero-subtitle {
-    @apply text-xs;
+    @apply text-lg;
     line-height: 1.4;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
+    font-family: 'Inter', sans-serif;
   }
 }
