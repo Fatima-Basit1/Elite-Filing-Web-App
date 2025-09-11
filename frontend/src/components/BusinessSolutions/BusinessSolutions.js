@@ -4,7 +4,7 @@ import virtualServicesImage from '../../assets/IMG-20250826-WA0048.jpg';
 
 const BusinessSolutions = () => {
   return (
-    <section className="py-32 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 relative overflow-hidden">
+    <section className="py-32 relative overflow-hidden" style={{backgroundColor: "rgb(6, 30, 68)"}}>
       {/* Background Wave Effect */}
       <div className="absolute inset-0">
         <svg className="absolute bottom-0 w-full h-24" viewBox="0 0 1200 120" preserveAspectRatio="none">
