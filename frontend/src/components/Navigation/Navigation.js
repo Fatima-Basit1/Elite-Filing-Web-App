@@ -203,7 +203,7 @@ const Navigation = () => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-blue-600 font-bold text-sm sm:text-base md:text-lg tracking-tight">Elite Filing</span>
+              <span className="font-bold text-sm sm:text-base md:text-lg tracking-tight" style={{color: '#041e72'}}>Elite Filing</span>
             </div>
           </div>
 

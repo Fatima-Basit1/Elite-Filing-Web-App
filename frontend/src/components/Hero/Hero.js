@@ -21,28 +21,22 @@ const Hero = () => {
       {/* Main Content */}
       <div className="hero-content">
         <div className="container mx-auto px-6 lg:px-8">
-          <div className="flex justify-center items-center min-h-[60vh]">
+          <div className="flex justify-center items-start min-h-[60vh] pt-16">
             {/* Centered Text Content */}
             <div className="text-left max-w-4xl">
               <p 
-                className="text-6xl sm:text-5xl lg:text-6xl font-semibold mb-6" 
-                style={{color: '#f8bd0a', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.1em'}}
+                className="text-4xl sm:text-4xl lg:text-4xl font-semibold mb-2" 
+                style={{color: '#f8bd0a', fontFamily: 'Monaco, monospace'}}
               >
                 ELITE FILING
               </p>
 
-              <h1 className="hero-title text-left">
+              <h1 className="hero-title text-left mt-2">
                 <span 
                   className="block text-white text-5xl sm:text-4xl lg:text-5xl" 
-                  style={{lineHeight: '1.1'}}
+                  style={{lineHeight: '1.1', fontFamily: 'Monaco, monospace', fontWeight: '600'}}
                 >
-                  SIMPLIFYING AND ENHANCING
-                </span>
-                <span 
-                  className="block text-white text-5xl sm:text-4xl lg:text-5xl" 
-                  style={{lineHeight: '1.1'}}
-                >
-                  YOUR BUSINESS PATH
+                  SIMPLIFYING AND ENHANCING YOUR BUSINESS PATH
                 </span>
               </h1>
               
@@ -56,7 +50,8 @@ const Hero = () => {
               </p>
               
               <button className="hero-cta-button group text-xl sm:text-lg lg:text-xl">
-                <span className="mr-2">Learn More</span>
+                <span className="mr-2">Start Your Business Today</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </button>
             </div>
           </div>
