@@ -1,4 +1,6 @@
 import React from 'react';
+import companyFormationImage from '../../assets/IMG_4295 (1).png';
+import virtualServicesImage from '../../assets/IMG-20250826-WA0048.jpg';
 
 const BusinessSolutions = () => {
   return (
@@ -28,37 +30,12 @@ const BusinessSolutions = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Company Formation Image */}
             <div className="relative">
-              <div className="border-4 border-yellow-500 rounded-lg overflow-hidden bg-white p-4">
-                <div className="bg-gray-100 rounded p-4">
-                  {/* Dashboard Interface */}
-                  <div className="bg-white rounded shadow-sm p-3 mb-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      <div className="flex-1 bg-gray-200 rounded px-2 py-1 text-xs text-gray-600">dashboard.elitfiling.com</div>
-                    </div>
-                    <div className="grid grid-cols-4 gap-2 mb-3">
-                      <div className="bg-blue-500 text-white text-xs p-2 rounded text-center">Dashboard</div>
-                      <div className="bg-green-500 text-white text-xs p-2 rounded text-center">Orders</div>
-                      <div className="bg-purple-500 text-white text-xs p-2 rounded text-center">Analytics</div>
-                      <div className="bg-orange-500 text-white text-xs p-2 rounded text-center">Reports</div>
-                    </div>
-                    {/* Chart Area */}
-                    <div className="bg-gray-50 rounded p-3 h-32 flex items-end justify-between">
-                      <div className="w-1 bg-blue-400 h-8"></div>
-                      <div className="w-1 bg-blue-400 h-12"></div>
-                      <div className="w-1 bg-blue-400 h-6"></div>
-                      <div className="w-1 bg-blue-400 h-16"></div>
-                      <div className="w-1 bg-blue-400 h-10"></div>
-                      <div className="w-1 bg-blue-400 h-20"></div>
-                      <div className="w-1 bg-blue-400 h-14"></div>
-                      <div className="w-1 bg-blue-400 h-18"></div>
-                      <div className="w-1 bg-blue-400 h-8"></div>
-                      <div className="w-1 bg-blue-400 h-24"></div>
-                    </div>
-                  </div>
-                </div>
+              <div className="border-4 border-yellow-500 rounded-lg overflow-hidden">
+                <img 
+                  src={companyFormationImage}
+                  alt="Company Formation Services" 
+                  className="w-full h-64 object-cover"
+                />
               </div>
             </div>
             
@@ -97,7 +74,7 @@ const BusinessSolutions = () => {
             <div className="relative lg:order-2">
               <div className="border-4 border-yellow-500 rounded-lg overflow-hidden">
                 <img 
-                  src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                  src={virtualServicesImage}
                   alt="Virtual Office Services" 
                   className="w-full h-64 object-cover"
                 />
