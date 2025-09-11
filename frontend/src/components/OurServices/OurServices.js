@@ -141,15 +141,15 @@ const OurServices = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className={`text-center mb-24 transition-all duration-1000 transform ${
+       <div className={`text-center mb-16 transition-all duration-1000 transform ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
-          <div className="inline-block mb-10">
-            <span className="px-12 py-4 rounded-full text-2xl font-black tracking-widest uppercase shadow-2xl border-4" style={{
+          <div className="inline-block mb-8">
+            <span className="px-10 py-3 rounded-full text-xl font-black tracking-widest uppercase shadow-2xl border-4" style={{
               background: 'linear-gradient(135deg, #f8bd0a, #ffd700)',
               color: '#041e72',
               borderColor: '#041e72',
-              fontWeight: '900',
+              fontWeight: '300',
               letterSpacing: '0.15em',
               textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
               boxShadow: '0 8px 32px rgba(248,189,10,0.6), 0 0 0 4px rgba(4,30,114,0.3)'
@@ -158,31 +158,32 @@ const OurServices = () => {
             </span>
           </div>
           
-          <h2 className="text-4xl md:text-4xl font-bold mb-8" style={{ color: '#041e72' }}>
+          <h2 className="text-xl md:text-2xl font-bold mb-5" style={{ color: '#041e72' }}>
             LEGAL AND REGISTRATION
             <br />
             <span style={{ color: '#f8bd0a' }}>COMPLIANCE SERVICES</span>
           </h2>
           
-          <p className="text-2xl text-gray-600 max-w-4xl mx-auto mb-10 leading-relaxed">
+         <p className="text-base text-gray-600 max-w-2xl mx-auto mb-6 leading-relaxed">
             At Elite Filing, we offer a comprehensive range of services designed to meet your 
             business needs with precision, efficiency, and unmatched expertise.
           </p>
-          
+
           <div className="animate-bounce cursor-pointer group transition-all duration-300 hover:scale-110">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{
+            <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto" style={{
               background: 'linear-gradient(135deg, #f8bd0a, #ffd700)',
               boxShadow: '0 6px 20px rgba(248,189,10,0.4)'
             }}>
-              <svg className="w-8 h-8 transition-transform duration-300 group-hover:translate-y-1" style={{ color: '#041e72' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-7 h-7 transition-transform duration-300 group-hover:translate-y-1" style={{ color: '#041e72' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
               </svg>
             </div>
           </div>
         </div>
 
+
         {/* Services Grid with Staggered Animations */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => {
             const IconComponent = service.icon;
             const isCardVisible = visibleCards.includes(index);
@@ -200,7 +201,7 @@ const OurServices = () => {
                 style={{
                   background: `linear-gradient(135deg, ${service.gradient.replace('from-', '').replace(' to-', ', ')})`,
                   borderTop: `6px solid ${service.borderColor}`,
-                  minHeight: '380px',
+                  minHeight: '280px',
                   transitionDelay: isCardVisible ? '0ms' : `${index * 100}ms`
                 }}
                 onMouseEnter={(e) => {
@@ -218,20 +219,20 @@ const OurServices = () => {
                   }
                 }}
               >
-                <div className="relative p-10 text-center z-10 h-full flex flex-col justify-center">
+                <div className="relative p-6 text-center z-10 h-full flex flex-col justify-center">
                   {/* Icon with enhanced hover effect */}
-                  <div className="flex justify-center mb-8">
+                  <div className="flex justify-center mb-5">
                     <div 
-                      className={`w-24 h-24 rounded-3xl flex items-center justify-center shadow-xl transform transition-all duration-500 ${
+                      className={`w-18 h-18 rounded-2xl flex items-center justify-center shadow-lg transform transition-all duration-500 ${
                         isCardVisible ? 'group-hover:scale-110 group-hover:rotate-6' : ''
                       }`}
                       style={{
                         background: service.accentColor,
-                        boxShadow: `0 10px 30px ${service.accentColor}40`
+                        boxShadow: `0 8px 25px ${service.accentColor}40`
                       }}
                     >
                       <IconComponent 
-                        className={`w-12 h-12 transition-all duration-300 ${
+                        className={`w-9 h-9 transition-all duration-300 ${
                           isCardVisible ? 'group-hover:scale-110' : ''
                         }`}
                         style={{
@@ -242,7 +243,7 @@ const OurServices = () => {
                   </div>
                   
                   {/* Text with staggered animation */}
-                  <h3 className={`text-3xl font-bold mb-6 transition-all duration-500 text-gray-900 leading-tight ${
+                  <h3 className={`text-lg font-bold mb-3 transition-all duration-500 text-gray-900 leading-tight ${
                     isCardVisible ? 'group-hover:scale-105' : ''
                   }`}
                   style={{
@@ -251,7 +252,7 @@ const OurServices = () => {
                     {service.title}
                   </h3>
                   
-                  <p className={`text-lg leading-relaxed transition-all duration-500 text-gray-700 font-medium ${
+                  <p className={`text-sm leading-relaxed transition-all duration-500 text-gray-700 font-medium ${
                     isCardVisible ? 'group-hover:scale-105' : ''
                   }`}
                   style={{
