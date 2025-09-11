@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+// Import the service images
+import cfImage from '../../assets/cf.png';
+import voImage from '../../assets/vo.jpg';
+import mcImage from '../../assets/mc.jpg';
+import acImage from '../../assets/ac.jpg';
+import dmImage from '../../assets/dm.jpg';
+import taImage from '../../assets/ta.jpg';
+
 const Statistics = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [counts, setCounts] = useState({ clients: 0, projects: 0, advisors: 0 });
@@ -8,10 +16,10 @@ const Statistics = () => {
   const finalCounts = {
     clients: 150,
     projects: 400,
-    advisors: 75
+    advisors: 75,
   };
 
-  // Intersection Observer to trigger animation when section is visible
+  // Intersection Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -22,33 +30,29 @@ const Statistics = () => {
       { threshold: 0.3 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    if (sectionRef.current) observer.observe(sectionRef.current);
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
+      if (sectionRef.current) observer.unobserve(sectionRef.current);
     };
   }, [isVisible]);
 
-  // Animate counters when visible
+  // Animate counters
   useEffect(() => {
     if (isVisible) {
-      const duration = 2000; // 2 seconds
-      const steps = 60; // 60 steps for smooth animation
+      const duration = 2000;
+      const steps = 60;
       const stepDuration = duration / steps;
 
       let currentStep = 0;
       const timer = setInterval(() => {
         currentStep++;
         const progress = currentStep / steps;
-        
+
         setCounts({
           clients: Math.floor(finalCounts.clients * progress),
           projects: Math.floor(finalCounts.projects * progress),
-          advisors: Math.floor(finalCounts.advisors * progress)
+          advisors: Math.floor(finalCounts.advisors * progress),
         });
 
         if (currentStep >= steps) {
@@ -62,176 +66,192 @@ const Statistics = () => {
   }, [isVisible]);
 
   const stats = [
-    {
-      id: 1,
-      number: counts.clients,
-      suffix: '+',
-      label: 'Happy Clients',
-      color: 'text-blue-900'
-    },
-    {
-      id: 2,
-      number: counts.projects,
-      suffix: '',
-      label: 'Successful Projects',
-      color: 'text-blue-900'
-    },
-    {
-      id: 3,
-      number: counts.advisors,
-      suffix: '+',
-      label: 'Advisors & Experts',
-      color: 'text-blue-900'
-    }
+    { id: 1, number: counts.clients, suffix: '+', label: 'Happy Clients' },
+    { id: 2, number: counts.projects, suffix: '', label: 'Successful Projects' },
+    { id: 3, number: counts.advisors, suffix: '+', label: 'Advisors & Experts' },
   ];
 
   return (
-    <section ref={sectionRef} className="py-20 bg-white">
+    <section
+      ref={sectionRef}
+      className="py-20"
+      style={{
+        background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Numbers Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Side - Let the Numbers Speak */}
           <div className="text-center lg:text-left">
-            <h2 className="text-4xl lg:text-5xl font-bold text-yellow-500 leading-tight">
-              LET THE<br />
-              NUMBERS<br />
-              SPEAK
+            <h2
+              className="text-4xl lg:text-5xl font-bold leading-tight"
+              style={{
+                background: 'linear-gradient(135deg, #f8bd0a 0%, #041e72 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              LET THE NUMBERS SPEAK
+              
             </h2>
           </div>
 
-          {/* Right Side - Statistics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {stats.map((stat) => (
               <div key={stat.id} className="text-center">
-                {/* Divider Line */}
-                <div className="w-16 h-0.5 bg-gray-300 mx-auto mb-4"></div>
-                
-                {/* Label */}
-                <p className="text-sm font-medium text-gray-600 mb-2">
-                  {stat.label}
-                </p>
-                
-                {/* Animated Number */}
-                <div className={`text-4xl lg:text-5xl font-bold ${stat.color} transition-all duration-300`}>
-                  {stat.number}{stat.suffix}
+                <div
+                  className="w-16 h-0.5 mx-auto mb-4"
+                  style={{
+                    background: 'linear-gradient(90deg, #f8bd0a, #041e72)',
+                  }}
+                ></div>
+                <p className="text-sm font-medium text-gray-600 mb-2">{stat.label}</p>
+                <div
+                  className="text-4xl lg:text-5xl font-bold"
+                  style={{ color: '#041e72' }}
+                >
+                  {stat.number}
+                  {stat.suffix}
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Business Start-up Solutions Section */}
+        {/* Business Start-up Solutions */}
         <div className="mt-20">
-          {/* Header */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-yellow-500 mb-4">
+            <h2
+              className="text-3xl lg:text-4xl font-bold mb-4"
+              style={{
+                background: 'linear-gradient(135deg, #f8bd0a 0%, #041e72 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
               BUSINESS START-UP SOLUTIONS
             </h2>
             <p className="text-gray-600 max-w-3xl mx-auto">
-              Elite Filing, authorized by Companies House, ensures seamless and efficient company formation in the UK.
+              Elite Filing, authorized by Companies House, ensures seamless and
+              efficient company formation in the UK.
             </p>
           </div>
 
           {/* Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Company Formation */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
-              <div className="mb-4">
-                <img 
-                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' fill='none'%3E%3Crect width='200' height='120' fill='%23f3f4f6'/%3E%3Cpath d='M50 40h100v40H50z' fill='%23dc2626'/%3E%3Ctext x='100' y='65' text-anchor='middle' fill='white' font-size='12'%3ECOMPANY%3C/text%3E%3Ctext x='100' y='80' text-anchor='middle' fill='white' font-size='12'%3EFORMATION%3C/text%3E%3C/svg%3E" 
-                  alt="Company Formation" 
-                  className="w-full h-24 object-cover rounded"
-                />
-              </div>
-              <h3 className="text-lg font-bold text-yellow-500 mb-2">Company Formation</h3>
-              <p className="text-sm text-gray-600 mb-3">From Only £12.99</p>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                Elite Filing offers the most comprehensive UK Limited Company formation services starting at just £12.99. As an authorized partner of Companies House, we ensure a seamless registration experience through our fully approved Company Package.
-              </p>
-            </div>
-
-            {/* Virtual Office Rental - Highlighted */}
-            <div className="bg-yellow-500 border border-yellow-500 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 transform hover:scale-105">
-              <div className="mb-4">
-                <img 
-                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' fill='none'%3E%3Crect width='200' height='120' fill='%23e5e7eb'/%3E%3Crect x='20' y='20' width='160' height='80' fill='%23374151'/%3E%3Crect x='40' y='40' width='30' height='20' fill='%23f59e0b'/%3E%3Crect x='80' y='40' width='30' height='20' fill='%23f59e0b'/%3E%3Crect x='120' y='40' width='30' height='20' fill='%23f59e0b'/%3E%3C/svg%3E" 
-                  alt="Virtual Office" 
-                  className="w-full h-24 object-cover rounded"
-                />
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2">Virtual Office Rental</h3>
-              <p className="text-sm text-white mb-3">From Only £8.88 (Inc. VAT)</p>
-              <p className="text-xs text-white leading-relaxed">
-                Elite Filing provides comprehensive virtual office rental services starting from just £8.88, including VAT. Enhance your business credibility with a prestigious UK address while managing your operations remotely. Our service includes secure mail handling.
-              </p>
-            </div>
-
-            {/* Free Multi-Currency Business Bank Accounts */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
-              <div className="mb-4">
-                <img 
-                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' fill='none'%3E%3Crect width='200' height='120' fill='%23f3f4f6'/%3E%3Ccircle cx='100' cy='60' r='30' fill='%23fbbf24'/%3E%3Ctext x='100' y='65' text-anchor='middle' fill='white' font-size='16'%3E£%3C/text%3E%3C/svg%3E" 
-                  alt="Bank Accounts" 
-                  className="w-full h-24 object-cover rounded"
-                />
-              </div>
-              <h3 className="text-lg font-bold text-yellow-500 mb-2">Free Multi-Currency Business Bank Accounts</h3>
-              <p className="text-sm text-gray-600 mb-3">With Up To £5k Cash Reward</p>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                Streamline your international business with our multi-currency business bank accounts, making it easy to manage your finances and simplify global transactions. As a bonus, enjoy up to £5k in cash rewards upon successful account activation & qualifying transactions.
-              </p>
-            </div>
-
-            {/* Free Basic Accountancy Consultation */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
-              <div className="mb-4">
-                <img 
-                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' fill='none'%3E%3Crect width='200' height='120' fill='%23f3f4f6'/%3E%3Crect x='40' y='30' width='120' height='60' fill='%23374151'/%3E%3Crect x='60' y='45' width='80' height='8' fill='%23fbbf24'/%3E%3Crect x='60' y='60' width='60' height='6' fill='%23d1d5db'/%3E%3Crect x='60' y='72' width='40' height='6' fill='%23d1d5db'/%3E%3C/svg%3E" 
-                  alt="Accountancy" 
-                  className="w-full h-24 object-cover rounded"
-                />
-              </div>
-              <h3 className="text-lg font-bold text-yellow-500 mb-2">Free Basic Accountancy Consultation</h3>
-              <p className="text-sm text-gray-600 mb-3">For All Of Our Clients Who Incorporate A Company Through Us</p>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                Elite Filing offers a free basic accountancy consultation service for all clients who incorporate a company through us. Get expert advice on financial management, tax compliance, and compliance to set your business on the right path from the start.
-              </p>
-            </div>
-
-            {/* Domain Names For Your Business - Highlighted */}
-            <div className="bg-yellow-500 border border-yellow-500 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 transform hover:scale-105">
-              <div className="mb-4">
-                <img 
-                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' fill='none'%3E%3Crect width='200' height='120' fill='%23374151'/%3E%3Ccircle cx='100' cy='60' r='25' fill='%23059669'/%3E%3Ctext x='100' y='50' text-anchor='middle' fill='white' font-size='10'%3E.com%3C/text%3E%3Ctext x='100' y='65' text-anchor='middle' fill='white' font-size='10'%3E.co.uk%3C/text%3E%3Ctext x='100' y='80' text-anchor='middle' fill='white' font-size='10'%3E.org%3C/text%3E%3C/svg%3E" 
-                  alt="Domain Names" 
-                  className="w-full h-24 object-cover rounded"
-                />
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2">Domain Names For Your Business</h3>
-              <p className="text-sm text-white mb-3">Free When You Purchase Any Company Formation</p>
-              <p className="text-xs text-white leading-relaxed">
-                Secure a free domain name for your business when you purchase any company formation or virtual office package from Elite Filing. Establish a strong online presence with a professional domain that perfectly represents your brand.
-              </p>
-            </div>
-
-            {/* Tax Filing And Audits */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
-              <div className="mb-4">
-                <img 
-                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' fill='none'%3E%3Crect width='200' height='120' fill='%23f3f4f6'/%3E%3Crect x='50' y='20' width='100' height='80' fill='%23374151'/%3E%3Ctext x='100' y='45' text-anchor='middle' fill='%23fbbf24' font-size='14'%3ETax Filing%3C/text%3E%3Crect x='70' y='55' width='60' height='4' fill='%23d1d5db'/%3E%3Crect x='70' y='65' width='40' height='4' fill='%23d1d5db'/%3E%3Crect x='70' y='75' width='50' height='4' fill='%23d1d5db'/%3E%3C/svg%3E" 
-                  alt="Tax Filing" 
-                  className="w-full h-24 object-cover rounded"
-                />
-              </div>
-              <h3 className="text-lg font-bold text-yellow-500 mb-2">Tax Filing And Audits</h3>
-              <p className="text-sm text-gray-600 mb-3">Free When You Purchase Any Company Formation</p>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                From accurate financial reporting and statutory audits to tax planning and advisory, we cover everything your company needs to stay compliant and financially healthy. We ensure your business — you build it on a foundation of compliance and trust.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <ServiceCard
+              image={cfImage}
+              title="Company Formation"
+              subtitle="From Only £12.99"
+              description="Comprehensive UK Limited Company formation services with Companies House approval."
+              variant="blue"
+            />
+            <ServiceCard
+              image={voImage}
+              title="Virtual Office Rental"
+              subtitle="From Only £8.88 (Inc. VAT)"
+              description="Prestigious UK address with secure mail handling to boost your business credibility."
+              variant="yellow"
+            />
+            <ServiceCard
+              image={mcImage}
+              title="Multi-Currency Business Bank Accounts"
+              subtitle="With Up To £5k Cash Reward"
+              description="Manage global finances seamlessly and earn cash rewards on activation."
+              variant="blue"
+            />
+            <ServiceCard
+              image={acImage}
+              title="Accountancy Consultation"
+              subtitle="Free With Company Incorporation"
+              description="Get expert financial advice, tax compliance, and business setup support."
+              variant="yellow"
+            />
+            <ServiceCard
+              image={dmImage}
+              title="Domain Names"
+              subtitle="Free With Any Company Formation"
+              description="Secure a free professional domain name to establish your online presence."
+              variant="blue"
+            />
+            <ServiceCard
+              image={taImage}
+              title="Tax Filing & Audits"
+              subtitle="Free With Company Formation"
+              description="From reporting to audits and tax planning, we keep your business compliant."
+              variant="yellow"
+            />
           </div>
         </div>
       </div>
     </section>
+  );
+};
+
+// Updated Service Card Component
+// Updated Service Card Component
+const ServiceCard = ({ image, title, subtitle, description, variant }) => {
+  const isYellow = variant === 'yellow';
+
+  return (
+    <div
+      className="group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-500 transform hover:scale-105 hover:shadow-2xl"
+      style={{
+        background: isYellow
+          ? 'linear-gradient(135deg, #f8bd0a15, #f8bd0a25)'
+          : 'linear-gradient(135deg, #041e7215, #041e7225)',
+        border: `1.5px solid ${isYellow ? '#f8bd0a60' : '#041e7260'}`,
+        backdropFilter: 'blur(10px)',
+        minHeight: '300px',
+      }}
+    >
+      {/* Accent Line */}
+      <div
+        className="absolute top-0 left-0 w-full h-1 transition-all duration-300 group-hover:h-1.5"
+        style={{
+          background: isYellow
+            ? 'linear-gradient(90deg, #f8bd0a, #041e72)'
+            : 'linear-gradient(90deg, #041e72, #f8bd0a)',
+        }}
+      ></div>
+
+      <div className="relative p-6 z-10 h-full flex flex-col">
+        <div className="mb-4 flex justify-center items-center h-28">
+          <img
+            src={image}
+            alt={title}
+            className="max-h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+          />
+        </div>
+
+        <div className="flex-1 text-center">
+          <h3
+            className="text-lg font-bold mb-1 transition-colors duration-300"
+            style={{
+              color: isYellow ? '#f8bd0a' : '#041e72', // ✅ Better readability
+            }}
+          >
+            {title}
+          </h3>
+          <p className="text-sm font-medium text-gray-700 mb-2">{subtitle}</p>
+          <p className="text-xs text-gray-600 leading-relaxed group-hover:text-gray-800 transition-colors duration-300">
+            {description}
+          </p>
+        </div>
+      </div>
+
+      {/* Hover Glow Effect */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-2xl"
+        style={{
+          background: isYellow
+            ? 'radial-gradient(circle at center, #f8bd0a, transparent)'
+            : 'radial-gradient(circle at center, #041e72, transparent)',
+        }}
+      ></div>
+    </div>
   );
 };
 
