@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, useInView, useAnimation } from 'framer-motion';
+import cfImage from '../../assets/cf.png';
+import voImage from '../../assets/vo.jpg';
+import mcImage from '../../assets/mc.jpg';
+import acImage from '../../assets/ac.jpg';
+import dmImage from '../../assets/dm.jpg';
+import taImage from '../../assets/ta.jpg';
 
 // Animation variants
 const containerVariants = {
@@ -55,14 +61,6 @@ const serviceCardVariants = {
   }
 };
 
-// Import the service images
-import cfImage from '../../assets/cf.png';
-import voImage from '../../assets/vo.jpg';
-import mcImage from '../../assets/mc.jpg';
-import acImage from '../../assets/ac.jpg';
-import dmImage from '../../assets/dm.jpg';
-import taImage from '../../assets/ta.jpg';
-
 const Statistics = () => {
   const [counts, setCounts] = useState({ clients: 0, projects: 0, advisors: 0 });
   const sectionRef = useRef(null);
@@ -76,29 +74,11 @@ const Statistics = () => {
     clients: 150,
     projects: 400,
     advisors: 75,
-  };
-
-  // Intersection Observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isVisible) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-
-    return () => {
-      if (sectionRef.current) observer.unobserve(sectionRef.current);
-    };
-  }, [isVisible]);
+  }), []);
 
   // Animate counters
   useEffect(() => {
-    if (isVisible) {
+    if (isInView) {
       const duration = 2000;
       const steps = 60;
       const stepDuration = duration / steps;
@@ -152,13 +132,17 @@ const Statistics = () => {
               }}
             >
               LET THE NUMBERS SPEAK
-              
             </h2>
-          </motion.div>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <motion.div 
+            className="grid grid-cols-1 sm:grid-cols-3 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+          >
             {stats.map((stat) => (
-              <div key={stat.id} className="text-center">
+              <motion.div key={stat.id} className="text-center" variants={itemVariants}>
                 <div
                   className="w-16 h-0.5 mx-auto mb-4"
                   style={{
@@ -173,7 +157,7 @@ const Statistics = () => {
                   {stat.number}
                   {stat.suffix}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>
