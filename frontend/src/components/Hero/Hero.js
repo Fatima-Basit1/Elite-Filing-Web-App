@@ -21,11 +21,11 @@ const Hero = () => {
       {/* Main Content */}
       <div className="hero-content">
         <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Column - Text Content */}
-            <div className="text-left">
+          <div className="flex justify-center items-center min-h-[60vh]">
+            {/* Centered Text Content */}
+            <div className="text-left max-w-4xl">
               <p 
-                className="text-4xl sm:text-3xl lg:text-3xl font-semibold mb-4" 
+                className="text-6xl sm:text-5xl lg:text-6xl font-semibold mb-6" 
                 style={{color: '#f8bd0a', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.1em'}}
               >
                 ELITE FILING
@@ -33,13 +33,13 @@ const Hero = () => {
 
               <h1 className="hero-title text-left">
                 <span 
-                  className="block text-white text-3xl sm:text-2xl lg:text-2xl" 
+                  className="block text-white text-5xl sm:text-4xl lg:text-5xl" 
                   style={{lineHeight: '1.1'}}
                 >
                   SIMPLIFYING AND ENHANCING
                 </span>
                 <span 
-                  className="block text-white text-3xl sm:text-2xl lg:text-2xl" 
+                  className="block text-white text-5xl sm:text-4xl lg:text-5xl" 
                   style={{lineHeight: '1.1'}}
                 >
                   YOUR BUSINESS PATH
@@ -47,7 +47,7 @@ const Hero = () => {
               </h1>
               
               <p 
-                className="text-lg sm:text-base lg:text-base font-light mb-8 leading-relaxed max-w-2xl text-white" 
+                className="text-xl sm:text-lg lg:text-xl font-light mb-8 leading-relaxed max-w-3xl text-white" 
                 style={{fontFamily: 'Inter, sans-serif', opacity: '0.9'}}
               >
                 Elite Filing simplifies your business operations with expert solutions in incorporation, 
@@ -55,7 +55,7 @@ const Hero = () => {
                 Rely on us to manage the complexities while you concentrate on driving growth.
               </p>
               
-              <button className="hero-cta-button group text-lg sm:text-base lg:text-base">
+              <button className="hero-cta-button group text-xl sm:text-lg lg:text-xl">
                 <span className="mr-2">Learn More</span>
               </button>
             </div>
