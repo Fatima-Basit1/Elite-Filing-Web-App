@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../../assets/logo.png';
 
 const Footer = () => {
   return (
@@ -9,8 +10,8 @@ const Footer = () => {
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-6">
-              <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
-                <span className="text-white font-bold text-xl">EF</span>
+              <div className="w-16 h-16 rounded-lg flex items-center justify-center mr-4">
+                <img src={logo} alt="Elite Filing Logo" className="w-16 h-16 object-contain" />
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-blue-500">ELITE</h3>

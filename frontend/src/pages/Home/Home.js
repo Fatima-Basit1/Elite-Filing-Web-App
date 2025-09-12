@@ -29,6 +29,7 @@ const Home = () => {
       <Blogs />
       <Testimonials />
       <ServicesSection />
+      
       <Footer />
       <ChatWidget />
     </div>

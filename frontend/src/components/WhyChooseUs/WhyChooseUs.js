@@ -32,7 +32,7 @@ const WhyChooseUs = () => {
   ];
 
   return (
-    <section className="py-3 px-2 relative overflow-hidden" style={{
+    <section className="pt-12 pb-3 px-2 relative overflow-hidden" style={{
       background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)'
     }}>
       
