@@ -11,13 +11,11 @@ const container = document.getElementById('root');
 const root = createRoot(container);
 
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div></div>} persistor={persistor}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </PersistGate>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <PersistGate loading={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div></div>} persistor={persistor}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </PersistGate>
+  </Provider>
 );

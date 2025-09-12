@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { motion, useInView, useAnimation } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+
+// Import the service images
 import cfImage from '../../assets/cf.png';
 import voImage from '../../assets/vo.jpg';
 import mcImage from '../../assets/mc.jpg';
@@ -7,94 +8,38 @@ import acImage from '../../assets/ac.jpg';
 import dmImage from '../../assets/dm.jpg';
 import taImage from '../../assets/ta.jpg';
 
-// Animation variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6
-    }
-  }
-};
-
-
-
-const cardVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.5
-    }
-  }
-};
-
-const servicesVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const serviceCardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6
-    }
-  }
-};
-
 const Statistics = () => {
+  const [isVisible, setIsVisible] = useState(false);
   const [counts, setCounts] = useState({ clients: 0, projects: 0, advisors: 0 });
   const sectionRef = useRef(null);
-  const servicesRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, threshold: 0.1 });
-  const servicesInView = useInView(servicesRef, { once: true, threshold: 0.1 });
-  const controls = useAnimation();
-  const servicesControls = useAnimation();
 
-
-  const finalCounts = useMemo(() => ({
+  const finalCounts = {
     clients: 150,
     projects: 400,
     advisors: 75,
-  }), []);
+  };
 
-  // Animate controls
+  // Intersection Observer
   useEffect(() => {
-    if (isInView) {
-      controls.start("visible");
-    }
-  }, [isInView, controls]);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
 
-  useEffect(() => {
-    if (servicesInView) {
-      servicesControls.start("visible");
-    }
-  }, [servicesInView, servicesControls]);
+    if (sectionRef.current) observer.observe(sectionRef.current);
+
+    return () => {
+      if (sectionRef.current) observer.unobserve(sectionRef.current);
+    };
+  }, [isVisible]);
 
   // Animate counters
   useEffect(() => {
-    if (isInView) {
+    if (isVisible) {
       const duration = 2000;
       const steps = 60;
       const stepDuration = duration / steps;
@@ -118,7 +63,7 @@ const Statistics = () => {
 
       return () => clearInterval(timer);
     }
-  }, [isInView, finalCounts]);
+  }, [isVisible]);
 
   const stats = [
     { id: 1, number: counts.clients, suffix: '+', label: 'Happy Clients' },
@@ -148,17 +93,13 @@ const Statistics = () => {
               }}
             >
               LET THE NUMBERS SPEAK
+              
             </h2>
           </div>
 
-          <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-3 gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            animate={controls}
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {stats.map((stat) => (
-              <motion.div key={stat.id} className="text-center" variants={stat.id === 1 ? cardVariants : itemVariants}>
+              <div key={stat.id} className="text-center">
                 <div
                   className="w-16 h-0.5 mx-auto mb-4"
                   style={{
@@ -173,9 +114,9 @@ const Statistics = () => {
                   {stat.number}
                   {stat.suffix}
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {/* Business Start-up Solutions */}
@@ -199,68 +140,50 @@ const Statistics = () => {
           </div>
 
           {/* Services Grid */}
-          <motion.div 
-            ref={servicesRef}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            variants={servicesVariants}
-            initial="hidden"
-            animate={servicesControls}
-          >
-            <motion.div variants={serviceCardVariants}>
-              <ServiceCard
-                image={cfImage}
-                title="Company Formation"
-                subtitle="From Only £12.99"
-                description="Comprehensive UK Limited Company formation services with Companies House approval."
-                variant="blue"
-              />
-            </motion.div>
-            <motion.div variants={serviceCardVariants}>
-              <ServiceCard
-                image={voImage}
-                title="Virtual Office Rental"
-                subtitle="From Only £8.88 (Inc. VAT)"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <ServiceCard
+              image={cfImage}
+              title="Company Formation"
+              subtitle="From Only £12.99"
+              description="Comprehensive UK Limited Company formation services with Companies House approval."
+              variant="blue"
+            />
+            <ServiceCard
+              image={voImage}
+              title="Virtual Office Rental"
+              subtitle="From Only £8.88 (Inc. VAT)"
               description="Prestigious UK address with secure mail handling to boost your business credibility."
               variant="yellow"
             />
-            </motion.div>
-            <motion.div variants={serviceCardVariants}>
-              <ServiceCard
-                image={mcImage}
-                title="Multi-Currency Business Bank Accounts"
-                subtitle="With Up To £5k Cash Reward"
-                description="Manage global finances seamlessly and earn cash rewards on activation."
-                variant="blue"
-              />
-            </motion.div>
-            <motion.div variants={serviceCardVariants}>
-              <ServiceCard
-                image={acImage}
-                title="Accountancy Consultation"
-                subtitle="Free With Company Incorporation"
-                description="Get expert financial advice, tax compliance, and business setup support."
-                variant="yellow"
-              />
-            </motion.div>
-            <motion.div variants={serviceCardVariants}>
-              <ServiceCard
-                image={dmImage}
-                title="Domain Names"
-                subtitle="Free With Any Company Formation"
-                description="Secure a free professional domain name to establish your online presence."
-                variant="blue"
-              />
-            </motion.div>
-            <motion.div variants={serviceCardVariants}>
-              <ServiceCard
-                image={taImage}
-                title="Tax Filing & Audits"
-                subtitle="Free With Company Formation"
-                description="From reporting to audits and tax planning, we keep your business compliant."
-                variant="yellow"
-              />
-            </motion.div>
-          </motion.div>
+            <ServiceCard
+              image={mcImage}
+              title="Multi-Currency Business Bank Accounts"
+              subtitle="With Up To £5k Cash Reward"
+              description="Manage global finances seamlessly and earn cash rewards on activation."
+              variant="blue"
+            />
+            <ServiceCard
+              image={acImage}
+              title="Accountancy Consultation"
+              subtitle="Free With Company Incorporation"
+              description="Get expert financial advice, tax compliance, and business setup support."
+              variant="yellow"
+            />
+            <ServiceCard
+              image={dmImage}
+              title="Domain Names"
+              subtitle="Free With Any Company Formation"
+              description="Secure a free professional domain name to establish your online presence."
+              variant="blue"
+            />
+            <ServiceCard
+              image={taImage}
+              title="Tax Filing & Audits"
+              subtitle="Free With Company Formation"
+              description="From reporting to audits and tax planning, we keep your business compliant."
+              variant="yellow"
+            />
+          </div>
         </div>
       </div>
     </section>
