@@ -32,12 +32,20 @@ const WhyChooseUs = () => {
   ];
 
   return (
-    <section className="py-20 px-4 relative overflow-hidden" style={{
+    <section className="py-3 px-2 relative overflow-hidden" style={{
       background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)'
     }}>
-      
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-5 left-5 w-20 h-20 rounded-full" style={{
+          background: 'linear-gradient(135deg, #f8bd0a, #041e72)'
+        }}></div>
+        <div className="absolute bottom-10 right-10 w-16 h-16 rounded-full" style={{
+          background: 'linear-gradient(135deg, #041e72, #f8bd0a)'
+        }}></div>
+      </div>
 
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
        <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold mb-4" style={{

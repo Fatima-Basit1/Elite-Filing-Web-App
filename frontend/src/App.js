@@ -4,6 +4,10 @@ import { Routes, Route } from 'react-router-dom';
 // Pages
 import Home from './pages/Home/Home';
 import BusinessSolutions from './pages/BusinessSolutions/BusinessSolutions';
+import LogoCreation from './pages/LogoCreation/LogoCreation';
+import RegisteredAgent from './pages/RegisteredAgent/RegisteredAgent';
+import UKSharedOffices from './pages/UKSharedOffices/UKSharedOffices';
+import TrademarkUK from './pages/TrademarkUK/TrademarkUK';
 import CompanyServices from './pages/CompanyServices/CompanyServices';
 import Ecommerce from './pages/Ecommerce/Ecommerce';
 import Contact from './pages/Contact/Contact';
@@ -15,6 +19,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/business-solutions" element={<BusinessSolutions />} />
+        <Route path="/business-solutions/logo-creation" element={<LogoCreation />} />
+        <Route path="/business-solutions/registered-agent" element={<RegisteredAgent />} />
+        <Route path="/business-solutions/uk-shared-offices" element={<UKSharedOffices />} />
+              <Route path="/business-solutions/trademark-uk" element={<TrademarkUK />} />
         <Route path="/company-services" element={<CompanyServices />} />
         <Route path="/ecommerce" element={<Ecommerce />} />
         <Route path="/contact" element={<Contact />} />

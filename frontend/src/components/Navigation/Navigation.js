@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDownIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import logo from '../../assets/logo.png';
 
 const Navigation = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -197,13 +198,13 @@ const Navigation = () => {
           <div className="flex items-center space-x-2 sm:space-x-3">
             <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full">
               <img 
-                src="https://elite-filing.com/wp-content/uploads/2025/07/cropped-httpselite-filing-logo.webp" 
+                src={logo} 
                 alt="Elite Filing Logo" 
-                className="w-5 h-5 object-contain"
+                className="w-8 h-8 object-contain"
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-blue-600 font-bold text-sm sm:text-base md:text-lg tracking-tight">Elite Filing</span>
+              <span className="font-bold text-sm sm:text-base md:text-lg tracking-tight" style={{color: '#041e72'}}>Elite Filing</span>
             </div>
           </div>
 

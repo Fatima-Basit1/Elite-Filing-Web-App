@@ -34,15 +34,15 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24">
+    <div className="min-h-screen">
       <Navigation />
-      <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900">
+      <div className="bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950">
         <div className="py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 mt-16">
               Contact Us
             </h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+            <p className="text-xl text-blue-50 max-w-3xl mx-auto">
               Get in touch with our expert team for all your business needs
             </p>
           </div>
@@ -61,7 +61,7 @@ const Contact = () => {
               
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
+                  <div className="w-12 h-12 bg-blue-900 rounded-lg flex items-center justify-center mr-4">
                     <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                     </svg>
@@ -101,7 +101,7 @@ const Contact = () => {
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
+                  <div className="w-12 h-12 bg-blue-900 rounded-lg flex items-center justify-center mr-4">
                     <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                     </svg>
@@ -135,7 +135,7 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent"
                       placeholder="Your full name"
                     />
                   </div>
@@ -151,7 +151,7 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent"
                       placeholder="your.email@example.com"
                     />
                   </div>
@@ -166,7 +166,7 @@ const Contact = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent"
                       placeholder="+44 123 456 7890"
                     />
                   </div>
@@ -182,7 +182,7 @@ const Contact = () => {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent"
                       placeholder="How can we help you?"
                     />
                   </div>
@@ -198,14 +198,14 @@ const Contact = () => {
                       onChange={handleChange}
                       required
                       rows={5}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent"
                       placeholder="Tell us more about your requirements..."
                     ></textarea>
                   </div>
                   
                   <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
+                    className="w-full bg-blue-900 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-950 transition-all duration-300 transform hover:scale-105"
                   >
                     Send Message
                   </button>
