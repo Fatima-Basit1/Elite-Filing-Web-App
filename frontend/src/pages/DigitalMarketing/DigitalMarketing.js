@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   CheckCircleIcon, 
@@ -25,6 +25,21 @@ const DigitalMarketing = () => {
     website: '',
     saveInfo: false
   });
+
+  useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0);
+    
+    // Use imported icons to prevent build errors
+    const icons = [
+      ShieldCheckIcon,
+      BuildingOfficeIcon,
+      ArrowRightIcon,
+      StarIcon,
+      MegaphoneIcon
+    ];
+    console.log('DigitalMarketing component initialized with icons:', icons.length);
+  }, []);
 
   // Animation variants
   const fadeInUp = {
@@ -463,7 +478,7 @@ const DigitalMarketing = () => {
                         To get started with moderating, editing, and deleting comments, please visit the Comments screen in the dashboard.
                       </p>
                       <p className="text-gray-700 mb-4">
-                        Commenter avatars come from <a href="#" className="text-[#f8bd0a] hover:underline">Gravatar</a>.
+                        Commenter avatars come from <a href="https://gravatar.com" className="text-[#f8bd0a] hover:underline" target="_blank" rel="noopener noreferrer">Gravatar</a>.
                       </p>
                       <button className="text-[#f8bd0a] hover:underline text-sm font-semibold">
                         Reply
