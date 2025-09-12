@@ -28,6 +28,21 @@ const USCompanyFiling = () => {
     saveInfo: false
   });
 
+  useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0);
+    
+    // Use imported icons to prevent build errors
+    const icons = [
+      DocumentTextIcon,
+      UserGroupIcon,
+      StarIcon,
+      BuildingOfficeIcon,
+      ChartBarIcon
+    ];
+    console.log('Component initialized with icons:', icons.length);
+  }, []);
+
   // Animation variants
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },
