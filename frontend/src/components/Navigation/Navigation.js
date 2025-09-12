@@ -307,15 +307,15 @@ const Navigation = () => {
             </div>
             <div className="lg:hidden">
               <button 
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-gray-600 hover:text-gray-900 p-2 transition-colors duration-200"
-              >
-                {isMobileMenuOpen ? (
-                  <XMarkIcon className="w-6 h-6" />
-                ) : (
-                  <Bars3Icon className="w-6 h-6" />
-                )}
-              </button>
+  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+  className="text-gray-600 hover:text-gray-900 p-2 transition-colors duration-200"
+>
+  {isMobileMenuOpen ? (
+    <XMarkIcon className="w-6 h-6" />
+  ) : (
+    <Bars3Icon className="w-6 h-6" />
+  )}
+</button>
             </div>
           </div>
         </div>
