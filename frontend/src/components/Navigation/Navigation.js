@@ -192,8 +192,8 @@ const Navigation = () => {
 
   return (
     <nav className="fixed top-0 sm:top-2 md:top-4 left-0 right-0 sm:left-2 sm:right-2 md:left-4 md:right-4 lg:left-8 lg:right-8 xl:left-16 xl:right-16 z-50">
-      <div className="bg-white/95 backdrop-blur-xl shadow-2xl rounded-none sm:rounded-xl md:rounded-full border border-gray-200/50 px-3 sm:px-5 md:px-8 lg:px-10 py-2 max-w-[1400px] mx-auto">
-          <div className="flex justify-between items-center h-10 sm:h-8">
+      <div className="bg-white/95 backdrop-blur-xl shadow-2xl rounded-none sm:rounded-xl md:rounded-full border border-gray-200/50 px-4 sm:px-5 md:px-8 lg:px-10 py-3 sm:py-2 max-w-[1400px] mx-auto">
+          <div className="flex justify-between items-center h-16 sm:h-12 md:h-10">
           {/* Logo */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full">
