@@ -212,12 +212,20 @@ const Navigation = () => {
           <div className="hidden lg:block">
             <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4">
               {menuItems.map((item, index) => (
-                <div key={index} className="relative group">
+                <div 
+                  key={index} 
+                  className="relative group"
+                  onMouseEnter={() => setActiveDropdown(index)}
+                  onMouseLeave={() => {
+                    setTimeout(() => {
+                      setActiveDropdown(null);
+                      setActiveSubDropdown(null);
+                    }, 300);
+                  }}
+                >
                   {item.hasDropdown ? (
                     <button
                       className="text-gray-600 hover:text-blue-700 px-2 md:px-3 py-1.5 text-xs md:text-sm font-medium flex items-center transition-all duration-300 hover:bg-blue-50 rounded-full"
-                      onMouseEnter={() => setActiveDropdown(index)}
-                      onMouseLeave={() => setActiveDropdown(null)}
                     >
                       <span>{item.name}</span>
                       <ChevronDownIcon className={`ml-2 h-4 w-4 transition-transform duration-300 ${activeDropdown === index ? 'rotate-180' : ''}`} />
@@ -233,14 +241,22 @@ const Navigation = () => {
 
                   {/* Dropdown Menu */}
                   {item.hasDropdown && activeDropdown === index && (
-                    <div
-                      className="absolute top-full left-0 mt-3 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
-                      onMouseEnter={() => setActiveDropdown(index)}
-                      onMouseLeave={() => {
-                        setActiveDropdown(null);
-                        setActiveSubDropdown(null);
-                      }}
-                    >
+                    <>
+                      {/* Invisible bridge to prevent dropdown from closing */}
+                      <div 
+                        className="absolute top-full left-0 w-full h-2 z-40"
+                        onMouseEnter={() => setActiveDropdown(index)}
+                      ></div>
+                      <div 
+                        className="absolute top-full left-0 mt-2 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
+                        onMouseEnter={() => setActiveDropdown(index)}
+                        onMouseLeave={() => {
+                          setTimeout(() => {
+                            setActiveDropdown(null);
+                            setActiveSubDropdown(null);
+                          }, 300);
+                        }}
+                      >
                       {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
                         item.hasNestedDropdown ? (
                           <div key={dropdownIndex} className="relative">
@@ -264,7 +280,15 @@ const Navigation = () => {
                             </div>
 
                             {dropdownItem.hasSubDropdown && activeSubDropdown === dropdownIndex && (
-                              <div className="absolute left-full top-0 ml-2 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50">
+                              <div 
+                                className="absolute left-full top-0 ml-2 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
+                                onMouseEnter={() => setActiveSubDropdown(dropdownIndex)}
+                                onMouseLeave={() => {
+                                  setTimeout(() => {
+                                    setActiveSubDropdown(null);
+                                  }, 300);
+                                }}
+                              >
                                 {dropdownItem.subItems.map((subItem, subIndex) => (
                                   <Link
                                     key={subIndex}
@@ -287,7 +311,8 @@ const Navigation = () => {
                           </Link>
                         )
                       ))}
-                    </div>
+                      </div>
+                    </>
                   )}
                 </div>
               ))}
@@ -321,7 +346,6 @@ const Navigation = () => {
       </div>
 
       {/* Mobile Navigation */}
-      {/* Mobile Navigation - Improved positioning and styling */}
       {isMobileMenuOpen && (
         <div className="fixed lg:hidden bg-white/95 backdrop-blur-xl shadow-2xl border border-gray-200/50 mt-1 sm:mt-2 rounded-b-xl mx-0 sm:mx-2 left-0 right-0 sm:left-2 sm:right-2 md:left-4 md:right-4 lg:left-8 lg:right-8 z-40 max-w-[1400px] mx-auto">
           <div className="px-4 sm:px-6 py-4 space-y-1 max-h-[70vh] overflow-y-auto">
@@ -359,8 +383,7 @@ const Navigation = () => {
                                 </div>
                                 {dropdownItem.hasSubDropdown && (
                                   <svg
-                                    className={`w-4 h-4 ml-2 transition-transform duration-200 ${activeSubDropdown === dropdownIndex ? 'rotate-90' : ''
-                                      }`}
+                                    className={`w-4 h-4 ml-2 transition-transform duration-200 ${activeSubDropdown === dropdownIndex ? 'rotate-90' : ''}`}
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"

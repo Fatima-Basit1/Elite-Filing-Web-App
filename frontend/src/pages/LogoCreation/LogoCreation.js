@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
+import bluebg from '../../assets/bluebg.jpg';
 
 const LogoCreation = () => {
   const [formData, setFormData] = useState({
@@ -69,38 +70,60 @@ const LogoCreation = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden" style={{
-        background: 'linear-gradient(135deg, #041e72 0%, #0a285a 50%, #041e72 100%)'
-      }}>
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent"></div>
-        </div>
+      <div 
+        className="relative min-h-screen flex items-center"
+        style={{
+          backgroundImage: `url(${bluebg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <motion.div
-            className="text-center"
-            initial="hidden"
-            animate="show"
-            variants={fadeUp}
-          >
-            <h1 className="text-4xl md:text-6xl font-bold mb-6" style={{
-              background: 'linear-gradient(135deg, #f8bd0a 0%, #ffd700 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              Custom Logo Creation
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left">
+          <div className="text-white animate-fade-in-up">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+              Custom Logo Creation{' '}
+              <span className="block text-yellow-400">with Elite Filing</span>
             </h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed" style={{
-              fontFamily: 'Inter, sans-serif',
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
-            }}>
+            <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed max-w-4xl">
               Transform your brand vision into a memorable logo that represents your unique identity
             </p>
-          </motion.div>
+            <div className="flex flex-wrap justify-start gap-4 mb-8">
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <span className="text-yellow-400 font-semibold">✓</span>
+                <span className="ml-2">Custom Design</span>
+              </div>
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <span className="text-yellow-400 font-semibold">✓</span>
+                <span className="ml-2">Professional Quality</span>
+              </div>
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <span className="text-yellow-400 font-semibold">✓</span>
+                <span className="ml-2">Multi-Platform Ready</span>
+              </div>
+            </div>
+            <button
+              onClick={() => document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' })}
+              className="flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 font-semibold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:from-yellow-500 hover:to-yellow-600"
+            >
+              Start Your Logo Design
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </div>
         </div>
-      </section>
+      </div>
 
       {/* Purpose Section */}
       <section className="py-16 bg-gradient-to-br from-gray-50 to-white">
@@ -152,7 +175,9 @@ const LogoCreation = () => {
               variants={slideFromRight}
               whileHover={{ y: -5, transition: { duration: 0.3 } }}
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center mb-6">
+              <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-6" style={{
+                background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+              }}>
                 <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -161,14 +186,18 @@ const LogoCreation = () => {
               <p className="text-gray-600 leading-relaxed">
                 To guide potential clients to submit the necessary information via a form so the design team can create a logo aligned with the client's vision.
               </p>
-              <div className="mt-4 text-sm font-medium text-blue-600">Elite Filing</div>
+              <div className="mt-4 text-sm font-medium" style={{
+                color: 'rgba(6,30,68,1)'
+              }}>Elite Filing</div>
             </motion.div>
           </div>
         </div>
       </section>
 
       {/* Form Section */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-50">
+      <section id="form-section" className="py-16" style={{
+        background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+      }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-12"
@@ -177,16 +206,12 @@ const LogoCreation = () => {
             viewport={{ once: true }}
             variants={fadeUp}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6" style={{
-              background: 'linear-gradient(135deg, #041e72 0%, #0a285a 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white" style={{
               fontFamily: 'Inter, sans-serif'
             }}>
               Logo Creation Form
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-blue-100 max-w-2xl mx-auto">
               Share your vision with us and let our design team create the perfect logo for your brand
             </p>
           </motion.div>
@@ -215,7 +240,10 @@ const LogoCreation = () => {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     placeholder="Your first name"
                     required
                   />
@@ -231,7 +259,10 @@ const LogoCreation = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     placeholder="Your last name"
                     required
                   />
@@ -255,7 +286,10 @@ const LogoCreation = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     placeholder="your.email@example.com"
                     required
                   />
@@ -271,7 +305,10 @@ const LogoCreation = () => {
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     placeholder="+1 (555) 123-4567"
                     required
                   />
@@ -372,7 +409,10 @@ const LogoCreation = () => {
                   value={formData.message}
                   onChange={handleInputChange}
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 resize-none"
+                  style={{
+                    '--tw-ring-color': 'rgba(6,30,68,1)'
+                  }}
                   placeholder="Any additional details or instructions you want our designers to know..."
                 />
                 <p className="text-xs text-gray-500 mt-1">Any additional details or instructions the client wants the designers to know</p>
@@ -384,7 +424,10 @@ const LogoCreation = () => {
               >
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold py-4 px-8 rounded-xl hover:from-blue-700 hover:to-blue-900 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  className="w-full text-white font-bold py-4 px-8 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                  }}
                 >
                   Submit Logo Request
                 </button>
@@ -395,7 +438,9 @@ const LogoCreation = () => {
       </section>
 
       {/* Process Section */}
-      <section className="py-16 bg-gradient-to-br from-gray-900 to-blue-900">
+      <section className="py-16" style={{
+        background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+      }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
@@ -445,14 +490,16 @@ const LogoCreation = () => {
               variants={fadeUp}
               whileHover={{ y: -10, transition: { duration: 0.3 } }}
             >
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{
+                background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+              }}>
                 <span className="text-2xl font-bold text-white">2</span>
               </div>
               <h3 className="text-xl font-bold text-white mb-4">Concept & Design</h3>
               <p className="text-blue-100 leading-relaxed">
                 Designers will create multiple logo concepts, using creativity + strategy.
               </p>
-              <div className="mt-4 text-sm font-medium text-blue-400">Elite Filing</div>
+              <div className="mt-4 text-sm font-medium text-yellow-400">Elite Filing</div>
             </motion.div>
             
             <motion.div

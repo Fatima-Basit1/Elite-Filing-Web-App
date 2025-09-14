@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
+import bluebg from '../../assets/bluebg.jpg';
 
 const TrademarkUK = () => {
   const [formData, setFormData] = useState({
@@ -55,66 +56,60 @@ const TrademarkUK = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-20 overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <defs>
-              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
-              </pattern>
-            </defs>
-            <rect width="100" height="100" fill="url(#grid)" />
-          </svg>
-        </div>
-
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={fadeInUp}
-              className="space-y-6"
-            >
-              <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                Trademark Registration
-                <span className="block text-yellow-400">UK</span>
-              </h1>
-              <p className="text-xl text-blue-100 leading-relaxed">
-                Protect your brand with professional trademark registration services. 
-                Secure exclusive rights and legal protection for your business identity.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-yellow-400 text-blue-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-yellow-300 transition-colors"
-                >
-                  Start Registration
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-blue-900 transition-colors"
-                >
-                  Learn More
-                </motion.button>
+      <div 
+        className="relative min-h-screen flex items-center"
+        style={{
+          backgroundImage: `url(${bluebg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left">
+          <div className="text-white animate-fade-in-up">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+              Trademark Registration UK{' '}
+              <span className="block text-yellow-400">with Elite Filing</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed max-w-4xl">
+              Protect your brand with professional trademark registration services. Secure exclusive rights and legal protection for your business identity.
+            </p>
+            <div className="flex flex-wrap justify-start gap-4 mb-8">
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <span className="text-yellow-400 font-semibold">✓</span>
+                <span className="ml-2">Exclusive Rights</span>
               </div>
-            </motion.div>
-
-            {/* Right Visual */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <span className="text-yellow-400 font-semibold">✓</span>
+                <span className="ml-2">Brand Protection</span>
+              </div>
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <span className="text-yellow-400 font-semibold">✓</span>
+                <span className="ml-2">Legal Support</span>
+              </div>
+            </div>
+            <button
+              onClick={() => document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' })}
+              className="flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 font-semibold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:from-yellow-500 hover:to-yellow-600"
             >
-              
-            </motion.div>
+              Start Registration
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* What is Trademark Section */}
       <section className="py-20 bg-gray-50">
@@ -127,7 +122,7 @@ const TrademarkUK = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
-              What is a <span className="text-blue-600">Trademark?</span>
+              What is a <span style={{color: 'rgba(6,30,68,1)'}}>Trademark?</span>
             </h2>
             <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -150,7 +145,7 @@ const TrademarkUK = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
-              Why Register a <span className="text-blue-600">Trademark?</span>
+              Why Register a <span style={{color: 'rgba(6,30,68,1)'}}>Trademark?</span>
             </h2>
             <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
           </motion.div>
@@ -196,7 +191,9 @@ const TrademarkUK = () => {
                 >
                   {benefit.icon}
                 </motion.div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:transition-colors" style={{
+                  '--hover-color': 'rgba(6,30,68,1)'
+                }}>
                   {benefit.title}
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
@@ -219,7 +216,7 @@ const TrademarkUK = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
-              Eligibility for <span className="text-blue-600">Trademark</span>
+              Eligibility for <span style={{color: 'rgba(6,30,68,1)'}}>Trademark</span>
             </h2>
             <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
           </motion.div>
@@ -243,8 +240,12 @@ const TrademarkUK = () => {
                   <p className="text-gray-600">Your trademark must be distinctive and easily recognizable</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{
+                    backgroundColor: 'rgba(6,30,68,0.1)'
+                  }}>
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" style={{
+                      color: 'rgba(6,30,68,1)'
+                    }}>
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
                   </div>
@@ -267,7 +268,9 @@ const TrademarkUK = () => {
       </section>
 
       {/* Contact Form Section */}
-      <section className="py-20">
+      <section id="contact-form" className="py-20" style={{
+        background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+      }}>
         <div className="container mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -276,11 +279,11 @@ const TrademarkUK = () => {
             variants={fadeInUp}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">
-              Start Your <span className="text-blue-600">Trademark Registration</span>
+            <h2 className="text-4xl font-bold text-white mb-6">
+              Start Your <span style={{color: 'rgba(248,189,10,1)'}}>Trademark Registration</span>
             </h2>
             <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
               Get expert assistance with your trademark registration. Our team will guide you through the entire process.
             </p>
           </motion.div>
@@ -304,7 +307,10 @@ const TrademarkUK = () => {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      style={{
+                        '--tw-ring-color': 'rgba(6,30,68,1)'
+                      }}
                       required
                     />
                   </div>
@@ -317,7 +323,10 @@ const TrademarkUK = () => {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      style={{
+                        '--tw-ring-color': 'rgba(6,30,68,1)'
+                      }}
                       required
                     />
                   </div>
@@ -333,7 +342,10 @@ const TrademarkUK = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      style={{
+                        '--tw-ring-color': 'rgba(6,30,68,1)'
+                      }}
                       required
                     />
                   </div>
@@ -346,7 +358,10 @@ const TrademarkUK = () => {
                       name="companyName"
                       value={formData.companyName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      style={{
+                        '--tw-ring-color': 'rgba(6,30,68,1)'
+                      }}
                     />
                   </div>
                 </div>
@@ -360,7 +375,10 @@ const TrademarkUK = () => {
                       name="trademarkType"
                       value={formData.trademarkType}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      style={{
+                        '--tw-ring-color': 'rgba(6,30,68,1)'
+                      }}
                       required
                     >
                       <option value="">Select trademark type</option>
@@ -379,7 +397,10 @@ const TrademarkUK = () => {
                       name="businessSector"
                       value={formData.businessSector}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      style={{
+                        '--tw-ring-color': 'rgba(6,30,68,1)'
+                      }}
                       required
                     >
                       <option value="">Select business sector</option>
@@ -403,7 +424,10 @@ const TrademarkUK = () => {
                     value={formData.message}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all resize-none"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     placeholder="Tell us more about your trademark registration needs..."
                   ></textarea>
                 </div>
@@ -412,7 +436,10 @@ const TrademarkUK = () => {
                   type="submit"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full bg-blue-600 text-white py-4 px-8 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors shadow-lg"
+                  className="w-full text-white py-4 px-8 rounded-lg font-semibold text-lg transition-colors shadow-lg"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                  }}
                 >
                   Submit Registration Request
                 </motion.button>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
+import bluebg from '../../assets/bluebg.jpg';
 
 const RegisteredAgent = () => {
   const [formData, setFormData] = useState({
@@ -73,60 +74,60 @@ const RegisteredAgent = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-24 pb-20">
-        {/* Blue Wave SVG Background */}
-        <div className="absolute inset-0 z-0">
-          <svg className="absolute bottom-0 left-0 w-full h-64" viewBox="0 0 1200 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" fill="#3B82F6" fillOpacity="0.1"/>
-          </svg>
-        </div>
+      <div 
+        className="relative min-h-screen flex items-center"
+        style={{
+          backgroundImage: `url(${bluebg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Side - Content */}
-            <motion.div
-              className="text-left"
-              initial="hidden"
-              animate="show"
-              variants={slideFromLeft}
-            >
-              <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                Registered Agent Services
-              </h1>
-              
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Your reliable point of contact for legal & state compliance.
-              </p>
-              
-              <motion.button
-                onClick={scrollToForm}
-                className="inline-flex items-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Start Now
-                <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </motion.button>
-            </motion.div>
-            
-            {/* Right Side - Illustration */}
-            <motion.div
-              className="flex justify-center lg:justify-end"
-              initial="hidden"
-              animate="show"
-              variants={slideFromRight}
-            >
-              <div className="w-96 h-96 bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl flex items-center justify-center shadow-lg">
-                <svg className="w-48 h-48 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11H16V18H8V11H9.2V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.4,8.7 10.4,10V11H13.6V10C13.6,8.7 12.8,8.2 12,8.2Z"/>
-                </svg>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left">
+          <div className="text-white animate-fade-in-up">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+              Registered Agent Services{' '}
+              <span className="block text-yellow-400">with Elite Filing</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed max-w-4xl">
+              Your reliable point of contact for legal & state compliance.
+            </p>
+            <div className="flex flex-wrap justify-start gap-4 mb-8">
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <span className="text-yellow-400 font-semibold">✓</span>
+                <span className="ml-2">Official Contact</span>
               </div>
-            </motion.div>
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <span className="text-yellow-400 font-semibold">✓</span>
+                <span className="ml-2">Legal Compliance</span>
+              </div>
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <span className="text-yellow-400 font-semibold">✓</span>
+                <span className="ml-2">Document Handling</span>
+              </div>
+            </div>
+            <button
+              onClick={scrollToForm}
+              className="flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 font-semibold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:from-yellow-500 hover:to-yellow-600"
+            >
+              Start Now
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Benefits Section */}
       <section className="py-20 bg-white">
@@ -155,7 +156,9 @@ const RegisteredAgent = () => {
               className="bg-white rounded-xl shadow-lg p-8 text-center hover:-translate-y-2 transition-all duration-300 hover:shadow-xl"
               variants={scaleIn}
             >
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
+                background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+              }}>
                 <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                 </svg>
@@ -175,7 +178,9 @@ const RegisteredAgent = () => {
               className="bg-white rounded-xl shadow-lg p-8 text-center hover:-translate-y-2 transition-all duration-300 hover:shadow-xl"
               variants={scaleIn}
             >
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
+                background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+              }}>
                 <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z"/>
                 </svg>
@@ -195,7 +200,9 @@ const RegisteredAgent = () => {
               className="bg-white rounded-xl shadow-lg p-8 text-center hover:-translate-y-2 transition-all duration-300 hover:shadow-xl"
               variants={scaleIn}
             >
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
+                background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+              }}>
                 <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M9,17H7V12H9V17M13,17H11V7H13V17M17,17H15V14H17V17Z"/>
                 </svg>
@@ -245,7 +252,9 @@ const RegisteredAgent = () => {
                 className="text-center relative"
                 variants={fadeUp}
               >
-                <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10">
+                <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10" style={{
+                  background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                }}>
                   <span className="text-white font-bold text-2xl">1</span>
                 </div>
                 
@@ -263,7 +272,9 @@ const RegisteredAgent = () => {
                 className="text-center relative"
                 variants={fadeUp}
               >
-                <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10">
+                <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10" style={{
+                  background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                }}>
                   <span className="text-white font-bold text-2xl">2</span>
                 </div>
                 
@@ -281,7 +292,9 @@ const RegisteredAgent = () => {
                 className="text-center relative"
                 variants={fadeUp}
               >
-                <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10">
+                <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10" style={{
+                  background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                }}>
                   <span className="text-white font-bold text-2xl">3</span>
                 </div>
                 
@@ -299,7 +312,9 @@ const RegisteredAgent = () => {
                 className="text-center relative"
                 variants={fadeUp}
               >
-                <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10">
+                <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10" style={{
+                  background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                }}>
                   <span className="text-white font-bold text-2xl">4</span>
                 </div>
                 
@@ -317,7 +332,9 @@ const RegisteredAgent = () => {
       </section>
 
       {/* Form Section */}
-      <section id="form-section" className="py-20 bg-gradient-to-br from-blue-50 to-blue-100">
+      <section id="form-section" className="py-20" style={{
+        background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+      }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="bg-white rounded-2xl shadow-xl p-8 md:p-12"
@@ -327,10 +344,10 @@ const RegisteredAgent = () => {
             variants={scaleIn}
           >
             <div className="text-center mb-8">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
                 Start Your Registered Agent Service
               </h2>
-              <p className="text-gray-600">
+              <p className="text-blue-100">
                 Fill out the form below and we'll get you set up quickly.
               </p>
             </div>
@@ -347,7 +364,10 @@ const RegisteredAgent = () => {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     required
                   />
                 </div>
@@ -361,7 +381,10 @@ const RegisteredAgent = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     required
                   />
                 </div>
@@ -378,7 +401,10 @@ const RegisteredAgent = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     required
                   />
                 </div>
@@ -392,7 +418,10 @@ const RegisteredAgent = () => {
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     required
                   />
                 </div>
@@ -423,7 +452,10 @@ const RegisteredAgent = () => {
                     name="businessType"
                     value={formData.businessType}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     required
                   >
                     <option value="">Select Business Type</option>
@@ -442,7 +474,10 @@ const RegisteredAgent = () => {
                     name="stateOfRegistration"
                     value={formData.stateOfRegistration}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
                     required
                   >
                     <option value="">Select State</option>
@@ -530,7 +565,10 @@ const RegisteredAgent = () => {
                   value={formData.symbolsElements}
                   onChange={handleInputChange}
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 resize-none"
+                  style={{
+                    '--tw-ring-color': 'rgba(6,30,68,1)'
+                  }}
                   placeholder="Describe any specific symbols or elements you'd like to include..."
                 />
               </div>
@@ -545,7 +583,10 @@ const RegisteredAgent = () => {
                   value={formData.message}
                   onChange={handleInputChange}
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 resize-none"
+                  style={{
+                    '--tw-ring-color': 'rgba(6,30,68,1)'
+                  }}
                   placeholder="Any additional information or questions..."
                 />
               </div>
@@ -553,8 +594,11 @@ const RegisteredAgent = () => {
               {/* Submit Button */}
               <motion.button
                 type="submit"
-                className="w-full py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:from-blue-700 hover:to-blue-900"
-                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)" }}
+                className="w-full py-4 text-lg font-bold text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                }}
+                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(6, 30, 68, 0.3)" }}
                 whileTap={{ scale: 0.98 }}
               >
                 Submit Application
