@@ -18,6 +18,7 @@ import USCompanyFiling from './pages/USCompanyFiling/USCompanyFiling';
 import UKCompanyFiling from './pages/UKCompanyFiling/UKCompanyFiling';
 import DigitalMarketing from './pages/DigitalMarketing/DigitalMarketing';
 import LLCFormation from './pages/USA/LLC-Formation';
+import Tax from './pages/USA/Tax';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/blogs/company-filing-uk" element={<UKCompanyFiling />} />
         <Route path="/blogs/digital-marketing" element={<DigitalMarketing />} />
         <Route path="/USA/LLC-Formation" element={<LLCFormation />} />
+        <Route path="/USA/Tax" element={<Tax />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

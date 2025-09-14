@@ -46,8 +46,8 @@ const Navigation = () => {
           ),
           hasSubDropdown: true,
           subItems: [
-            { name: 'LLC Formation', href: '/company-formation/usa/llc' },
-            { name: 'USA Tax', href: '/company-formation/usa/tax' },
+            { name: 'LLC Formation', href: '/USA/LLC-Formation' },
+            { name: 'USA Tax', href: '/USA/Tax' },
             { name: 'ITIN', href: '/company-formation/usa/itin' },
             { name: 'Trademark', href: '/company-formation/usa/trademark' },
             { name: 'Complete Package', href: '/company-formation/usa/complete-package' }
