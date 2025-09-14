@@ -25,6 +25,7 @@ import LLCFormation from './pages/USA/LLC-Formation';
 import Tax from './pages/USA/Tax';
 import ITIN from './pages/USA/ITIN';
 import Trademark from './pages/USA/Trademark';
+import CompletePackage from './pages/USA/CompletePackage';
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
         <Route path="/USA/Tax" element={<Tax />} />
         <Route path="/USA/ITIN" element={<ITIN />} />
         <Route path="/USA/Trademark" element={<Trademark />} />
+        <Route path="/complete-package-for-USA" element={<CompletePackage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
