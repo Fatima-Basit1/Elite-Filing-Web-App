@@ -12,6 +12,10 @@ import CompanyServices from './pages/CompanyServices/CompanyServices';
 import Ecommerce from './pages/Ecommerce/Ecommerce';
 import AmazonEcommerce from './pages/Ecommerce/AmazonEcommerce';
 import WalmartEcommerce from './pages/Ecommerce/WalmartEcommerce';
+import EtsyEcommerce from './pages/Ecommerce/EtsyEcommerce';
+import SECPRegistration from './pages/CompanyFormation/Pakistan/SECPRegistration';
+import PSEBRegistration from './pages/CompanyFormation/Pakistan/PSEBRegistration';
+import FBRRegistration from './pages/CompanyFormation/Pakistan/FBRRegistration';
 import Contact from './pages/Contact/Contact';
 import NotFound from './pages/NotFound/NotFound';
 import USCompanyFiling from './pages/USCompanyFiling/USCompanyFiling';
@@ -35,6 +39,10 @@ function App() {
         <Route path="/ecommerce" element={<Ecommerce />} />
         <Route path="/ecommerce/amazon" element={<AmazonEcommerce />} />
         <Route path="/ecommerce/walmart" element={<WalmartEcommerce />} />
+        <Route path="/ecommerce/etsy" element={<EtsyEcommerce />} />
+        <Route path="/company-formation/pakistan/secp" element={<SECPRegistration />} />
+        <Route path="/company-formation/pakistan/pseb" element={<PSEBRegistration />} />
+        <Route path="/company-formation/pakistan/fbr" element={<FBRRegistration />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/blogs/company-filing-us" element={<USCompanyFiling />} />
         <Route path="/blogs/company-filing-uk" element={<UKCompanyFiling />} />
