@@ -10,6 +10,8 @@ import UKSharedOffices from './pages/UKSharedOffices/UKSharedOffices';
 import TrademarkUK from './pages/TrademarkUK/TrademarkUK';
 import CompanyServices from './pages/CompanyServices/CompanyServices';
 import Ecommerce from './pages/Ecommerce/Ecommerce';
+import AmazonEcommerce from './pages/Ecommerce/AmazonEcommerce';
+import WalmartEcommerce from './pages/Ecommerce/WalmartEcommerce';
 import Contact from './pages/Contact/Contact';
 import NotFound from './pages/NotFound/NotFound';
 import USCompanyFiling from './pages/USCompanyFiling/USCompanyFiling';
@@ -28,6 +30,8 @@ function App() {
               <Route path="/business-solutions/trademark-uk" element={<TrademarkUK />} />
         <Route path="/company-services" element={<CompanyServices />} />
         <Route path="/ecommerce" element={<Ecommerce />} />
+        <Route path="/ecommerce/amazon" element={<AmazonEcommerce />} />
+        <Route path="/ecommerce/walmart" element={<WalmartEcommerce />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/blogs/company-filing-us" element={<USCompanyFiling />} />
         <Route path="/blogs/company-filing-uk" element={<UKCompanyFiling />} />
