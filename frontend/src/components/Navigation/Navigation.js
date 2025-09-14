@@ -49,7 +49,7 @@ const Navigation = () => {
             { name: 'LLC Formation', href: '/USA/LLC-Formation' },
             { name: 'USA Tax', href: '/USA/Tax' },
             { name: 'ITIN', href: '/USA/ITIN' },
-            { name: 'Trademark', href: '/company-formation/usa/trademark' },
+            { name: 'Trademark', href: '/USA/Trademark' },
             { name: 'Complete Package', href: '/company-formation/usa/complete-package' }
           ]
         },
