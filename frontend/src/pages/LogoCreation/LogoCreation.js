@@ -66,7 +66,7 @@ const LogoCreation = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24">
+    <div className="min-h-screen">
       <Navigation />
       
       {/* Hero Section */}
@@ -195,9 +195,8 @@ const LogoCreation = () => {
       </section>
 
       {/* Form Section */}
-      <section id="form-section" className="py-16" style={{
-        background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
-      }}>
+      <section id="form-section" className="py-16 bg-gradient-to-br from-gray-50 to-white"
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-12"
@@ -206,12 +205,16 @@ const LogoCreation = () => {
             viewport={{ once: true }}
             variants={fadeUp}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white" style={{
+            <h2 className="text-3xl md:text-4xl font-bold mb-6" style={{
+              background: 'linear-gradient(135deg, #041e72 0%, #0a285a 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
               fontFamily: 'Inter, sans-serif'
             }}>
               Logo Creation Form
             </h2>
-            <p className="text-lg text-blue-100 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Share your vision with us and let our design team create the perfect logo for your brand
             </p>
           </motion.div>
