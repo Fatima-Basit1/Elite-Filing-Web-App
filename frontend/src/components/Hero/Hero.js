@@ -104,12 +104,12 @@ const Hero = () => {
       </div>
 
       {/* Logo Display - Desktop */}
-      <div className="absolute bottom-16 right-16 z-20 hidden md:block">
+      <div className="absolute bottom-16 right-12 z-20 hidden md:block">
         <div className="relative w-32 h-24 flex items-center justify-center">
           {/* Left Arrow */}
           <button
             onClick={scrollLeft}
-            className="absolute -left-10 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
+            className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
           >
             <ChevronLeftIcon className="w-7 h-7 drop-shadow-lg" />
           </button>
@@ -117,13 +117,13 @@ const Hero = () => {
           {/* Right Arrow */}
           <button
             onClick={scrollRight}
-            className="absolute -right-10 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
+            className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
           >
             <ChevronRightIcon className="w-7 h-7 drop-shadow-lg" />
           </button>
 
           {/* Logo Display */}
-          <div className="w-24 h-24 flex items-center justify-center">
+          <div className="w-50 h-50 flex items-center justify-center">
             <img 
               src={heroImages[currentImageIndex].src}
               alt={heroImages[currentImageIndex].alt}
@@ -134,34 +134,34 @@ const Hero = () => {
       </div>
 
       {/* Mobile Logo Display */}
-      <div className="absolute bottom-8 right-8 z-20 block md:hidden">
-        <div className="relative w-20 h-16 flex items-center justify-center">
-          {/* Left Arrow */}
-          <button
-            onClick={scrollLeft}
-            className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
-          >
-            <ChevronLeftIcon className="w-5 h-5 drop-shadow-lg" />
-          </button>
-
-          {/* Right Arrow */}
-          <button
-            onClick={scrollRight}
-            className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
-          >
-            <ChevronRightIcon className="w-5 h-5 drop-shadow-lg" />
-          </button>
-
-          {/* Mobile Logo Display */}
-          <div className="w-16 h-16 flex items-center justify-center">
-            <img 
-              src={heroImages[currentImageIndex].src}
-              alt={heroImages[currentImageIndex].alt}
-              className="h-12 w-12 object-contain rounded-lg bg-white/10 backdrop-blur-sm p-1 transition-all duration-500 hover:scale-110" 
-            />
-          </div>
-        </div>
-      </div>
+        <div className="absolute bottom-8 right-6 z-20 block md:hidden">
+         <div className="relative w-28 h-20 flex items-center justify-center">
+           {/* Left Arrow */}
+           <button
+             onClick={scrollLeft}
+             className="absolute -left-4 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
+           >
+             <ChevronLeftIcon className="w-6 h-6 drop-shadow-lg" />
+           </button>
+ 
+           {/* Right Arrow */}
+           <button
+             onClick={scrollRight}
+             className="absolute -right-4 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
+           >
+             <ChevronRightIcon className="w-6 h-6 drop-shadow-lg" />
+           </button>
+ 
+           {/* Mobile Logo Display */}
+           <div className="w-20 h-20 flex items-center justify-center">
+             <img 
+               src={heroImages[currentImageIndex].src}
+               alt={heroImages[currentImageIndex].alt}
+               className="h-16 w-16 object-contain rounded-lg bg-white/10 backdrop-blur-sm p-2 transition-all duration-500 hover:scale-110" 
+             />
+           </div>
+         </div>
+       </div>
 
 
     </div>
