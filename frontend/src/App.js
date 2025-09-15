@@ -26,6 +26,16 @@ import Tax from './pages/USA/Tax';
 import ITIN from './pages/USA/ITIN';
 import Trademark from './pages/USA/Trademark';
 import CompletePackage from './pages/USA/CompletePackage';
+import CompanyRegistration from './pages/UK/CompanyRegistration';
+import AnnualAccounts from './pages/UK/AnnualAccounts';
+import CompanyNameChange from './pages/UK/CompanyNameChange';
+import CompanyClosure from './pages/UK/CompanyClosure';
+import StructuralChange from './pages/UK/StructuralChange';
+import ConfirmationStatement from './pages/UK/ConfirmationStatement';
+import EORIApplication from './pages/UK/EORIApplication';
+import VATRegistration from './pages/UK/VATRegistration';
+import VATReturn from './pages/UK/VATReturn';
+import BankAccounts from './pages/UK/BankAccounts';
 
 function App() {
   return (
@@ -54,6 +64,17 @@ function App() {
         <Route path="/USA/ITIN" element={<ITIN />} />
         <Route path="/USA/Trademark" element={<Trademark />} />
         <Route path="/complete-package-for-USA" element={<CompletePackage />} />
+        <Route path="/UK/CompanyRegistration" element={<CompanyRegistration />} />
+        <Route path="/UK/AnnualAccounts" element={<AnnualAccounts />} />
+        <Route path="/UK/CompanyClosure" element={<CompanyClosure />} />
+        <Route path="/UK/CompanyNameChange" element={<CompanyNameChange />} />
+        <Route path="/UK/StructuralChange" element={<StructuralChange />} />
+        <Route path="/UK/ConfirmationStatement" element={<ConfirmationStatement />} />
+        <Route path="/UK/EORIApplication" element={<EORIApplication />} />
+        <Route path="/UK/VATRegistration" element={<VATRegistration />} />
+        <Route path="/UK/VATReturn" element={<VATReturn />} />
+        <Route path="/UK/BankAccounts" element={<BankAccounts />} />
+        
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
