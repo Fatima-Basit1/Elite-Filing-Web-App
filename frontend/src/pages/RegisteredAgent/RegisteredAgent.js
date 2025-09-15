@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
@@ -19,6 +20,9 @@ const RegisteredAgent = () => {
     message: ''
   });
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -332,25 +336,39 @@ const RegisteredAgent = () => {
       </section>
 
       {/* Form Section */}
-      <section id="form-section" className="py-20" style={{
-        background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
-      }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="form-section" className="py-16 bg-gradient-to-br from-gray-50 to-white"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="bg-white rounded-2xl shadow-xl p-8 md:p-12"
+            className="text-center mb-12"
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            variants={scaleIn}
+            variants={fadeUp}
           >
-            <div className="text-center mb-8">
-              <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-                Start Your Registered Agent Service
-              </h2>
-              <p className="text-blue-100">
-                Fill out the form below and we'll get you set up quickly.
-              </p>
-            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6" style={{
+              background: 'linear-gradient(135deg, #041e72 0%, #0a285a 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Start Your Registered Agent Service
+
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Fill out the form below and we'll get you set up quickly.
+            </p>
+          </motion.div>
+          
+          <div className="flex justify-center">
+            <motion.div
+              className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-4xl w-full"
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              variants={scaleIn}
+            >
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Fields */}
@@ -604,13 +622,14 @@ const RegisteredAgent = () => {
                 Submit Application
               </motion.button>
             </form>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Trust/Compliance Section */}
       <section className="py-12 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
             initial="hidden"
@@ -619,6 +638,8 @@ const RegisteredAgent = () => {
             variants={fadeUp}
           >
             <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-12">
+
+
               {/* Legal Compliance */}
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">

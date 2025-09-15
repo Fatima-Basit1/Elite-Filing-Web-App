@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
@@ -18,6 +18,9 @@ const UKSharedOffices = () => {
     message: ''
   });
 
+      useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -224,7 +227,7 @@ const UKSharedOffices = () => {
 
       {/* Pricing Section */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
             initial="hidden"
@@ -241,13 +244,14 @@ const UKSharedOffices = () => {
           </motion.div>
           
           {/* Recommended Plan */}
-          <motion.div
-            className="relative"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            variants={scaleIn}
-          >
+          <div className="flex justify-center">
+            <motion.div
+              className="relative max-w-2xl w-full"
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              variants={scaleIn}
+            >
             {/* Recommended Badge */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
               <span className="bg-yellow-400 px-6 py-2 rounded-full text-sm font-bold shadow-lg" style={{
@@ -316,30 +320,44 @@ const UKSharedOffices = () => {
                 Get Started Now
               </motion.button>
             </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Contact Form Section */}
-      <section id="contact-form" className="py-20" style={{
-        background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
-      }}>
+      <section id="contact-form" className="py-16 bg-gradient-to-br from-gray-50 to-white"
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="bg-white rounded-3xl shadow-xl p-8 md:p-12"
+            className="text-center mb-12"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={fadeUp}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-6" style={{
+              background: 'linear-gradient(135deg, #041e72 0%, #0a285a 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              UK Shared Offices Form
+
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Get started with your UK office setup today. Fill out the form below and we'll contact you within 24 hours.
+            </p>
+          </motion.div>
+          
+          <motion.div
+            className="bg-white rounded-3xl shadow-2xl p-8 md:p-12"
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
             variants={scaleIn}
           >
-            <div className="text-center mb-8">
-              <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-                UK Shared Offices Form
-              </h2>
-              <p className="text-blue-100">
-                Get started with your UK office setup today. Fill out the form below and we'll contact you within 24 hours.
-              </p>
-            </div>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Fields */}
@@ -536,7 +554,7 @@ const UKSharedOffices = () => {
 
       {/* Trust Section */}
       <section className="py-12 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
             initial="hidden"
@@ -544,7 +562,7 @@ const UKSharedOffices = () => {
             viewport={{ once: true }}
             variants={fadeUp}
           >
-            <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
               {/* Fully Compliant */}
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
