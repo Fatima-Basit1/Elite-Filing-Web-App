@@ -39,6 +39,7 @@ import EORIApplication from './pages/UK/EORIApplication';
 import VATRegistration from './pages/UK/VATRegistration';
 import VATReturn from './pages/UK/VATReturn';
 import BankAccounts from './pages/UK/BankAccounts';
+import SPCFreeZone from './pages/UAE/SPCFreeZone';
 
 function App() {
   return (
@@ -80,6 +81,7 @@ function App() {
         <Route path="/UK/VATRegistration" element={<VATRegistration />} />
         <Route path="/UK/VATReturn" element={<VATReturn />} />
         <Route path="/UK/BankAccounts" element={<BankAccounts />} />
+        <Route path="/company-formation/uae/spc-free-zone" element={<SPCFreeZone />} />
         
         <Route path="*" element={<NotFound />} />
       </Routes>
