@@ -74,7 +74,7 @@ const RegisteredAgent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="bg-white font-sans">
       <Navigation />
       
       {/* Hero Section */}
@@ -158,10 +158,10 @@ const RegisteredAgent = () => {
             {/* Card 1: Official Point of Contact */}
             <motion.div
               className="bg-white rounded-xl shadow-lg p-8 text-center hover:-translate-y-2 transition-all duration-300 hover:shadow-xl"
-              variants={slideFromLeft}
+              variants={scaleIn}
             >
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
-                background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                background: 'linear-gradient(180deg, rgb(152, 97, 14) 0%, rgb(156, 150, 32) 100%)'
               }}>
                 <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -180,10 +180,10 @@ const RegisteredAgent = () => {
             {/* Card 2: Safeguard Legal Documents */}
             <motion.div
               className="bg-white rounded-xl shadow-lg p-8 text-center hover:-translate-y-2 transition-all duration-300 hover:shadow-xl"
-              variants={slideFromRight}
+              variants={scaleIn}
             >
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
-                background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                background: 'linear-gradient(180deg, rgb(12, 91, 218) 0%, rgba(10,40,90,1) 100%)'
               }}>
                 <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z"/>
@@ -205,7 +205,7 @@ const RegisteredAgent = () => {
               variants={scaleIn}
             >
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
-                background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                background: 'linear-gradient(180deg, rgb(38, 165, 85) 0%, rgb(9, 96, 15) 100%)'
               }}>
                 <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M9,17H7V12H9V17M13,17H11V7H13V17M17,17H15V14H17V17Z"/>
@@ -277,7 +277,7 @@ const RegisteredAgent = () => {
                 variants={fadeUp}
               >
                 <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10" style={{
-                  background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                background: 'linear-gradient(180deg, rgb(6, 43, 68) 0%, rgba(10,40,90,1) 100%)'
                 }}>
                   <span className="text-white font-bold text-2xl">2</span>
                 </div>
@@ -297,7 +297,7 @@ const RegisteredAgent = () => {
                 variants={fadeUp}
               >
                 <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10" style={{
-                  background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                  background: 'linear-gradient(180deg, rgb(6, 43, 68) 0%, rgba(10,40,90,1) 100%)'
                 }}>
                   <span className="text-white font-bold text-2xl">3</span>
                 </div>
@@ -317,7 +317,7 @@ const RegisteredAgent = () => {
                 variants={fadeUp}
               >
                 <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10" style={{
-                  background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                  background: 'linear-gradient(180deg, rgb(6, 43, 68) 0%, rgba(10,40,90,1) 100%)'
                 }}>
                   <span className="text-white font-bold text-2xl">4</span>
                 </div>
@@ -351,7 +351,9 @@ const RegisteredAgent = () => {
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               color: 'transparent',
-              fontFamily: 'Inter, sans-serif'
+              fontFamily: 'Inter, sans-serif',
+              lineHeight:'1.3',
+              paddingBottom:'4px'
             }}>
               Start Your Registered Agent Service
 
@@ -611,16 +613,20 @@ const RegisteredAgent = () => {
               
               {/* Submit Button */}
               <motion.button
-                type="submit"
-                className="w-full py-4 text-lg font-bold text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-                style={{
-                  background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
-                }}
-                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(6, 30, 68, 0.3)" }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Submit Application
-              </motion.button>
+  type="submit"
+  className="w-full py-4 text-lg font-bold text-white rounded-2xl shadow-lg hover:text-black transition-all duration-300"
+  style={{
+    background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+  }}
+  whileHover={{
+    scale: 1.02,
+    boxShadow: "0 20px 40px rgba(175, 188, 57, 0.3)",
+    background: "linear-gradient(to right, rgb(250, 204, 21), rgb(234, 179, 8))" // yellow-400 → yellow-500
+  }}
+  whileTap={{ scale: 0.98 }}
+>
+  Submit Application
+</motion.button>
             </form>
             </motion.div>
           </div>
@@ -637,8 +643,7 @@ const RegisteredAgent = () => {
             viewport={{ once: true }}
             variants={fadeUp}
           >
-            <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-12">
-
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-center space-y-4 md:space-y-0 md:space-x-12">
 
               {/* Legal Compliance */}
               <div className="flex items-center space-x-3">

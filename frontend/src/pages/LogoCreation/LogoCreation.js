@@ -518,7 +518,7 @@ const LogoCreation = () => {
                 <span className="text-2xl font-bold text-white">3</span>
               </div>
               <h3 className="text-xl font-bold text-white mb-4">Finalization & Delivery</h3>
-              <p className="text-blue-200 leading-relaxed">
+              <p className="text-blue-100 leading-relaxed">
                 After feedback, the chosen concept is refined and delivered in high-quality formats for all platforms.
               </p>
               <div className="mt-4 text-sm font-medium text-green-400">Elite Filing</div>

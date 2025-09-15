@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import bgVideo from '../../assets/bgvideo.mp4';
 const Hero = () => {
@@ -95,10 +96,12 @@ const Hero = () => {
                 Rely on us to manage the complexities while you concentrate on driving growth.
               </p>
               
+              <Link to="/contact">
               <button className="hero-cta-button group text-xl sm:text-lg lg:text-xl">
                 <span className="mr-2">Start Your Business Today</span>
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </button>
+            </Link>
             </div>
           </div>
         </div>

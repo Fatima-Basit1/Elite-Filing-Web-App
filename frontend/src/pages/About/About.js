@@ -83,7 +83,7 @@ const About = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Elite Filing is an authorized partner of Companies House, making UK Limited Company formation simple, fast, and compliant. With our reliable in-house system, we deliver seamless registrations, accurate documentation, and professional support—helping entrepreneurs and businesses start strong with confidence.
+             Elite Filing is an authorized partner of Companies House, making UK Limited Company formation simple, fast, and compliant. With our reliable in-house system, we deliver seamless registrations, accurate documentation, and professional support that help entrepreneurs and businesses start strong with confidence.
             </motion.p>
           </motion.div>
         </div>
@@ -95,7 +95,7 @@ const About = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* CEO Photo */}
             <motion.div 
-              className="flex justify-center lg:justify-start"
+              className="flex flex-col items-center lg:items-start"
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
@@ -118,6 +118,18 @@ const About = () => {
                   
                 </motion.div>
               </div>
+              
+              {/* CEO Name and Title */}
+              <motion.div 
+                className="text-center mt-8 w-[400px]"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Muhammad Hasan</h3>
+                <p className="text-lg text-yellow-600 font-semibold">Chief Executive Officer</p>
+              </motion.div>
             </motion.div>
             
             {/* CEO Message Content */}
@@ -162,7 +174,7 @@ const About = () => {
                   transition={{ duration: 0.6, delay: 0.2 }}
                   viewport={{ once: true }}
                 >
-                  <strong className="text-blue-900">Mission:</strong> Remove barriers of red tape, paperwork, and confusion → replace with clarity, efficiency, confidence.
+                  <strong className="text-blue-900">Mission:</strong> Remove barriers of red tape, paperwork, and confusion, and replace them with clarity, efficiency, and confidence.
                 </motion.p>
                 
                 <motion.div 
@@ -202,7 +214,7 @@ const About = () => {
                     >Established businesses</motion.li>
                   </motion.ul>
                   <p className="mt-4 text-lg">
-                    Services cover: registration, compliance, and growth.
+                    Services cover registration, compliance, and growth.
                   </p>
                 </motion.div>
                 
@@ -213,7 +225,7 @@ const About = () => {
                   transition={{ duration: 0.6, delay: 0.4 }}
                   viewport={{ once: true }}
                 >
-                  Elite Filing is positioned as more than a service — it's a movement, making business ownership accessible to all.
+                  Elite Filing is positioned as more than a service. It is a movement that makes business ownership accessible to all.
                 </motion.p>
                 
                 <motion.p 
@@ -223,7 +235,7 @@ const About = () => {
                   transition={{ duration: 0.6, delay: 0.5 }}
                   viewport={{ once: true }}
                 >
-                  <strong className="text-blue-900">Core values:</strong> innovation, vision-driven approach, redefining business creation.
+                  <strong className="text-blue-900">Core values:</strong> innovation, a vision-driven approach, and redefining business creation.
                 </motion.p>
                 
                 <motion.blockquote 
