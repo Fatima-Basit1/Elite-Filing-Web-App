@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
@@ -16,6 +16,9 @@ const TrademarkUK = () => {
     message: ''
   });
 
+    useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -70,30 +73,30 @@ const TrademarkUK = () => {
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left">
           <div className="text-white animate-fade-in-up">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
               Trademark Registration UK{' '}
               <span className="block text-yellow-400">with Elite Filing</span>
             </h1>
-            <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed max-w-4xl">
+            <p className="text-lg sm:text-xl md:text-2xl text-blue-100 mb-6 sm:mb-8 leading-relaxed max-w-4xl">
               Protect your brand with professional trademark registration services. Secure exclusive rights and legal protection for your business identity.
             </p>
-            <div className="flex flex-wrap justify-start gap-4 mb-8">
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+            <div className="flex flex-wrap justify-start gap-2 sm:gap-4 mb-6 sm:mb-8">
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base">
                 <span className="text-yellow-400 font-semibold">✓</span>
                 <span className="ml-2">Exclusive Rights</span>
               </div>
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base">
                 <span className="text-yellow-400 font-semibold">✓</span>
                 <span className="ml-2">Brand Protection</span>
               </div>
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base">
                 <span className="text-yellow-400 font-semibold">✓</span>
                 <span className="ml-2">Legal Support</span>
               </div>
             </div>
             <button
               onClick={() => document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' })}
-              className="flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 font-semibold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:from-yellow-500 hover:to-yellow-600"
+              className="flex items-center justify-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:from-yellow-500 hover:to-yellow-600 w-full sm:w-auto text-center"
             >
               Start Registration
               <svg
@@ -113,7 +116,7 @@ const TrademarkUK = () => {
 
       {/* What is Trademark Section */}
       <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -136,7 +139,7 @@ const TrademarkUK = () => {
 
       {/* Why Register Section */}
       <section className="py-20">
-        <div className="container mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -155,7 +158,7 @@ const TrademarkUK = () => {
             whileInView="visible"
             viewport={{ once: true }}
             variants={staggerContainer}
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8"
           >
             {[
               {
@@ -183,7 +186,7 @@ const TrademarkUK = () => {
                 key={index}
                 variants={fadeInUp}
                 whileHover="hover"
-                className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 text-center group"
+                className="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100 text-center group"
               >
                 <motion.div
                   variants={cardHover}
@@ -207,7 +210,7 @@ const TrademarkUK = () => {
 
       {/* Eligibility Section */}
       <section className="py-20 bg-blue-50">
-        <div className="container mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -228,38 +231,38 @@ const TrademarkUK = () => {
             variants={fadeInUp}
             className="max-w-4xl mx-auto"
           >
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <svg className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Unique & Identifiable</h3>
-                  <p className="text-gray-600">Your trademark must be distinctive and easily recognizable</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">Unique & Identifiable</h3>
+                  <p className="text-sm sm:text-base text-gray-600">Your trademark must be distinctive and easily recognizable</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4" style={{
                     backgroundColor: 'rgba(6,30,68,0.1)'
                   }}>
-                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" style={{
+                    <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="currentColor" viewBox="0 0 24 24" style={{
                       color: 'rgba(6,30,68,1)'
                     }}>
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Non-Generic</h3>
-                  <p className="text-gray-600">Avoid generic or overly descriptive terms</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">Non-Generic</h3>
+                  <p className="text-sm sm:text-base text-gray-600">Avoid generic or overly descriptive terms</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <svg className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                     </svg>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">No Conflicts</h3>
-                  <p className="text-gray-600">Must not conflict with existing registered trademarks</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">No Conflicts</h3>
+                  <p className="text-sm sm:text-base text-gray-600">Must not conflict with existing registered trademarks</p>
                 </div>
               </div>
             </div>
@@ -271,7 +274,7 @@ const TrademarkUK = () => {
       <section id="contact-form" className="py-20" style={{
         background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
       }}>
-        <div className="container mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -295,11 +298,11 @@ const TrademarkUK = () => {
             variants={fadeInUp}
             className="max-w-4xl mx-auto"
           >
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-100">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                       First Name *
                     </label>
                     <input
@@ -307,7 +310,7 @@ const TrademarkUK = () => {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
                       style={{
                         '--tw-ring-color': 'rgba(6,30,68,1)'
                       }}
@@ -315,7 +318,7 @@ const TrademarkUK = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                       Last Name *
                     </label>
                     <input
@@ -323,7 +326,7 @@ const TrademarkUK = () => {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
                       style={{
                         '--tw-ring-color': 'rgba(6,30,68,1)'
                       }}
@@ -332,9 +335,9 @@ const TrademarkUK = () => {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                       Phone Number *
                     </label>
                     <input
@@ -342,7 +345,7 @@ const TrademarkUK = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
                       style={{
                         '--tw-ring-color': 'rgba(6,30,68,1)'
                       }}
@@ -350,7 +353,7 @@ const TrademarkUK = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                       Company Name
                     </label>
                     <input
@@ -358,7 +361,7 @@ const TrademarkUK = () => {
                       name="companyName"
                       value={formData.companyName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
                       style={{
                         '--tw-ring-color': 'rgba(6,30,68,1)'
                       }}
@@ -366,16 +369,16 @@ const TrademarkUK = () => {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                       Trademark Type *
                     </label>
                     <select
                       name="trademarkType"
                       value={formData.trademarkType}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
                       style={{
                         '--tw-ring-color': 'rgba(6,30,68,1)'
                       }}
@@ -390,14 +393,14 @@ const TrademarkUK = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                       Business Sector *
                     </label>
                     <select
                       name="businessSector"
                       value={formData.businessSector}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
                       style={{
                         '--tw-ring-color': 'rgba(6,30,68,1)'
                       }}
@@ -416,7 +419,7 @@ const TrademarkUK = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                     Additional Information
                   </label>
                   <textarea
@@ -424,7 +427,7 @@ const TrademarkUK = () => {
                     value={formData.message}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all resize-none"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all resize-none text-base"
                     style={{
                       '--tw-ring-color': 'rgba(6,30,68,1)'
                     }}
@@ -436,7 +439,7 @@ const TrademarkUK = () => {
                   type="submit"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full text-white py-4 px-8 rounded-lg font-semibold text-lg transition-colors shadow-lg"
+                  className="w-full text-white py-3 sm:py-4 px-6 sm:px-8 rounded-lg font-semibold text-base sm:text-lg transition-colors shadow-lg"
                   style={{
                     background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
                   }}
@@ -450,14 +453,14 @@ const TrademarkUK = () => {
       </section>
 
       {/* Trust Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-6">
+      <section className="py-12 sm:py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={staggerContainer}
-            className="grid md:grid-cols-3 gap-8 text-center"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 text-center"
           >
             {[
               {
@@ -479,13 +482,13 @@ const TrademarkUK = () => {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="flex items-center justify-center space-x-3"
+                className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3"
               >
-                <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold">
+                <div className="w-10 h-10 sm:w-8 sm:h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-base">
                   {item.icon}
                 </div>
-                <div className="text-left">
-                  <h4 className="font-semibold text-gray-900">{item.title}</h4>
+                <div className="text-center sm:text-left">
+                  <h4 className="font-semibold text-gray-900 text-base sm:text-sm">{item.title}</h4>
                   <p className="text-sm text-gray-600">{item.description}</p>
                 </div>
               </motion.div>

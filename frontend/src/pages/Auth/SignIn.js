@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
@@ -12,6 +12,10 @@ const SignIn = () => {
     email: '',
     password: ''
   });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -200,6 +204,7 @@ const SignIn = () => {
               >
                 <Link 
                   to="/sign-up"
+                  onClick={() => window.scrollTo(0, 0)}
                   className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl inline-block"
                 >
                   Create Account

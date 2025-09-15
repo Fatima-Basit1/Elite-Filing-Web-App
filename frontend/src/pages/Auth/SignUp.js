@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
@@ -13,6 +13,10 @@ const SignUp = () => {
     password: '',
     confirmPassword: ''
   });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -196,6 +200,7 @@ const SignUp = () => {
             <motion.a
               whileHover={{ scale: 1.02 }}
               href="/get-started"
+              onClick={() => window.scrollTo(0, 0)}
               className="inline-block bg-gray-100 text-gray-700 py-2 px-6 rounded-lg font-medium hover:bg-gray-200 transition-all duration-200"
             >
               Sign In

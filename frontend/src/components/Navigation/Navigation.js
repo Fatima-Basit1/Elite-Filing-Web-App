@@ -358,6 +358,7 @@ const Navigation = () => {
             <div className="hidden md:block">
               <Link
                 to="/get-started"
+                onClick={() => window.scrollTo(0, 0)}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-5 sm:px-6 md:px-7 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center justify-center min-w-[100px] sm:min-w-[120px]"
               >
                 Get Started
@@ -472,7 +473,10 @@ const Navigation = () => {
               <Link
                 to="/get-started"
                 className="block w-full max-w-[280px] mx-auto text-center bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  window.scrollTo(0, 0);
+                }}
               >
                 Get Started
               </Link>
