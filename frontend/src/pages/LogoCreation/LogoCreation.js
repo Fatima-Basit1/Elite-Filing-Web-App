@@ -188,7 +188,7 @@ const LogoCreation = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">Guided Design Process</h3>
               <p className="text-gray-600 leading-relaxed">
-                To guide potential clients to submit the necessary information via a form so the design team can create a logo aligned with the client's vision.
+                Guide clients to submit form details so the design team can create a logo that matches their vision.
               </p>
               <div className="mt-4 text-sm font-medium" style={{
                 color: 'rgba(6,30,68,1)'
@@ -498,7 +498,7 @@ const LogoCreation = () => {
               whileHover={{ y: -10, transition: { duration: 0.3 } }}
             >
               <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{
-                background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                background: 'linear-gradient(180deg, rgb(39, 99, 197) 0%, rgb(21, 77, 174) 100%)'
               }}>
                 <span className="text-2xl font-bold text-white">2</span>
               </div>
@@ -506,7 +506,7 @@ const LogoCreation = () => {
               <p className="text-blue-100 leading-relaxed">
                 Designers will create multiple logo concepts, using creativity + strategy.
               </p>
-              <div className="mt-4 text-sm font-medium text-yellow-400">Elite Filing</div>
+              <div className="mt-4 text-sm font-medium text-blue-400">Elite Filing</div>
             </motion.div>
             
             <motion.div
@@ -518,8 +518,8 @@ const LogoCreation = () => {
                 <span className="text-2xl font-bold text-white">3</span>
               </div>
               <h3 className="text-xl font-bold text-white mb-4">Finalization & Delivery</h3>
-              <p className="text-blue-100 leading-relaxed">
-                After feedback, the selected concept is refined and delivered in high-quality formats, ready for all platforms.
+              <p className="text-blue-200 leading-relaxed">
+                After feedback, the chosen concept is refined and delivered in high-quality formats for all platforms.
               </p>
               <div className="mt-4 text-sm font-medium text-green-400">Elite Filing</div>
             </motion.div>
@@ -587,7 +587,7 @@ const LogoCreation = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">Professional Design</h3>
               <p className="text-gray-600 leading-relaxed">
-                Visually appealing, professional design.
+                Clean, visually appealing, and polished design that enhances your brand image.
               </p>
               <div className="mt-4 text-sm font-medium text-pink-600">Elite Filing</div>
             </motion.div>

@@ -85,9 +85,7 @@ const BusinessSolutions = () => {
               textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
             }}
           >
-            Launch and grow your business with confidence.  
-            We deliver tailored solutions from company formation to digital office services -  
-            designed to keep your operations seamless and future-ready.
+            Elite Filing, authorized by Companies House, offers seamless UK Limited company formation with our approved in-house software and helps you start or expand your business with confidence.
           </p>
         </motion.div>
 
@@ -185,9 +183,7 @@ const BusinessSolutions = () => {
                   textShadow: '0 1px 3px rgba(0, 0, 0, 0.2)'
                 }}
               >
-                A prestigious UK business address — without the overhead.  
-                Manage operations remotely with secure mail forwarding and digital office support,  
-                giving your brand instant credibility from anywhere in the world.
+                Elite Filing provides virtual offices with a professional address, mail forwarding, multi-currency accounts, free logo design and an easy website builder to support your business from setup to growth.
               </p>
             </motion.div>
 
