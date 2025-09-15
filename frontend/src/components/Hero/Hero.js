@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import bgVideo from '../../assets/bgvideo.mp4';
-
 const Hero = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const heroImages = [
     {
-      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-4L-SMBEE6Z-150x150-1.png",
+      src: "/images/image-4L-SMBEE6Z-150x150-1.png",
       alt: "image-4L-SMBEE6Z-150x150"
     },
     {
-      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-8L-SMBEE6Z-150x150-1.png",
+      src: "/images/image-8L-SMBEE6Z-150x150-1.png",
       alt: "image-8L-SMBEE6Z-150x150"
     },
     {
-      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-1L-SMBEE6Z-150x150-1.png",
+      src: "/images/image-1L-SMBEE6Z-150x150-1.png",
       alt: "image-1L-SMBEE6Z-150x150"
     },
     {
-      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-3L-SMBEE6Z-150x150-1.png",
+      src: "/images/image-3L-SMBEE6Z-150x150-1.png",
       alt: "image-3L-SMBEE6Z-150x150"
     }
   ];
