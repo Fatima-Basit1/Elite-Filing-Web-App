@@ -158,7 +158,7 @@ const RegisteredAgent = () => {
             {/* Card 1: Official Point of Contact */}
             <motion.div
               className="bg-white rounded-xl shadow-lg p-8 text-center hover:-translate-y-2 transition-all duration-300 hover:shadow-xl"
-              variants={scaleIn}
+              variants={slideFromLeft}
             >
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
                 background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
@@ -180,7 +180,7 @@ const RegisteredAgent = () => {
             {/* Card 2: Safeguard Legal Documents */}
             <motion.div
               className="bg-white rounded-xl shadow-lg p-8 text-center hover:-translate-y-2 transition-all duration-300 hover:shadow-xl"
-              variants={scaleIn}
+              variants={slideFromRight}
             >
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
                 background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'

@@ -32,10 +32,22 @@ const BankAccounts = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        // Handle form submission logic here
+        setIsSubmitting(true);
+        setSubmitStatus(null);
+        
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            console.log('Form submitted:', formData);
+            setSubmitStatus('success');
+        } catch (error) {
+            console.error('Submission error:', error);
+            setSubmitStatus('error');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleShowForm = () => {
@@ -252,10 +264,27 @@ const BankAccounts = () => {
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         type="submit"
-                                        className="w-full bg-[#1e3a8a] hover:bg-[#facc15] text-white hover:text-[#1e3a8a] py-4 px-6 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
+                                        disabled={isSubmitting}
+                                        className={`w-full py-4 px-6 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl ${
+                                            isSubmitting 
+                                                ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                                                : 'bg-[#1e3a8a] hover:bg-[#facc15] text-white hover:text-[#1e3a8a]'
+                                        }`}
                                     >
-                                        SUBMIT
+                                        {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
                                     </motion.button>
+                                    
+                                    {submitStatus === 'success' && (
+                                        <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                                            Form submitted successfully!
+                                        </div>
+                                    )}
+                                    
+                                    {submitStatus === 'error' && (
+                                        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                                            There was an error submitting the form. Please try again.
+                                        </div>
+                                    )}
                                 </form>
                             </motion.div>
                         </div>
