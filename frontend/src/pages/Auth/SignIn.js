@@ -5,7 +5,6 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
-import bluebg from '../../assets/bluebg.jpg';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({

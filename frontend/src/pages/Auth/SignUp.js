@@ -178,13 +178,13 @@ const SignUp = () => {
             className="text-xs text-gray-500 text-center mt-6"
           >
             By creating an account, you agree to our{' '}
-            <a href="#" className="text-blue-600 hover:underline">
+            <button type="button" className="text-blue-600 hover:underline bg-transparent border-none cursor-pointer">
               Terms of Service
-            </a>{' '}
+            </button>{' '}
             and{' '}
-            <a href="#" className="text-blue-600 hover:underline">
+            <button type="button" className="text-blue-600 hover:underline bg-transparent border-none cursor-pointer">
               Privacy Policy
-            </a>
+            </button>
           </motion.p>
 
           {/* Sign In Link */}
