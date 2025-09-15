@@ -35,24 +35,7 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, [heroImages.length]);
 
-  const removedHeroImages = [
-    {
-      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-4L-SMBEE6Z-150x150-1.png",
-      alt: "image-4L-SMBEE6Z-150x150"
-    },
-    {
-      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-8L-SMBEE6Z-150x150-1.png",
-      alt: "image-8L-SMBEE6Z-150x150"
-    },
-    {
-      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-1L-SMBEE6Z-150x150-1.png",
-      alt: "image-1L-SMBEE6Z-150x150"
-    },
-    {
-      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-3L-SMBEE6Z-150x150-1.png",
-      alt: "image-3L-SMBEE6Z-150x150"
-    }
-  ];
+
 
   const scrollLeft = () => {
     setCurrentImageIndex((prev) => 
