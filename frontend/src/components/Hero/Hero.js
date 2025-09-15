@@ -1,9 +1,54 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import bgVideo from '../../assets/bgvideo.mp4';
 
 const Hero = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Auto-rotation effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => 
+        prev === heroImages.length - 1 ? 0 : prev + 1
+      );
+    }, 3000); // Change image every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const heroImages = [
+    {
+      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-4L-SMBEE6Z-150x150-1.png",
+      alt: "image-4L-SMBEE6Z-150x150"
+    },
+    {
+      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-8L-SMBEE6Z-150x150-1.png",
+      alt: "image-8L-SMBEE6Z-150x150"
+    },
+    {
+      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-1L-SMBEE6Z-150x150-1.png",
+      alt: "image-1L-SMBEE6Z-150x150"
+    },
+    {
+      src: "https://elite-filing.com/wp-content/uploads/2025/01/image-3L-SMBEE6Z-150x150-1.png",
+      alt: "image-3L-SMBEE6Z-150x150"
+    }
+  ];
+
+  const scrollLeft = () => {
+    setCurrentImageIndex((prev) => 
+      prev === 0 ? heroImages.length - 1 : prev - 1
+    );
+  };
+
+  const scrollRight = () => {
+    setCurrentImageIndex((prev) => 
+      prev === heroImages.length - 1 ? 0 : prev + 1
+    );
+  };
+
   return (
-    <div className="hero-container">
+    <div className="hero-container relative">
       {/* Background Video */}
       <video 
         className="hero-video"
@@ -57,6 +102,68 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Logo Display - Desktop */}
+      <div className="absolute bottom-16 right-16 z-20 hidden md:block">
+        <div className="relative w-32 h-24 flex items-center justify-center">
+          {/* Left Arrow */}
+          <button
+            onClick={scrollLeft}
+            className="absolute -left-10 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
+          >
+            <ChevronLeftIcon className="w-7 h-7 drop-shadow-lg" />
+          </button>
+
+          {/* Right Arrow */}
+          <button
+            onClick={scrollRight}
+            className="absolute -right-10 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
+          >
+            <ChevronRightIcon className="w-7 h-7 drop-shadow-lg" />
+          </button>
+
+          {/* Logo Display */}
+          <div className="w-24 h-24 flex items-center justify-center">
+            <img 
+              src={heroImages[currentImageIndex].src}
+              alt={heroImages[currentImageIndex].alt}
+              className="h-20 w-20 object-contain rounded-lg bg-white/10 backdrop-blur-sm p-2 transition-all duration-500 hover:scale-110" 
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Logo Display */}
+      <div className="absolute bottom-8 right-8 z-20 block md:hidden">
+        <div className="relative w-20 h-16 flex items-center justify-center">
+          {/* Left Arrow */}
+          <button
+            onClick={scrollLeft}
+            className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
+          >
+            <ChevronLeftIcon className="w-5 h-5 drop-shadow-lg" />
+          </button>
+
+          {/* Right Arrow */}
+          <button
+            onClick={scrollRight}
+            className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 transition-all duration-200 text-yellow-400 hover:text-yellow-500 cursor-pointer p-1"
+          >
+            <ChevronRightIcon className="w-5 h-5 drop-shadow-lg" />
+          </button>
+
+          {/* Mobile Logo Display */}
+          <div className="w-16 h-16 flex items-center justify-center">
+            <img 
+              src={heroImages[currentImageIndex].src}
+              alt={heroImages[currentImageIndex].alt}
+              className="h-12 w-12 object-contain rounded-lg bg-white/10 backdrop-blur-sm p-1 transition-all duration-500 hover:scale-110" 
+            />
+          </div>
+        </div>
+      </div>
+
+
     </div>
   );
 };

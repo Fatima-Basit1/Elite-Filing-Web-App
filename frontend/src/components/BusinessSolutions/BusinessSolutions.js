@@ -68,13 +68,10 @@ const BusinessSolutions = () => {
           <h2
             className="text-4xl lg:text-5xl font-extrabold mb-6 tracking-wide"
             style={{
-              background: 'linear-gradient(135deg,rgb(225, 219, 201) 0%,rgb(237, 235, 221) 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              
-              fontFamily: 'Inter, sans-serif'
-            }}
+  color: '#fff', // white text
+  textShadow: '2px 2px 6px rgba(0,0,0,0.6)', // soft shadow
+  fontFamily: 'Inter, sans-serif',
+}}
           >
             Business Start-Up Solutions
           </h2>
@@ -89,7 +86,7 @@ const BusinessSolutions = () => {
             }}
           >
             Launch and grow your business with confidence.  
-            We deliver tailored solutions — from company formation to digital office services —  
+            We deliver tailored solutions from company formation to digital office services -  
             designed to keep your operations seamless and future-ready.
           </p>
         </motion.div>
