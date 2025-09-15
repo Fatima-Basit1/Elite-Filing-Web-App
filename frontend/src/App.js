@@ -17,6 +17,7 @@ import SECPRegistration from './pages/CompanyFormation/Pakistan/SECPRegistration
 import PSEBRegistration from './pages/CompanyFormation/Pakistan/PSEBRegistration';
 import FBRRegistration from './pages/CompanyFormation/Pakistan/FBRRegistration';
 import Contact from './pages/Contact/Contact';
+import About from './pages/About/About';
 import NotFound from './pages/NotFound/NotFound';
 import USCompanyFiling from './pages/USCompanyFiling/USCompanyFiling';
 import UKCompanyFiling from './pages/UKCompanyFiling/UKCompanyFiling';
@@ -46,6 +47,7 @@ function App() {
         <Route path="/company-formation/pakistan/pseb" element={<PSEBRegistration />} />
         <Route path="/company-formation/pakistan/fbr" element={<FBRRegistration />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
         <Route path="/blogs/company-filing-us" element={<USCompanyFiling />} />
         <Route path="/blogs/company-filing-uk" element={<UKCompanyFiling />} />
         <Route path="/blogs/digital-marketing" element={<DigitalMarketing />} />
