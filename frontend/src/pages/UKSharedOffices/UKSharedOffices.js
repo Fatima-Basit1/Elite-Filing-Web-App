@@ -159,7 +159,7 @@ const UKSharedOffices = () => {
             {/* Professional Address */}
             <motion.div
               className="bg-white rounded-2xl shadow-lg p-8 text-center hover:-translate-y-2 transition-all duration-300 hover:shadow-xl border border-gray-100"
-              variants={scaleIn}
+              variants={slideFromLeft}
             >
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
                 background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
@@ -181,7 +181,7 @@ const UKSharedOffices = () => {
             {/* Mail Handling */}
             <motion.div
               className="bg-white rounded-2xl shadow-lg p-8 text-center hover:-translate-y-2 transition-all duration-300 hover:shadow-xl border border-gray-100"
-              variants={scaleIn}
+              variants={slideFromRight}
             >
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{
                 background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
