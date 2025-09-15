@@ -117,16 +117,16 @@ const Navigation = () => {
           ),
           hasSubDropdown: true,
           subItems: [
-            { name: 'Company Registration', href: '/company-formation/uk/registration' },
-            { name: 'Company Annual Accounts Filing', href: '/company-formation/uk/annual-accounts' },
-            { name: 'Company Closure Dissolution', href: '/company-formation/uk/closure' },
-            { name: 'Company Name Change', href: '/company-formation/uk/name-change' },
-            { name: 'Company Structural Change', href: '/company-formation/uk/structural-change' },
-            { name: 'Confirmation Statement Filing', href: '/company-formation/uk/confirmation-statement' },
-            { name: 'EORI Number Application', href: '/company-formation/uk/eori' },
-            { name: 'VAT Number Registration', href: '/company-formation/uk/vat-registration' },
-            { name: 'VAT Return Filing', href: '/company-formation/uk/vat-return' },
-            { name: 'UK Bank Accounts', href: '/company-formation/uk/bank-accounts' }
+            { name: 'Company Registration', href: '/UK/CompanyRegistration' },
+            { name: 'Company Annual Accounts Filing', href: '/UK/AnnualAccounts' },
+            { name: 'Company Closure Dissolution', href: '/UK/CompanyClosure' },
+            { name: 'Company Name Change', href: '/UK/CompanyNameChange' },
+            { name: 'Company Structural Change', href: '/UK/StructuralChange' },
+            { name: 'Confirmation Statement Filing', href: '/UK/ConfirmationStatement' },
+            { name: 'EORI Number Application', href: '/UK/EORIApplication' },
+            { name: 'VAT Number Registration', href: '/UK/VATRegistration' },
+            { name: 'VAT Return Filing', href: '/UK/VATReturn' },
+            { name: 'UK Bank Accounts', href: '/UK/BankAccounts' }
           ]
         },
         {
