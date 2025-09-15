@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDownIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import logo from '../../assets/logo.png';
@@ -7,6 +7,49 @@ const Navigation = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [activeSubDropdown, setActiveSubDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hoverTimeout, setHoverTimeout] = useState(null);
+
+  // Helper functions for better hover handling
+  const handleMouseEnter = (index) => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+    setActiveDropdown(index);
+  };
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setActiveDropdown(null);
+      setActiveSubDropdown(null);
+    }, 800); // Increased to 500ms
+    setHoverTimeout(timeout);
+  };
+
+  const handleDropdownMouseEnter = (index) => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+    setActiveDropdown(index);
+  };
+
+  const handleSubDropdownMouseEnter = (index) => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+    setActiveSubDropdown(index);
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
+    };
+  }, [hoverTimeout]);
 
   const menuItems = [
     { name: 'Home', href: '/' },
@@ -215,13 +258,8 @@ const Navigation = () => {
                 <div 
                   key={index} 
                   className="relative group"
-                  onMouseEnter={() => setActiveDropdown(index)}
-                  onMouseLeave={() => {
-                    setTimeout(() => {
-                      setActiveDropdown(null);
-                      setActiveSubDropdown(null);
-                    }, 300);
-                  }}
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseLeave={handleMouseLeave}
                 >
                   {item.hasDropdown ? (
                     <button
@@ -244,18 +282,13 @@ const Navigation = () => {
                     <>
                       {/* Invisible bridge to prevent dropdown from closing */}
                       <div 
-                        className="absolute top-full left-0 w-full h-2 z-40"
-                        onMouseEnter={() => setActiveDropdown(index)}
+                        className="absolute top-full left-0 w-full h-4 z-40"
+                        onMouseEnter={() => handleDropdownMouseEnter(index)}
                       ></div>
                       <div 
-                        className="absolute top-full left-0 mt-2 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
-                        onMouseEnter={() => setActiveDropdown(index)}
-                        onMouseLeave={() => {
-                          setTimeout(() => {
-                            setActiveDropdown(null);
-                            setActiveSubDropdown(null);
-                          }, 300);
-                        }}
+                        className="absolute top-full left-0 mt-0 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
+                        onMouseEnter={() => handleDropdownMouseEnter(index)}
+                        onMouseLeave={handleMouseLeave}
                       >
                       {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
                         item.hasNestedDropdown ? (
@@ -265,7 +298,7 @@ const Navigation = () => {
                                 ? 'text-gray-400 cursor-not-allowed'
                                 : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 hover:shadow-sm'
                                 }`}
-                              onMouseEnter={() => dropdownItem.hasSubDropdown && setActiveSubDropdown(dropdownIndex)}
+                              onMouseEnter={() => dropdownItem.hasSubDropdown && handleSubDropdownMouseEnter(dropdownIndex)}
                               onClick={dropdownItem.isDisabled ? (e) => e.preventDefault() : undefined}
                             >
                               <div className="flex items-center">
@@ -282,11 +315,12 @@ const Navigation = () => {
                             {dropdownItem.hasSubDropdown && activeSubDropdown === dropdownIndex && (
                               <div 
                                 className="absolute left-full top-0 ml-2 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
-                                onMouseEnter={() => setActiveSubDropdown(dropdownIndex)}
+                                onMouseEnter={() => handleSubDropdownMouseEnter(dropdownIndex)}
                                 onMouseLeave={() => {
-                                  setTimeout(() => {
+                                  const timeout = setTimeout(() => {
                                     setActiveSubDropdown(null);
-                                  }, 300);
+                                  }, 500);
+                                  setHoverTimeout(timeout);
                                 }}
                               >
                                 {dropdownItem.subItems.map((subItem, subIndex) => (
