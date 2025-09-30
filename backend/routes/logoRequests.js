@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const LogoRequest = require('../models/LogoRequest');
+const { sendLogoRequestEmail } = require('../utils/emailService');
 
 const router = express.Router();
 
@@ -12,17 +13,8 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadsDir);
-  },
-  filename: function (req, file, cb) {
-    // Generate unique filename with timestamp
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Configure multer to store files in memory first for email attachments
+const storage = multer.memoryStorage();
 
 // File filter to only allow images
 const fileFilter = (req, file, cb) => {
@@ -73,11 +65,11 @@ router.post('/', upload.array('referenceImages', 5), async (req, res) => {
 
     // Process uploaded files
     const referenceImages = req.files ? req.files.map(file => ({
-      filename: file.filename,
+      filename: file.originalname,
       originalName: file.originalname,
       mimetype: file.mimetype,
       size: file.size,
-      path: file.path
+      buffer: file.buffer
     })) : [];
 
     // Create new logo request
@@ -94,7 +86,26 @@ router.post('/', upload.array('referenceImages', 5), async (req, res) => {
       message
     });
 
-    await logoRequest.save();
+    const savedRequest = await logoRequest.save();
+
+    // Send confirmation email
+    const emailResult = await sendLogoRequestEmail(
+      {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        businessName,
+        logoStyle,
+        colorPreferences,
+        symbolsElements,
+        message
+      },
+      referenceImages
+    );
+
+    // Log email result for debugging
+    console.log('Email sending result:', emailResult);
 
     res.status(201).json({
       success: true,
@@ -107,7 +118,8 @@ router.post('/', upload.array('referenceImages', 5), async (req, res) => {
         businessName: logoRequest.businessName,
         status: logoRequest.status,
         createdAt: logoRequest.createdAt,
-        filesUploaded: referenceImages.length
+        filesUploaded: referenceImages.length,
+        emailSent: emailResult.success
       }
     });
 
