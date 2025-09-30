@@ -100,7 +100,11 @@ const LogoCreation = () => {
       const result = await response.json();
 
       if (result.success) {
-        alert('Logo request submitted successfully!');
+        let message = 'Logo request submitted successfully!';
+        if (!result.data.emailSent) {
+          message += '\nNote: Confirmation email could not be sent at this time, but your request has been saved.';
+        }
+        alert(message);
         // Reset form
         setFormData({
           firstName: '',

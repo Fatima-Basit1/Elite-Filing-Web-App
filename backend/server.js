@@ -1,7 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
+const path = require('path');
+const result = require('dotenv').config({ path: path.join(__dirname, '.env') });
+if (result.error) {
+  console.error('Error loading .env file:', result.error);
+  process.exit(1);
+}
+
+console.log('Environment variables loaded:', {
+  PORT: process.env.PORT,
+  NODE_ENV: process.env.NODE_ENV,
+  SMTP_HOST: process.env.SMTP_HOST,
+  SMTP_USER: process.env.SMTP_USER
+});
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +29,12 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/elite-
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
+  socketTimeoutMS: 45000, // Increase socket timeout to 45 seconds
+  connectTimeoutMS: 30000, // Connection timeout
+  retryWrites: true,
+  w: 'majority',
+  family: 4 // Force IPv4
 })
 .then(() => console.log('MongoDB connected successfully'))
 .catch(err => console.error('MongoDB connection error:', err));
