@@ -21,6 +21,7 @@ const Home = () => {
         <Hero />
       </div>
       <WhyChooseUs />
+      <OurCollaborators />
       <OurServices />
       <Statistics />
       <FormLaunchGrow />
@@ -28,7 +29,7 @@ const Home = () => {
       <Blogs />
       <Testimonials />
       <ServicesSection />
-      <OurCollaborators />
+      
       <Footer />
       <ChatWidget />
     </div>

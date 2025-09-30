@@ -1,113 +1,434 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { body, validationResult } = require('express-validator');
+const crypto = require('crypto');
 const User = require('../models/User');
+const { auth } = require('../middleware/authEnhanced');
+const { authLimiter, signupLimiter, passwordResetLimiter } = require('../middleware/rateLimiting');
+const { 
+  signupValidationRules, 
+  loginValidationRules, 
+  handleValidationErrors,
+  sanitizeInput 
+} = require('../utils/validation');
+const {
+  generateTokenPair,
+  setTokenCookies,
+  clearTokenCookies,
+  verifyRefreshToken,
+  extractUserIdFromToken
+} = require('../utils/tokenUtils');
+const {
+  logLoginSuccess,
+  logLoginFailure,
+  logLoginBlocked,
+  logSignupSuccess,
+  logSignupFailure,
+  logTokenRefresh,
+  logTokenRefreshFailure,
+  logLogout,
+  logAccountLocked
+} = require('../utils/securityLogger');
+
 const router = express.Router();
 
-// @route   POST /api/auth/register
-// @desc    Register a new user
+// @route   POST /api/auth/signup
+// @desc    Register a new user with enhanced security
 // @access  Public
-router.post('/register', [
-  body('name', 'Name is required').not().isEmpty(),
-  body('email', 'Please include a valid email').isEmail(),
-  body('password', 'Password must be 6 or more characters').isLength({ min: 6 })
-], async (req, res) => {
+router.post('/signup', 
+  signupLimiter,
+  signupValidationRules(),
+  handleValidationErrors,
+  async (req, res) => {
+    try {
+      // Sanitize input
+      const sanitizedBody = sanitizeInput(req.body);
+      const { name, email, password } = sanitizedBody;
+
+      // Check if user already exists
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      if (existingUser) {
+        logSignupFailure(email, 'Email already registered', req);
+        return res.status(400).json({ 
+          message: 'User with this email already exists',
+          code: 'EMAIL_EXISTS'
+        });
+      }
+
+      // Create new user
+      const user = new User({
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
+        password: password // Will be hashed by pre-save middleware if we add it, or hash here
+      });
+
+      // Hash password with high salt rounds
+      const saltRounds = parseInt(process.env.BCRYPT_ROUNDS) || 12;
+      const salt = await bcrypt.genSalt(saltRounds);
+      user.password = await bcrypt.hash(password, salt);
+
+      // Save user
+      await user.save();
+
+      // Generate token pair
+      const tokens = await generateTokenPair(user);
+
+      // Set secure cookies
+      setTokenCookies(res, tokens);
+
+      // Log successful signup
+      logSignupSuccess(user, req);
+
+      // Return user data (without sensitive info)
+      const userResponse = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        emailVerified: user.emailVerified,
+        createdAt: user.createdAt
+      };
+
+      res.status(201).json({
+        message: 'User registered successfully',
+        user: userResponse,
+        tokens: {
+          accessToken: tokens.accessToken,
+          expiresIn: tokens.expiresIn
+        }
+      });
+
+    } catch (error) {
+      console.error('Signup error:', error);
+      logSignupFailure(req.body.email, error.message, req);
+      
+      res.status(500).json({ 
+        message: 'Server error during registration',
+        code: 'SERVER_ERROR'
+      });
+    }
+  }
+);
+
+// @route   POST /api/auth/login
+// @desc    Login user with enhanced security
+// @access  Public
+router.post('/login',
+  authLimiter,
+  loginValidationRules(),
+  handleValidationErrors,
+  async (req, res) => {
+    try {
+      // Sanitize input
+      const sanitizedBody = sanitizeInput(req.body);
+      const { email, password } = sanitizedBody;
+
+      // Find user and include security fields
+      const user = await User.findOne({ email: email.toLowerCase() });
+      
+      if (!user) {
+        logLoginFailure(email, 'User not found', req);
+        return res.status(400).json({ 
+          message: 'Invalid credentials',
+          code: 'INVALID_CREDENTIALS'
+        });
+      }
+
+      // Check if account is locked
+      if (user.isLocked) {
+        logLoginBlocked(email, 'Account locked', req);
+        return res.status(423).json({ 
+          message: 'Account is temporarily locked due to too many failed login attempts',
+          code: 'ACCOUNT_LOCKED',
+          lockUntil: user.lockUntil
+        });
+      }
+
+      // Check if account is active
+      if (!user.isActive) {
+        logLoginBlocked(email, 'Account deactivated', req);
+        return res.status(403).json({ 
+          message: 'Account is deactivated',
+          code: 'ACCOUNT_DEACTIVATED'
+        });
+      }
+
+      // Verify password
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      
+      if (!isPasswordValid) {
+        // Increment login attempts
+        await user.incLoginAttempts();
+        
+        // Check if account should be locked
+        const updatedUser = await User.findById(user._id);
+        if (updatedUser.isLocked) {
+          logAccountLocked(user._id, email, req);
+        }
+        
+        logLoginFailure(email, 'Invalid password', req);
+        return res.status(400).json({ 
+          message: 'Invalid credentials',
+          code: 'INVALID_CREDENTIALS'
+        });
+      }
+
+      // Reset login attempts on successful login
+      if (user.loginAttempts > 0) {
+        await user.resetLoginAttempts();
+      }
+
+      // Update last login
+      user.lastLogin = new Date();
+      await user.save();
+
+      // Generate token pair
+      const tokens = await generateTokenPair(user);
+
+      // Set secure cookies
+      setTokenCookies(res, tokens);
+
+      // Log successful login
+      logLoginSuccess(user, req);
+
+      // Return user data (without sensitive info)
+      const userResponse = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        emailVerified: user.emailVerified,
+        lastLogin: user.lastLogin
+      };
+
+      res.json({
+        message: 'Login successful',
+        user: userResponse,
+        tokens: {
+          accessToken: tokens.accessToken,
+          expiresIn: tokens.expiresIn
+        }
+      });
+
+    } catch (error) {
+      console.error('Login error:', error);
+      logLoginFailure(req.body.email, error.message, req);
+      
+      res.status(500).json({ 
+        message: 'Server error during login',
+        code: 'SERVER_ERROR'
+      });
+    }
+  }
+);
+
+// @route   POST /api/auth/refresh
+// @desc    Refresh access token using refresh token
+// @access  Public (but requires valid refresh token)
+router.post('/refresh', async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    // Get refresh token from cookies or body
+    const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+
+    if (!refreshToken) {
+      logTokenRefreshFailure('No refresh token provided', req);
+      return res.status(401).json({ 
+        message: 'Refresh token required',
+        code: 'NO_REFRESH_TOKEN'
+      });
     }
 
-    const { name, email, password } = req.body;
-
-    // Check if user already exists
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: 'User already exists' });
+    // Verify refresh token
+    let decoded;
+    try {
+      decoded = verifyRefreshToken(refreshToken);
+    } catch (error) {
+      logTokenRefreshFailure('Invalid refresh token', req);
+      clearTokenCookies(res);
+      return res.status(401).json({ 
+        message: 'Invalid refresh token',
+        code: 'INVALID_REFRESH_TOKEN'
+      });
     }
 
-    // Create new user
-    user = new User({
-      name,
-      email,
-      password
+    // Find user and check if refresh token exists
+    const user = await User.findById(decoded.user.id);
+    if (!user) {
+      logTokenRefreshFailure('User not found', req);
+      clearTokenCookies(res);
+      return res.status(401).json({ 
+        message: 'User not found',
+        code: 'USER_NOT_FOUND'
+      });
+    }
+
+    // Check if refresh token exists in user's tokens
+    const tokenExists = user.refreshTokens.some(token => token.token === decoded.tokenId);
+    if (!tokenExists) {
+      logTokenRefreshFailure('Refresh token not found in user tokens', req);
+      clearTokenCookies(res);
+      return res.status(401).json({ 
+        message: 'Invalid refresh token',
+        code: 'TOKEN_NOT_FOUND'
+      });
+    }
+
+    // Check if user is still active
+    if (!user.isActive) {
+      logTokenRefreshFailure('User account deactivated', req);
+      clearTokenCookies(res);
+      return res.status(403).json({ 
+        message: 'Account is deactivated',
+        code: 'ACCOUNT_DEACTIVATED'
+      });
+    }
+
+    // Remove old refresh token and generate new token pair
+    user.refreshTokens = user.refreshTokens.filter(token => token.token !== decoded.tokenId);
+    const tokens = await generateTokenPair(user);
+
+    // Set new secure cookies
+    setTokenCookies(res, tokens);
+
+    // Log successful token refresh
+    logTokenRefresh(user._id, req);
+
+    res.json({
+      message: 'Token refreshed successfully',
+      tokens: {
+        accessToken: tokens.accessToken,
+        expiresIn: tokens.expiresIn
+      }
     });
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
-
-    await user.save();
-
-    // Create JWT token
-    const payload = {
-      user: {
-        id: user.id
-      }
-    };
-
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'fallback_secret',
-      { expiresIn: process.env.JWT_EXPIRE || '7d' },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
-      }
-    );
   } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Server error');
+    console.error('Token refresh error:', error);
+    logTokenRefreshFailure(error.message, req);
+    clearTokenCookies(res);
+    
+    res.status(500).json({ 
+      message: 'Server error during token refresh',
+      code: 'SERVER_ERROR'
+    });
   }
 });
 
-// @route   POST /api/auth/login
-// @desc    Login user
-// @access  Public
-router.post('/login', [
-  body('email', 'Please include a valid email').isEmail(),
-  body('password', 'Password is required').exists()
-], async (req, res) => {
+// @route   POST /api/auth/logout
+// @desc    Logout user and invalidate tokens
+// @access  Private
+router.post('/logout', auth, async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { email, password } = req.body;
-
-    // Check if user exists
-    let user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    // Create JWT token
-    const payload = {
-      user: {
-        id: user.id
+    const user = await User.findById(req.user.id);
+    
+    if (user) {
+      // Get refresh token to remove
+      const refreshToken = req.cookies?.refreshToken;
+      
+      if (refreshToken) {
+        try {
+          const decoded = verifyRefreshToken(refreshToken);
+          // Remove specific refresh token
+          user.refreshTokens = user.refreshTokens.filter(token => token.token !== decoded.tokenId);
+          await user.save();
+        } catch (error) {
+          // Token might be invalid, but we still want to clear cookies
+          console.log('Error removing refresh token during logout:', error.message);
+        }
       }
-    };
+    }
 
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'fallback_secret',
-      { expiresIn: process.env.JWT_EXPIRE || '7d' },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
-      }
-    );
+    // Clear cookies
+    clearTokenCookies(res);
+
+    // Log logout
+    logLogout(req.user.id, req);
+
+    res.json({ 
+      message: 'Logged out successfully',
+      code: 'LOGOUT_SUCCESS'
+    });
+
   } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Server error');
+    console.error('Logout error:', error);
+    clearTokenCookies(res); // Clear cookies even if there's an error
+    
+    res.status(500).json({ 
+      message: 'Server error during logout',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
+
+// @route   POST /api/auth/logout-all
+// @desc    Logout from all devices (invalidate all refresh tokens)
+// @access  Private
+router.post('/logout-all', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    
+    if (user) {
+      // Clear all refresh tokens
+      user.refreshTokens = [];
+      await user.save();
+    }
+
+    // Clear cookies
+    clearTokenCookies(res);
+
+    // Log logout from all devices
+    logLogout(req.user.id + ' (all devices)', req);
+
+    res.json({ 
+      message: 'Logged out from all devices successfully',
+      code: 'LOGOUT_ALL_SUCCESS'
+    });
+
+  } catch (error) {
+    console.error('Logout all error:', error);
+    clearTokenCookies(res);
+    
+    res.status(500).json({ 
+      message: 'Server error during logout',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
+
+// @route   GET /api/auth/me
+// @desc    Get current user info
+// @access  Private
+router.get('/me', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password -refreshTokens');
+    
+    if (!user) {
+      return res.status(404).json({ 
+        message: 'User not found',
+        code: 'USER_NOT_FOUND'
+      });
+    }
+
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        emailVerified: user.emailVerified,
+        lastLogin: user.lastLogin,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      }
+    });
+
+  } catch (error) {
+    console.error('Get user error:', error);
+    res.status(500).json({ 
+      message: 'Server error',
+      code: 'SERVER_ERROR'
+    });
   }
 });
 
