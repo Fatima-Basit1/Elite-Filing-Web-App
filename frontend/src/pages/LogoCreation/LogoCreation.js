@@ -15,9 +15,12 @@ const LogoCreation = () => {
     logoStyle: '',
     colorPreferences: '',
     symbolsElements: '',
-    referenceLogos: '',
     message: ''
   });
+
+  const [referenceImages, setReferenceImages] = useState([]);
+  const [uploadErrors, setUploadErrors] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -31,10 +34,95 @@ const LogoCreation = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const errors = [];
+    const validFiles = [];
+
+    // Validate each file
+    files.forEach((file, index) => {
+      // Check file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+      if (!allowedTypes.includes(file.type)) {
+        errors.push(`File ${file.name}: Only image files are allowed (JPEG, PNG, GIF, WebP, SVG)`);
+        return;
+      }
+
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        errors.push(`File ${file.name}: File size must be less than 10MB`);
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    // Check total number of files
+    if (referenceImages.length + validFiles.length > 5) {
+      errors.push('Maximum 5 files allowed');
+      setUploadErrors(errors);
+      return;
+    }
+
+    setUploadErrors(errors);
+    if (validFiles.length > 0) {
+      setReferenceImages(prev => [...prev, ...validFiles]);
+    }
+  };
+
+  const removeFile = (index) => {
+    setReferenceImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission logic here
+    setIsSubmitting(true);
+    setUploadErrors([]);
+
+    try {
+      const formDataToSend = new FormData();
+      
+      // Append form fields
+      Object.keys(formData).forEach(key => {
+        formDataToSend.append(key, formData[key]);
+      });
+
+      // Append files
+      referenceImages.forEach(file => {
+        formDataToSend.append('referenceImages', file);
+      });
+
+      const response = await fetch('http://localhost:5000/api/logo-requests', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Logo request submitted successfully!');
+        // Reset form
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phoneNumber: '',
+          businessName: '',
+          logoStyle: '',
+          colorPreferences: '',
+          symbolsElements: '',
+          message: ''
+        });
+        setReferenceImages([]);
+      } else {
+        setUploadErrors([result.message || 'Failed to submit request']);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setUploadErrors(['Network error. Please try again.']);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Animation variants
@@ -394,17 +482,83 @@ const LogoCreation = () => {
               
               <motion.div variants={fadeUp}>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Reference Logos
+                  Reference Images
                 </label>
-                <input
-                  type="text"
-                  name="referenceLogos"
-                  value={formData.referenceLogos}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                  placeholder="Share links or describe logos you admire"
-                />
-                <p className="text-xs text-gray-500 mt-1">Examples of logos the client likes (for inspiration)</p>
+                <div className="space-y-4">
+                  {/* File Upload Area */}
+                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-500 transition-colors duration-300">
+                    <input
+                      type="file"
+                      id="referenceImages"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="referenceImages"
+                      className="cursor-pointer flex flex-col items-center space-y-2"
+                    >
+                      <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      <div className="text-gray-600">
+                        <span className="font-medium text-blue-600 hover:text-blue-500">Click to upload</span> or drag and drop
+                      </div>
+                      <p className="text-xs text-gray-500">PNG, JPG, GIF, WebP, SVG up to 10MB (Max 5 files)</p>
+                    </label>
+                  </div>
+
+                  {/* Display Upload Errors */}
+                  {uploadErrors.length > 0 && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <div className="flex">
+                        <svg className="w-5 h-5 text-red-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                        <div className="text-sm text-red-700">
+                          <ul className="list-disc list-inside space-y-1">
+                            {uploadErrors.map((error, index) => (
+                              <li key={index}>{error}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Display Selected Files */}
+                  {referenceImages.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-gray-700">Selected Files ({referenceImages.length}/5):</p>
+                      <div className="grid grid-cols-1 gap-2">
+                        {referenceImages.map((file, index) => (
+                          <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                              </svg>
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">{file.name}</p>
+                                <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeFile(index)}
+                              className="text-red-500 hover:text-red-700 p-1"
+                            >
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Upload reference images of logos you admire (for inspiration)</p>
               </motion.div>
               
               <motion.div variants={fadeUp}>
@@ -431,12 +585,27 @@ const LogoCreation = () => {
               >
                 <button
                   type="submit"
-                  className="w-full text-white font-bold py-4 px-8 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  disabled={isSubmitting}
+                  className={`w-full text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl ${
+                    isSubmitting 
+                      ? 'opacity-75 cursor-not-allowed' 
+                      : 'transform hover:scale-105'
+                  }`}
                   style={{
                     background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
                   }}
                 >
-                  Submit Logo Request
+                  {isSubmitting ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Submitting...</span>
+                    </div>
+                  ) : (
+                    'Submit Logo Request'
+                  )}
                 </button>
               </motion.div>
             </form>
