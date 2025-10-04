@@ -1,4 +1,6 @@
 import React, { useState,useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
@@ -6,6 +8,8 @@ import ChatWidget from '../../components/ChatWidget/ChatWidget';
 import bluebg from '../../assets/bluebg.jpg';
 
 const LogoCreation = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, token, user } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -79,6 +83,15 @@ const LogoCreation = () => {
     setIsSubmitting(true);
     setUploadErrors([]);
 
+    // Client-side auth guard
+    if (!isAuthenticated || !token) {
+      setIsSubmitting(false);
+      setUploadErrors(["Please register or log in first to submit the logo creation form."]); 
+      // Redirect to login/register page
+      navigate('/get-started');
+      return;
+    }
+
     try {
       const formDataToSend = new FormData();
       
@@ -95,6 +108,10 @@ const LogoCreation = () => {
       const response = await fetch('http://localhost:5000/api/logo-requests', {
         method: 'POST',
         body: formDataToSend,
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        credentials: 'include'
       });
 
       const result = await response.json();
@@ -109,7 +126,6 @@ const LogoCreation = () => {
         setFormData({
           firstName: '',
           lastName: '',
-          email: '',
           phoneNumber: '',
           businessName: '',
           logoStyle: '',
@@ -258,7 +274,7 @@ const LogoCreation = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">Custom Logo Design Services</h3>
               <p className="text-gray-600 leading-relaxed">
-                To offer custom logo-design services that represent the client's brand identity.
+                To offer custom logo design services that represent the client's brand identity.
               </p>
               <div className="mt-4 text-sm font-medium text-yellow-600">Elite Filing</div>
             </motion.div>
@@ -692,7 +708,7 @@ const LogoCreation = () => {
               </div>
               <h3 className="text-xl font-bold text-white mb-4">Finalization & Delivery</h3>
               <p className="text-blue-100 leading-relaxed">
-                After feedback, the chosen concept is refined and delivered in high-quality formats for all platforms.
+                After feedback, the chosen concept is refined and delivered in high quality formats for all platforms.
               </p>
               <div className="mt-4 text-sm font-medium text-green-400">Elite Filing</div>
             </motion.div>
@@ -777,7 +793,7 @@ const LogoCreation = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">Multi-Platform Ready</h3>
               <p className="text-gray-600 leading-relaxed">
-                Suitable for use across all platforms (web, print, etc.) once finalized.
+                Suitable for use across all platforms including web, print, etc. once finalized.
               </p>
               <div className="mt-4 text-sm font-medium text-indigo-600">Elite Filing</div>
             </motion.div>

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../../store/slices/authSlice';
+import { validateSignup, validatePasswordStrength } from '../../utils/validation';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeSlashIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
@@ -8,6 +11,7 @@ import ChatWidget from '../../components/ChatWidget/ChatWidget';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -30,38 +34,7 @@ const SignUp = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Password strength checker
-  const checkPasswordStrength = (password) => {
-    const checks = {
-      length: password.length >= 8,
-      uppercase: /[A-Z]/.test(password),
-      lowercase: /[a-z]/.test(password),
-      number: /\d/.test(password),
-      special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
-    };
-
-    const score = Object.values(checks).filter(Boolean).length;
-    const feedback = [];
-
-    if (!checks.length) feedback.push('At least 8 characters');
-    if (!checks.uppercase) feedback.push('One uppercase letter');
-    if (!checks.lowercase) feedback.push('One lowercase letter');
-    if (!checks.number) feedback.push('One number');
-    if (!checks.special) feedback.push('One special character');
-
-    return { score, feedback };
-  };
-
-  // Email validation
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  // Name validation
-  const validateName = (name) => {
-    return name.trim().length >= 2 && /^[a-zA-Z\s'-]+$/.test(name);
-  };
+  // Use shared validators
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -80,7 +53,8 @@ const SignUp = () => {
 
     // Real-time password strength checking
     if (name === 'password') {
-      setPasswordStrength(checkPasswordStrength(value));
+      const result = validatePasswordStrength(value);
+      setPasswordStrength({ score: result.score, feedback: result.feedback });
     }
 
     // Clear confirm password error if passwords now match
@@ -95,43 +69,13 @@ const SignUp = () => {
   };
 
   const validateForm = () => {
-    const newErrors = {};
-
-    // First name validation
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
-    } else if (!validateName(formData.firstName)) {
-      newErrors.firstName = 'First name must be at least 2 characters and contain only letters';
-    }
-
-    // Last name validation
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
-    } else if (!validateName(formData.lastName)) {
-      newErrors.lastName = 'Last name must be at least 2 characters and contain only letters';
-    }
-
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (passwordStrength.score < 4) {
-      newErrors.password = 'Password must meet all strength requirements';
-    }
-
-    // Confirm password validation
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
+    const newErrors = validateSignup({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+    });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -147,53 +91,58 @@ const SignUp = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          firstName: formData.firstName.trim(),
-          lastName: formData.lastName.trim(),
+      await dispatch(
+        registerUser({
+          name: `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim(),
           email: formData.email.trim().toLowerCase(),
-          password: formData.password
-        }),
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+        })
+      ).unwrap();
+
+      // On success, show message and navigate to home
+      setSuccessMessage('Account created successfully! Redirecting...');
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setSuccessMessage('Account created successfully! Redirecting to sign in...');
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          password: '',
-          confirmPassword: ''
-        });
-        
-        // Redirect to sign in page after 2 seconds
-        setTimeout(() => {
-          navigate('/sign-in');
-        }, 2000);
-      } else {
-        // Handle validation errors from backend
-        if (data.errors && Array.isArray(data.errors)) {
-          const backendErrors = {};
-          data.errors.forEach(error => {
-            if (error.path) {
-              backendErrors[error.path] = error.msg;
+      setTimeout(() => {
+        navigate('/');
+      }, 1000);
+    } catch (error) {
+      // Handle detailed backend validation errors
+      if (error && typeof error === 'object') {
+        const data = error;
+        if (Array.isArray(data.errors)) {
+          const fieldErrors = {};
+          data.errors.forEach((err) => {
+            const field = (err.field || err.param || '').toLowerCase();
+            const msg = err.message || err.msg || data.message || 'Invalid input';
+            // Map backend 'name' errors to firstName/lastName visibly
+            if (field === 'name') {
+              fieldErrors.firstName = msg;
+              fieldErrors.lastName = msg;
+            } else if (field === 'email' || field === 'password' || field === 'confirmpassword') {
+              fieldErrors[field === 'confirmpassword' ? 'confirmPassword' : field] = msg;
             }
           });
-          setErrors(backendErrors);
+          // Fallback general message
+          if (Object.keys(fieldErrors).length === 0) {
+            fieldErrors.general = data.message || 'Registration failed. Please review your information.';
+          }
+          setErrors(fieldErrors);
         } else {
-          setErrors({ general: data.message || 'Registration failed. Please try again.' });
+          const message = data.message || 'Registration failed. Please review your information.';
+          setErrors({ general: message });
         }
+      } else {
+        const message = typeof error === 'string' ? error : 'Registration failed. Please review your information.';
+        setErrors({ general: message });
       }
-    } catch (error) {
-      console.error('Registration error:', error);
-      setErrors({ general: 'Network error. Please check your connection and try again.' });
     } finally {
       setIsLoading(false);
     }

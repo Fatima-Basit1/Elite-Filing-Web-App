@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../../store/slices/authSlice';
+import { validateLogin } from '../../utils/validation';
 import { EyeIcon, EyeSlashIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
@@ -8,6 +11,7 @@ import ChatWidget from '../../components/ChatWidget/ChatWidget';
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -22,11 +26,7 @@ const SignIn = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Email validation
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  // Use shared validation
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,22 +53,10 @@ const SignIn = () => {
   };
 
   const validateForm = () => {
-    const newErrors = {};
-
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
+    const newErrors = validateLogin({
+      email: formData.email,
+      password: formData.password,
+    });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -84,53 +72,22 @@ const SignIn = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
+      await dispatch(
+        loginUser({
           email: formData.email.trim().toLowerCase(),
-          password: formData.password
-        }),
-      });
+          password: formData.password,
+        })
+      ).unwrap();
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setSuccessMessage('Sign in successful! Redirecting...');
-        setFormData({
-          email: '',
-          password: ''
-        });
-        
-        // Store user data if needed (you might want to use context or localStorage)
-        if (data.user) {
-          localStorage.setItem('user', JSON.stringify(data.user));
-        }
-        
-        // Redirect to dashboard or home page after 1.5 seconds
-        setTimeout(() => {
-          navigate('/'); // Change this to your desired redirect path
-        }, 1500);
-      } else {
-        // Handle validation errors from backend
-        if (data.errors && Array.isArray(data.errors)) {
-          const backendErrors = {};
-          data.errors.forEach(error => {
-            if (error.field) {
-              backendErrors[error.field] = error.message;
-            }
-          });
-          setErrors(backendErrors);
-        } else {
-          setErrors({ general: data.message || 'Sign in failed. Please check your credentials.' });
-        }
-      }
+      // On success, show message and navigate
+      setSuccessMessage('Sign in successful! Redirecting...');
+      setFormData({ email: '', password: '' });
+      setTimeout(() => {
+        navigate('/');
+      }, 1000);
     } catch (error) {
-      console.error('Sign in error:', error);
-      setErrors({ general: 'Network error. Please check your connection and try again.' });
+      const message = typeof error === 'string' ? error : 'Sign in failed. Please check your credentials.';
+      setErrors({ general: message });
     } finally {
       setIsLoading(false);
     }

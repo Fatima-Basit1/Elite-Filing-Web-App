@@ -169,17 +169,17 @@ const TrademarkUK = () => {
               {
                 icon: "🛡️",
                 title: "Brand Protection",
-                description: "Prevent unauthorized use of your trademark by others."
+                description: "Help prevent unauthorized use of your trademark by others."
               },
               {
                 icon: "📈",
-                title: "Increased Brand Value",
-                description: "A registered trademark adds credibility and increases your brand's market value."
+                title: "Greater Value",
+                description: "A registered trademark adds credibility and boosts your brand's value."
               },
               {
                 icon: "⚖️",
                 title: "Legal Support",
-                description: "You'll have the legal grounds to enforce your rights in case of infringement."
+                description: "You’ll have legal grounds to enforce your rights in case of infringement."
               }
             ].map((benefit, index) => (
               <motion.div
@@ -240,7 +240,7 @@ const TrademarkUK = () => {
                     </svg>
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">Unique & Identifiable</h3>
-                  <p className="text-sm sm:text-base text-gray-600">Your trademark must be distinctive and easily recognizable</p>
+                  <p className="text-sm sm:text-base text-gray-600">Your trademark must be distinctive and recognizable</p>
                 </div>
                 <div className="text-center">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4" style={{

@@ -133,123 +133,125 @@ const About = () => {
             </motion.div>
             
             {/* CEO Message Content */}
-            <motion.div 
-              className="space-y-6"
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <motion.h2 
-                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-              >
-                CEO <span className="text-yellow-400">Message</span>
-              </motion.h2>
-              
-              <motion.div 
-                className="space-y-4 text-gray-700 leading-relaxed"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                viewport={{ once: true }}
-              >
-                <motion.p 
-                  className="text-lg"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <strong className="text-blue-900">Vision:</strong> A world where launching and managing a business is as effortless as imagining it.
-                </motion.p>
-                
-                <motion.p 
-                  className="text-lg"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  viewport={{ once: true }}
-                >
-                  <strong className="text-blue-900">Mission:</strong> Remove barriers of red tape, paperwork, and confusion, and replace them with clarity, efficiency, and confidence.
-                </motion.p>
-                
-                <motion.div 
-                  className="bg-blue-50 p-6 rounded-lg border-l-4 border-yellow-400"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  viewport={{ once: true }}
-                >
-                  <p className="text-lg mb-4">
-                    <strong className="text-blue-900">Transformation:</strong> Turning "what if" into "what's next" by supporting:
-                  </p>
-                  <motion.ul 
-                    className="list-disc list-inside space-y-2 text-gray-700 ml-4"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    viewport={{ once: true }}
-                  >
-                    <motion.li
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: 0.5 }}
-                      viewport={{ once: true }}
-                    >Entrepreneurs</motion.li>
-                    <motion.li
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: 0.6 }}
-                      viewport={{ once: true }}
-                    >Startups</motion.li>
-                    <motion.li
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: 0.7 }}
-                      viewport={{ once: true }}
-                    >Established businesses</motion.li>
-                  </motion.ul>
-                  <p className="mt-4 text-lg">
-                    Services cover registration, compliance, and growth.
-                  </p>
-                </motion.div>
-                
-                <motion.p 
-                  className="text-lg"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                  viewport={{ once: true }}
-                >
-                  Elite Filing is positioned as more than a service. It is a movement that makes business ownership accessible to all.
-                </motion.p>
-                
-                <motion.p 
-                  className="text-lg"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  viewport={{ once: true }}
-                >
-                  <strong className="text-blue-900">Core values:</strong> innovation, a vision-driven approach, and redefining business creation.
-                </motion.p>
-                
-                <motion.blockquote 
-                  className="text-xl font-semibold text-blue-900 italic border-l-4 border-yellow-400 pl-6 mt-8"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  "Together, let's build something extraordinary."
-                  <footer className="text-gray-600 text-base mt-2 not-italic">— CEO, Elite Filing</footer>
-                </motion.blockquote>
-              </motion.div>
-            </motion.div>
+<motion.div 
+  className="space-y-6"
+  initial={{ opacity: 0, x: 50 }}
+  whileInView={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.8, delay: 0.2 }}
+  viewport={{ once: true }}
+>
+  <motion.h2 
+    className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6 }}
+    viewport={{ once: true }}
+  >
+    CEO <span className="text-yellow-400">Message</span>
+  </motion.h2>
+  
+  <motion.div 
+    className="space-y-4 text-gray-700 leading-relaxed"
+    initial={{ opacity: 0 }}
+    whileInView={{ opacity: 1 }}
+    transition={{ duration: 0.8, delay: 0.3 }}
+    viewport={{ once: true }}
+  >
+    <motion.p 
+      className="text-lg"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.1 }}
+      viewport={{ once: true }}
+    >
+      <strong className="text-blue-900">Vision:</strong> A world where launching, managing, and scaling a business is seamless through innovation, technology, and automation.
+    </motion.p>
+    
+    <motion.p 
+      className="text-lg"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
+      viewport={{ once: true }}
+    >
+      <strong className="text-blue-900">Mission:</strong> To remove the barriers of complexity, paperwork, and outdated processes by integrating intelligent systems, CRMs, and AI-driven automation that empower businesses with clarity, efficiency, and growth.
+    </motion.p>
+    
+    <motion.div 
+      className="bg-blue-50 p-6 rounded-lg border-l-4 border-yellow-400"
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+      viewport={{ once: true }}
+    >
+      <p className="text-lg mb-4">
+        <strong className="text-blue-900">Transformation:</strong> Turning "what if" into "what's next" through technology-driven support for:
+      </p>
+      <motion.ul 
+        className="list-disc list-inside space-y-2 text-gray-700 ml-4"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        viewport={{ once: true }}
+      >
+        <motion.li
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+          viewport={{ once: true }}
+        >Entrepreneurs</motion.li>
+        <motion.li
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.6 }}
+          viewport={{ once: true }}
+        >Startups</motion.li>
+        <motion.li
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.7 }}
+          viewport={{ once: true }}
+        >Established businesses</motion.li>
+      </motion.ul>
+      <p className="mt-4 text-lg">
+        Services now extend beyond registration, compliance, and growth by incorporating CRM integration, AI automation, and customized tech-based solutions to streamline every stage of business management.
+      </p>
+    </motion.div>
+    
+    <motion.p 
+      className="text-lg"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.4 }}
+      viewport={{ once: true }}
+    >
+      Elite Filing is more than a service. It is a technology driven movement redefining how businesses start, operate, and scale in the modern world.
+    </motion.p>
+    
+    <motion.p 
+      className="text-lg"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.5 }}
+      viewport={{ once: true }}
+    >
+      <strong className="text-blue-900">Core values:</strong> innovation, technology empowerment, and a vision driven approach that fuses human creativity with AI powered solutions.
+    </motion.p>
+    
+    <motion.blockquote 
+      className="text-xl font-semibold text-blue-900 italic border-l-4 border-yellow-400 pl-6 mt-8"
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, delay: 0.6 }}
+      viewport={{ once: true }}
+    >
+      "Together, let us build the future of business powered by innovation and intelligent automation."
+      <footer className="text-gray-600 text-base mt-2 not-italic">CEO, Elite Filing</footer>
+    </motion.blockquote>
+  </motion.div>
+</motion.div>
+
+
           </div>
         </div>
       </div>

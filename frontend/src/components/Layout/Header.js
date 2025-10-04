@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../store/slices/authSlice';
+import { apiMethods } from '../../services/api';
 import { toggleSidebar, openModal } from '../../store/slices/uiSlice';
 
 const Header = () => {
@@ -11,9 +12,17 @@ const Header = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      if (apiMethods?.auth?.logout) {
+        await apiMethods.auth.logout();
+      }
+    } catch (e) {
+      // Best-effort server logout; proceed with client reset regardless
+    } finally {
+      dispatch(logout());
+      navigate('/get-started');
+    }
   };
 
   const handleSearch = (e) => {

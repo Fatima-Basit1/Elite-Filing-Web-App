@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const LogoRequest = require('../models/LogoRequest');
 const { sendLogoRequestEmail } = require('../utils/emailService');
+const { auth } = require('../middleware/authEnhanced');
 
 const router = express.Router();
 
@@ -39,14 +40,13 @@ const upload = multer({
 });
 
 // @route   POST /api/logo-requests
-// @desc    Create a new logo request
-// @access  Public
-router.post('/', upload.array('referenceImages', 5), async (req, res) => {
+// @desc    Create a new logo request (requires authentication)
+// @access  Private
+router.post('/', auth, upload.array('referenceImages', 5), async (req, res) => {
   try {
     const {
       firstName,
       lastName,
-      email,
       phoneNumber,
       businessName,
       logoStyle,
@@ -56,10 +56,10 @@ router.post('/', upload.array('referenceImages', 5), async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!firstName || !lastName || !email || !phoneNumber || !businessName) {
+    if (!firstName || !lastName || !phoneNumber || !businessName) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide all required fields: firstName, lastName, email, phoneNumber, businessName'
+        message: 'Please provide all required fields: firstName, lastName, phoneNumber, businessName'
       });
     }
 
@@ -76,14 +76,15 @@ router.post('/', upload.array('referenceImages', 5), async (req, res) => {
     const logoRequest = new LogoRequest({
       firstName,
       lastName,
-      email,
+      email: req.user.email,
       phoneNumber,
       businessName,
       logoStyle,
       colorPreferences,
       symbolsElements,
       referenceImages,
-      message
+      message,
+      userId: req.user._id
     });
 
     const savedRequest = await logoRequest.save();
@@ -93,7 +94,7 @@ router.post('/', upload.array('referenceImages', 5), async (req, res) => {
       {
         firstName,
         lastName,
-        email,
+        email: req.user.email,
         phoneNumber,
         businessName,
         logoStyle,
@@ -101,7 +102,8 @@ router.post('/', upload.array('referenceImages', 5), async (req, res) => {
         symbolsElements,
         message
       },
-      referenceImages
+      referenceImages,
+      req.user.email
     );
 
     // Log email result for debugging

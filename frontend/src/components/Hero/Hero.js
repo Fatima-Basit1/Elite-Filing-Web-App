@@ -92,11 +92,11 @@ const Hero = () => {
                 style={{fontFamily: 'Inter, sans-serif', opacity: '0.9'}}
               >
                 Elite Filing simplifies your business operations with expert solutions in incorporation, 
-                taxation, trademarks, and more, ensuring a smooth and stress-free path to success. 
+                taxation, trademarks, and more, ensuring a smooth and stress free path to success. 
                 Rely on us to manage the complexities while you concentrate on driving growth.
               </p>
               
-              <Link to="/contact">
+              <Link to="/sign-up">
               <button className="hero-cta-button group text-xl sm:text-lg lg:text-xl">
                 <span className="mr-2">Start Your Business Today</span>
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>

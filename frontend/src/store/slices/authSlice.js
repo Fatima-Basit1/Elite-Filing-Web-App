@@ -7,13 +7,16 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { token, user } = response.data;
+      const { tokens, user } = response.data;
+      const accessToken = tokens?.accessToken;
       
       // Set token in localStorage and API headers
-      localStorage.setItem('token', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      if (accessToken) {
+        localStorage.setItem('token', accessToken);
+        api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      }
       
-      return { token, user };
+      return { token: accessToken, user };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Login failed'
@@ -24,19 +27,55 @@ export const loginUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async ({ name, email, password }, { rejectWithValue }) => {
+  async ({ name, email, password, confirmPassword }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/auth/register', { name, email, password });
-      const { token, user } = response.data;
+      const response = await api.post('/auth/signup', { name, email, password, confirmPassword });
+      const { tokens, user } = response.data;
+      const accessToken = tokens?.accessToken;
       
       // Set token in localStorage and API headers
-      localStorage.setItem('token', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      if (accessToken) {
+        localStorage.setItem('token', accessToken);
+        api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      }
       
-      return { token, user };
+      return { token: accessToken, user };
+    } catch (error) {
+      // Surface detailed backend validation errors to the caller
+      const payload = error.response?.data || { message: 'Registration failed' };
+      return rejectWithValue(payload);
+    }
+  }
+);
+
+export const forgotPassword = createAsyncThunk(
+  'auth/forgotPassword',
+  async ({ email }, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/auth/forgot-password', { email });
+      return response.data?.message || 'If the email exists, a reset link was sent.';
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || 'Registration failed'
+        error.response?.data?.message || 'Failed to request password reset'
+      );
+    }
+  }
+);
+
+export const resetPassword = createAsyncThunk(
+  'auth/resetPassword',
+  async ({ email, token, password, confirmPassword }, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/auth/reset-password', {
+        email,
+        token,
+        password,
+        confirmPassword,
+      });
+      return response.data?.message || 'Password has been reset successfully.';
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to reset password'
       );
     }
   }
@@ -49,8 +88,9 @@ export const loadUser = createAsyncThunk(
       const token = localStorage.getItem('token');
       if (token) {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        const response = await api.get('/users/profile');
-        return { token, user: response.data };
+        const response = await api.get('/auth/me');
+        const { user } = response.data;
+        return { token, user };
       }
       return rejectWithValue('No token found');
     } catch (error) {
@@ -143,6 +183,35 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.token = null;
         state.user = null;
+        // Keep error as a string in state for compatibility
+        state.error = typeof action.payload === 'string'
+          ? action.payload
+          : action.payload?.message || 'Registration failed';
+      })
+      // Forgot Password
+      .addCase(forgotPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Reset Password
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       })
       // Load User

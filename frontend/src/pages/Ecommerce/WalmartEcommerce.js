@@ -55,7 +55,7 @@ const WalmartEcommerce = () => {
               <span className="block text-yellow-400">with Elite Filing</span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed max-w-4xl">
-              Elite Filing helps businesses successfully sell on the Walmart Marketplace — from setup to growth.
+              Elite Filing helps businesses successfully sell on the Walmart Marketplace, from setup to growth.
             </p>
             <div className="flex flex-wrap justify-start gap-4 mb-8">
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
@@ -250,7 +250,7 @@ const WalmartEcommerce = () => {
               Walmart E-commerce Solutions
             </h2>
             <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Elite Filing delivers complete Walmart Marketplace solutions — from account setup and product listing optimization to promotions, advertising, and fulfillment support. We ensure your products are discoverable, properly categorized, and marketed for maximum sales impact.
+              Elite Filing delivers complete Walmart Marketplace solutions, from account setup and product listing optimization to promotions, advertising, and fulfillment support. We ensure your products are discoverable, properly categorized, and marketed for maximum sales impact.
             </p>
           </div>
 
@@ -307,7 +307,7 @@ const WalmartEcommerce = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <div className="bg-white p-6 rounded-xl shadow-md">
                 <h4 className="font-semibold text-gray-900 mb-2">Store Setup</h4>
-                <p className="text-gray-600 text-sm">Complete marketplace integration</p>
+                <p className="text-gray-600 text-sm">Full marketplace integration</p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-md">
                 <h4 className="font-semibold text-gray-900 mb-2">Listing Optimization</h4>

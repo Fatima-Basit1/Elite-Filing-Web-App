@@ -1,55 +1,100 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { LogOut } from "lucide-react";
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout, loadUser } from '../../store/slices/authSlice';
+import { apiMethods } from '../../services/api';
 import { ChevronDownIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import logo from '../../assets/logo.png';
 
 const Navigation = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [activeSubDropdown, setActiveSubDropdown] = useState(null);
+  const [activeSubDropdown, setActiveSubDropdown] = useState(null); // string key in format `${parentIndex}-${dropdownIndex}`
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [hoverTimeout, setHoverTimeout] = useState(null);
+  const hoverTimeoutRef = useRef(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  // Helper functions for better hover handling
-  const handleMouseEnter = (index) => {
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
-      setHoverTimeout(null);
+  // Try to load the user once at mount if token exists
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) dispatch(loadUser());
+    // run only once on mount intentionally
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Cleanup any pending timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
+
+  // Close menus and mobile menu on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setActiveDropdown(null);
+        setActiveSubDropdown(null);
+        setIsMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      if (apiMethods?.auth?.logout) await apiMethods.auth.logout();
+    } catch (e) {
+      // Log and continue with client-side logout
+      // console.warn('Server logout failed, continuing client logout', e);
+    } finally {
+      dispatch(logout());
+      setIsMobileMenuOpen(false);
+      navigate('/');
     }
+  };
+
+  // Hover handlers using ref for timeout
+  const clearHoverTimeout = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  };
+
+  const handleMouseEnter = (index) => {
+    clearHoverTimeout();
     setActiveDropdown(index);
   };
 
   const handleMouseLeave = () => {
-    const timeout = setTimeout(() => {
+    clearHoverTimeout();
+    hoverTimeoutRef.current = setTimeout(() => {
       setActiveDropdown(null);
       setActiveSubDropdown(null);
-    }, 800); // Increased to 500ms
-    setHoverTimeout(timeout);
+    }, 500);
   };
 
-  const handleDropdownMouseEnter = (index) => {
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
-      setHoverTimeout(null);
-    }
-    setActiveDropdown(index);
+  const handleDropdownMouseEnter = (parentIndex, dropdownIndex) => {
+    clearHoverTimeout();
+    setActiveDropdown(parentIndex);
+    // setSub only when explicitly entering
+    setActiveSubDropdown(null);
   };
 
-  const handleSubDropdownMouseEnter = (index) => {
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
-      setHoverTimeout(null);
-    }
-    setActiveSubDropdown(index);
+  const handleSubDropdownMouseEnter = (parentIndex, dropdownIndex) => {
+    clearHoverTimeout();
+    setActiveSubDropdown(`${parentIndex}-${dropdownIndex}`);
   };
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
-      }
-    };
-  }, [hoverTimeout]);
+  // Utility for toggling sub-dropdown via keyboard or click (mobile)
+  const toggleSubDropdown = (parentIndex, dropdownIndex) => {
+    const key = `${parentIndex}-${dropdownIndex}`;
+    setActiveSubDropdown((prev) => (prev === key ? null : key));
+  };
 
   const menuItems = [
     { name: 'Home', href: '/' },
@@ -74,13 +119,13 @@ const Navigation = () => {
           name: 'USA',
           href: '/company-formation/usa',
           flag: (
-            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480" aria-hidden>
               <defs>
-                <clipPath id="us-flag">
+                <clipPath id={`us-flag-${Math.random().toString(36).slice(2)}`}>
                   <path d="M0 0h640v480H0z" />
                 </clipPath>
               </defs>
-              <g clipPath="url(#us-flag)">
+              <g>
                 <path fill="#bd3d44" d="M0 0h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640z" />
                 <path fill="#fff" d="M0 37h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640zm0 74h640v37h-640z" />
                 <path fill="#192f5d" d="M0 0h364v259H0z" />
@@ -89,10 +134,10 @@ const Navigation = () => {
           ),
           hasSubDropdown: true,
           subItems: [
-            { name: 'LLC Formation', href: '/USA/LLC-Formation' },
-            { name: 'USA Tax', href: '/USA/Tax' },
-            { name: 'ITIN', href: '/USA/ITIN' },
-            { name: 'Trademark', href: '/USA/Trademark' },
+            { name: 'LLC Formation', href: '/company-formation/usa/llc-formation' },
+            { name: 'USA Tax', href: '/company-formation/usa/tax' },
+            { name: 'ITIN', href: '/company-formation/usa/itin' },
+            { name: 'Trademark', href: '/company-formation/usa/trademark' },
             { name: 'Complete Package', href: '/company-formation/usa/complete-package' }
           ]
         },
@@ -100,13 +145,13 @@ const Navigation = () => {
           name: 'UK',
           href: '/company-formation/uk',
           flag: (
-            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480" aria-hidden>
               <defs>
-                <clipPath id="uk-flag">
+                <clipPath id={`uk-flag-${Math.random().toString(36).slice(2)}`}>
                   <path d="M0 0h640v480H0z" />
                 </clipPath>
               </defs>
-              <g clipPath="url(#uk-flag)">
+              <g>
                 <path fill="#012169" d="M0 0h640v480H0z" />
                 <path fill="#fff" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-178L0 64V0h75z" />
                 <path fill="#c8102e" d="m424 281 216 159v40L369 281h55zm-184 20 6 35L54 480H0l246-179zM640 0v3L391 191l2-44L590 0h50zM0 0l239 176h-60L0 42V0z" />
@@ -117,29 +162,29 @@ const Navigation = () => {
           ),
           hasSubDropdown: true,
           subItems: [
-            { name: 'Company Registration', href: '/UK/CompanyRegistration' },
-            { name: 'Company Annual Accounts Filing', href: '/UK/AnnualAccounts' },
-            { name: 'Company Closure Dissolution', href: '/UK/CompanyClosure' },
-            { name: 'Company Name Change', href: '/UK/CompanyNameChange' },
-            { name: 'Company Structural Change', href: '/UK/StructuralChange' },
-            { name: 'Confirmation Statement Filing', href: '/UK/ConfirmationStatement' },
-            { name: 'EORI Number Application', href: '/UK/EORIApplication' },
-            { name: 'VAT Number Registration', href: '/UK/VATRegistration' },
-            { name: 'VAT Return Filing', href: '/UK/VATReturn' },
-            { name: 'UK Bank Accounts', href: '/UK/BankAccounts' }
+            { name: 'Company Registration', href: '/company-formation/uk/company-registration' },
+            { name: 'Company Annual Accounts Filing', href: '/company-formation/uk/annual-accounts' },
+            { name: 'Company Closure Dissolution', href: '/company-formation/uk/company-closure' },
+            { name: 'Company Name Change', href: '/company-formation/uk/name-change' },
+            { name: 'Company Structural Change', href: '/company-formation/uk/structural-change' },
+            { name: 'Confirmation Statement Filing', href: '/company-formation/uk/confirmation-statement' },
+            { name: 'EORI Number Application', href: '/company-formation/uk/eori-application' },
+            { name: 'VAT Number Registration', href: '/company-formation/uk/vat-registration' },
+            { name: 'VAT Return Filing', href: '/company-formation/uk/vat-return' },
+            { name: 'UK Bank Accounts', href: '/company-formation/uk/bank-accounts' }
           ]
         },
         {
           name: 'Pakistan',
           href: '/company-formation/pakistan',
           flag: (
-            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480" aria-hidden>
               <defs>
-                <clipPath id="pk-flag">
+                <clipPath id={`pk-flag-${Math.random().toString(36).slice(2)}`}>
                   <path d="M0 0h640v480H0z" />
                 </clipPath>
               </defs>
-              <g clipPath="url(#pk-flag)">
+              <g>
                 <path fill="#01411c" d="M0 0h640v480H0z" />
                 <path fill="#fff" d="M0 0h160v480H0z" />
                 <g fill="#fff">
@@ -159,13 +204,13 @@ const Navigation = () => {
           name: 'UAE',
           href: '/company-formation/uae',
           flag: (
-            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480" aria-hidden>
               <defs>
-                <clipPath id="ae-flag">
+                <clipPath id={`ae-flag-${Math.random().toString(36).slice(2)}`}>
                   <path d="M0 0h640v480H0z" />
                 </clipPath>
               </defs>
-              <g clipPath="url(#ae-flag)">
+              <g>
                 <path fill="#00732f" d="M0 0h640v160H0z" />
                 <path fill="#fff" d="M0 160h640v160H0z" />
                 <path fill="#000" d="M0 320h640v160H0z" />
@@ -182,13 +227,13 @@ const Navigation = () => {
           name: 'Canada (Coming Soon)',
           href: '/company-formation/canada',
           flag: (
-            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480" aria-hidden>
               <defs>
-                <clipPath id="ca-flag">
+                <clipPath id={`ca-flag-${Math.random().toString(36).slice(2)}`}>
                   <path d="M0 0h640v480H0z" />
                 </clipPath>
               </defs>
-              <g clipPath="url(#ca-flag)">
+              <g>
                 <path fill="#fff" d="M0 0h640v480H0z" />
                 <path fill="#ff0000" d="M0 0h160v480H0zm480 0h160v480H480z" />
                 <path fill="#ff0000" d="m320 100-24 76h-32l24-76-24-76h32l24 76 24-76h32l-24 76 24 76h-32z" />
@@ -201,13 +246,13 @@ const Navigation = () => {
           name: 'Turkey (Coming Soon)',
           href: '/company-formation/turkey',
           flag: (
-            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480">
+            <svg className="w-5 h-4 rounded-sm" viewBox="0 0 640 480" aria-hidden>
               <defs>
-                <clipPath id="tr-flag">
+                <clipPath id={`tr-flag-${Math.random().toString(36).slice(2)}`}>
                   <path d="M0 0h640v480H0z" />
                 </clipPath>
               </defs>
-              <g clipPath="url(#tr-flag)">
+              <g>
                 <path fill="#e30a17" d="M0 0h640v480H0z" />
                 <circle cx="200" cy="240" r="60" fill="#fff" />
                 <circle cx="220" cy="240" r="48" fill="#e30a17" />
@@ -240,11 +285,7 @@ const Navigation = () => {
           {/* Logo */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full">
-              <img
-                src={logo}
-                alt="Elite Filing Logo"
-                className="w-8 h-8 object-contain"
-              />
+              <img src={logo} alt="Elite Filing Logo" className="w-8 h-8 object-contain" />
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-sm sm:text-base md:text-lg tracking-tight" style={{ color: '#041e72' }}>Elite Filing</span>
@@ -255,15 +296,24 @@ const Navigation = () => {
           <div className="hidden lg:block">
             <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4">
               {menuItems.map((item, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="relative group"
                   onMouseEnter={() => handleMouseEnter(index)}
                   onMouseLeave={handleMouseLeave}
                 >
                   {item.hasDropdown ? (
                     <button
+                      aria-haspopup="true"
+                      aria-expanded={activeDropdown === index}
                       className="text-gray-600 hover:text-blue-700 px-2 md:px-3 py-1.5 text-xs md:text-sm font-medium flex items-center transition-all duration-300 hover:bg-blue-50 rounded-full"
+                      onClick={() => setActiveDropdown((prev) => (prev === index ? null : index))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setActiveDropdown((prev) => (prev === index ? null : index));
+                        }
+                      }}
                     >
                       <span>{item.name}</span>
                       <ChevronDownIcon className={`ml-2 h-4 w-4 transition-transform duration-300 ${activeDropdown === index ? 'rotate-180' : ''}`} />
@@ -271,7 +321,10 @@ const Navigation = () => {
                   ) : (
                     <Link
                       to={item.href}
-                      className="text-gray-600 hover:text-blue-700 px-2 md:px-3 py-1.5 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-blue-50 rounded-full block"
+                      className={`text-gray-600 hover:text-blue-700 px-2 md:px-3 py-1.5 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-blue-50 rounded-full block ${item.isDisabled ? 'text-gray-400 cursor-not-allowed' : ''}`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      tabIndex={item.isDisabled ? -1 : 0}
+                      aria-disabled={item.isDisabled || undefined}
                     >
                       <span>{item.name}</span>
                     </Link>
@@ -280,71 +333,99 @@ const Navigation = () => {
                   {/* Dropdown Menu */}
                   {item.hasDropdown && activeDropdown === index && (
                     <>
-                      {/* Invisible bridge to prevent dropdown from closing */}
-                      <div 
-                        className="absolute top-full left-0 w-full h-4 z-40"
-                        onMouseEnter={() => handleDropdownMouseEnter(index)}
-                      ></div>
-                      <div 
+                      <div className="absolute top-full left-0 w-full h-4 z-40" onMouseEnter={() => handleDropdownMouseEnter(index, -1)} />
+
+                      <div
                         className="absolute top-full left-0 mt-0 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
-                        onMouseEnter={() => handleDropdownMouseEnter(index)}
+                        onMouseEnter={() => handleDropdownMouseEnter(index, -1)}
                         onMouseLeave={handleMouseLeave}
                       >
-                      {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
-                        item.hasNestedDropdown ? (
-                          <div key={dropdownIndex} className="relative">
-                            <div
-                              className={`flex items-center justify-between px-5 py-3 text-sm transition-all duration-300 cursor-pointer rounded-xl mx-2 ${dropdownItem.isDisabled
-                                ? 'text-gray-400 cursor-not-allowed'
-                                : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 hover:shadow-sm'
-                                }`}
-                              onMouseEnter={() => dropdownItem.hasSubDropdown && handleSubDropdownMouseEnter(dropdownIndex)}
-                              onClick={dropdownItem.isDisabled ? (e) => e.preventDefault() : undefined}
-                            >
-                              <div className="flex items-center">
-                                {dropdownItem.flag && <div className="mr-3">{dropdownItem.flag}</div>}
+                        {item.dropdownItems.map((dropdownItem, dropdownIndex) => {
+                          const compositeKey = `${index}-${dropdownIndex}`;
+
+                          if (item.hasNestedDropdown) {
+                            return (
+                              <div key={compositeKey} className="relative">
+                                <div
+                                  role={dropdownItem.isDisabled ? undefined : 'button'}
+                                  tabIndex={dropdownItem.isDisabled ? -1 : 0}
+                                  onKeyDown={(e) => {
+                                    if ((e.key === 'Enter' || e.key === ' ') && !dropdownItem.isDisabled && dropdownItem.hasSubDropdown) {
+                                      e.preventDefault();
+                                      setActiveSubDropdown((prev) => (prev === compositeKey ? null : compositeKey));
+                                    }
+                                  }}
+                                  className={`flex items-center justify-between px-5 py-3 text-sm transition-all duration-300 cursor-pointer rounded-xl mx-2 ${dropdownItem.isDisabled
+                                    ? 'text-gray-400 cursor-not-allowed'
+                                    : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 hover:shadow-sm'
+                                    }`}
+                                  onMouseEnter={() => dropdownItem.hasSubDropdown && handleSubDropdownMouseEnter(index, dropdownIndex)}
+                                  onClick={(e) => {
+                                    if (dropdownItem.isDisabled) return e.preventDefault();
+                                    if (dropdownItem.hasSubDropdown) {
+                                      setActiveSubDropdown((prev) => (prev === compositeKey ? null : compositeKey));
+                                    }
+                                  }}
+                                >
+                                  <div className="flex items-center">
+                                    {dropdownItem.flag && <div className="mr-3">{dropdownItem.flag}</div>}
+                                    {dropdownItem.name}
+                                  </div>
+                                  {dropdownItem.hasSubDropdown && (
+                                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                  )}
+                                </div>
+
+                                {dropdownItem.hasSubDropdown && activeSubDropdown === compositeKey && (
+                                  <div
+                                    className="absolute left-full top-0 ml-2 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
+                                    onMouseEnter={() => handleSubDropdownMouseEnter(index, dropdownIndex)}
+                                    onMouseLeave={() => {
+                                      clearHoverTimeout();
+                                      hoverTimeoutRef.current = setTimeout(() => setActiveSubDropdown(null), 500);
+                                    }}
+                                  >
+                                    {dropdownItem.subItems.map((subItem, subIndex) => (
+                                      <Link
+                                        key={`${compositeKey}-sub-${subIndex}`}
+                                        to={subItem.href}
+                                        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-xl mx-2 hover:shadow-sm"
+                                        onClick={() => {
+                                          setActiveDropdown(null);
+                                          setActiveSubDropdown(null);
+                                        }}
+                                      >
+                                        {subItem.name}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          }
+
+                          // No nested dropdowns
+                          if (dropdownItem.isDisabled) {
+                            return (
+                              <div key={compositeKey} className="block px-5 py-3 text-sm text-gray-400 rounded-xl mx-2 cursor-not-allowed">
                                 {dropdownItem.name}
                               </div>
-                              {dropdownItem.hasSubDropdown && (
-                                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                              )}
-                            </div>
+                            );
+                          }
 
-                            {dropdownItem.hasSubDropdown && activeSubDropdown === dropdownIndex && (
-                              <div 
-                                className="absolute left-full top-0 ml-2 w-64 md:w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 py-3 z-50"
-                                onMouseEnter={() => handleSubDropdownMouseEnter(dropdownIndex)}
-                                onMouseLeave={() => {
-                                  const timeout = setTimeout(() => {
-                                    setActiveSubDropdown(null);
-                                  }, 500);
-                                  setHoverTimeout(timeout);
-                                }}
-                              >
-                                {dropdownItem.subItems.map((subItem, subIndex) => (
-                                  <Link
-                                    key={subIndex}
-                                    to={subItem.href}
-                                    className="block px-5 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-xl mx-2 hover:shadow-sm"
-                                  >
-                                    {subItem.name}
-                                  </Link>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <Link
-                            key={dropdownIndex}
-                            to={dropdownItem.href}
-                            className="block px-5 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-xl mx-2 hover:shadow-sm"
-                          >
-                            {dropdownItem.name}
-                          </Link>
-                        )
-                      ))}
+                          return (
+                            <Link
+                              key={compositeKey}
+                              to={dropdownItem.href}
+                              className="block px-5 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-xl mx-2 hover:shadow-sm"
+                              onClick={() => setActiveDropdown(null)}
+                            >
+                              {dropdownItem.name}
+                            </Link>
+                          );
+                        })}
                       </div>
                     </>
                   )}
@@ -356,24 +437,33 @@ const Navigation = () => {
           {/* CTA Button & Mobile menu button */}
           <div className="flex items-center space-x-3 sm:space-x-4">
             <div className="hidden md:block">
-              <Link
-                to="/get-started"
-                onClick={() => window.scrollTo(0, 0)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-5 sm:px-6 md:px-7 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center justify-center min-w-[100px] sm:min-w-[120px]"
-              >
-                Get Started
-              </Link>
+              {isAuthenticated ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 sm:px-6 md:px-7 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center justify-center gap-2 min-w-[100px] sm:min-w-[120px]"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Log Out
+                </button>
+              ) : (
+                <Link
+                  to="/get-started"
+                  onClick={() => window.scrollTo(0, 0)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 sm:px-6 md:px-7 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center justify-center min-w-[100px] sm:min-w-[120px]"
+                >
+                  Get Started
+                </Link>
+              )}
             </div>
             <div className="lg:hidden">
               <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-navigation"
                 className="text-gray-600 hover:text-gray-900 p-2 transition-colors duration-200"
               >
-                {isMobileMenuOpen ? (
-                  <XMarkIcon className="w-6 h-6" />
-                ) : (
-                  <Bars3Icon className="w-6 h-6" />
-                )}
+                {isMobileMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
               </button>
             </div>
           </div>
@@ -382,15 +472,16 @@ const Navigation = () => {
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className="fixed lg:hidden bg-white/95 backdrop-blur-xl shadow-2xl border border-gray-200/50 mt-1 sm:mt-2 rounded-b-xl mx-0 sm:mx-2 left-0 right-0 sm:left-2 sm:right-2 md:left-4 md:right-4 lg:left-8 lg:right-8 z-40 max-w-[1400px] mx-auto">
+        <div id="mobile-navigation" className="fixed lg:hidden bg-white/95 backdrop-blur-xl shadow-2xl border border-gray-200/50 mt-1 sm:mt-2 rounded-b-xl sm:mx-2 left-0 right-0 sm:left-2 sm:right-2 md:left-4 md:right-4 lg:left-8 lg:right-8 z-40 max-w-[1400px] mx-auto">
           <div className="px-4 sm:px-6 py-4 space-y-1 max-h-[70vh] overflow-y-auto">
             {menuItems.map((item, index) => (
-              <div key={index}>
+              <div key={`mobile-${index}`}>
                 {item.hasDropdown ? (
                   <div>
                     <button
-                      onClick={() => setActiveDropdown(activeDropdown === index ? null : index)}
+                      onClick={() => setActiveDropdown((prev) => (prev === index ? null : index))}
                       className="w-full text-left text-gray-600 hover:text-blue-700 py-2.5 text-sm font-medium transition-colors duration-200 flex items-center justify-between"
+                      aria-expanded={activeDropdown === index}
                     >
                       <span>{item.name}</span>
                       <ChevronDownIcon className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === index ? 'rotate-180' : ''}`} />
@@ -398,62 +489,71 @@ const Navigation = () => {
 
                     {activeDropdown === index && (
                       <div className="pl-4 space-y-1 mt-2 max-h-64 overflow-y-auto">
-                        {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
-                          item.hasNestedDropdown ? (
-                            <div key={dropdownIndex}>
-                              <div
-                                className={`flex items-center justify-between px-3 py-3 text-sm rounded-md transition-colors duration-200 cursor-pointer ${dropdownItem.isDisabled
-                                  ? 'text-gray-400 cursor-not-allowed'
-                                  : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
-                                  }`}
-                                onClick={() => {
-                                  if (!dropdownItem.isDisabled && dropdownItem.hasSubDropdown) {
-                                    setActiveSubDropdown(activeSubDropdown === dropdownIndex ? null : dropdownIndex);
-                                  }
-                                }}
-                              >
-                                <div className="flex items-center">
-                                  {dropdownItem.flag && <div className="mr-3">{dropdownItem.flag}</div>}
-                                  {dropdownItem.name}
+                        {item.dropdownItems.map((dropdownItem, dropdownIndex) => {
+                          const compositeKey = `${index}-${dropdownIndex}`;
+
+                          if (item.hasNestedDropdown) {
+                            return (
+                              <div key={`mobile-item-${compositeKey}`}>
+                                <div
+                                  className={`flex items-center justify-between px-3 py-3 text-sm rounded-md transition-colors duration-200 cursor-pointer ${dropdownItem.isDisabled
+                                    ? 'text-gray-400 cursor-not-allowed'
+                                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                                    }`}
+                                  onClick={() => {
+                                    if (dropdownItem.isDisabled) return;
+                                    if (dropdownItem.hasSubDropdown) toggleSubDropdown(index, dropdownIndex);
+                                    else setIsMobileMenuOpen(false);
+                                  }}
+                                >
+                                  <div className="flex items-center">
+                                    {dropdownItem.flag && <div className="mr-3">{dropdownItem.flag}</div>}
+                                    {dropdownItem.name}
+                                  </div>
+                                  {dropdownItem.hasSubDropdown && (
+                                    <svg className={`w-4 h-4 ml-2 transition-transform duration-200 ${activeSubDropdown === compositeKey ? 'rotate-90' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                  )}
                                 </div>
-                                {dropdownItem.hasSubDropdown && (
-                                  <svg
-                                    className={`w-4 h-4 ml-2 transition-transform duration-200 ${activeSubDropdown === dropdownIndex ? 'rotate-90' : ''}`}
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                  </svg>
+
+                                {dropdownItem.hasSubDropdown && activeSubDropdown === compositeKey && (
+                                  <div className="pl-6 space-y-1 mt-2">
+                                    {dropdownItem.subItems.map((subItem, subIndex) => (
+                                      <Link
+                                        key={`mobile-${compositeKey}-sub-${subIndex}`}
+                                        to={subItem.href}
+                                        className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors duration-200"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                      >
+                                        {subItem.name}
+                                      </Link>
+                                    ))}
+                                  </div>
                                 )}
                               </div>
+                            );
+                          }
 
-                              {dropdownItem.hasSubDropdown && activeSubDropdown === dropdownIndex && (
-                                <div className="pl-6 space-y-1 mt-2">
-                                  {dropdownItem.subItems.map((subItem, subIndex) => (
-                                    <Link
-                                      key={subIndex}
-                                      to={subItem.href}
-                                      className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors duration-200"
-                                      onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                      {subItem.name}
-                                    </Link>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          ) : (
+                          if (dropdownItem.isDisabled) {
+                            return (
+                              <div key={`mobile-disable-${compositeKey}`} className="block px-3 py-2 text-sm text-gray-400 rounded-md">
+                                {dropdownItem.name}
+                              </div>
+                            );
+                          }
+
+                          return (
                             <Link
-                              key={dropdownIndex}
+                              key={`mobile-link-${compositeKey}`}
                               to={dropdownItem.href}
                               className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors duration-200"
                               onClick={() => setIsMobileMenuOpen(false)}
                             >
                               {dropdownItem.name}
                             </Link>
-                          )
-                        ))}
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -470,16 +570,27 @@ const Navigation = () => {
             ))}
 
             <div className="pt-4 px-2">
-              <Link
-                to="/get-started"
-                className="block w-full max-w-[280px] mx-auto text-center bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  window.scrollTo(0, 0);
-                }}
-              >
-                Get Started
-              </Link>
+              {isAuthenticated ? (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                  className="block w-full max-w-[280px] mx-auto text-center bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  Log Out
+                </button>
+              ) : (
+                <Link
+                  to="/get-started"
+                  className="block w-full max-w-[280px] mx-auto text-center bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    window.scrollTo(0, 0);
+                  }}
+                >
+                  Get Started
+                </Link>
+              )}
             </div>
           </div>
         </div>
