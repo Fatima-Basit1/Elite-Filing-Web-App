@@ -267,7 +267,7 @@ const RegisteredAgent = () => {
                 variants={fadeUp}
               >
                 <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10" style={{
-                background: 'linear-gradient(180deg, rgb(6, 43, 68) 0%, rgba(10,40,90,1) 100%)'
+                background: 'linear-gradient(180deg, rgb(34, 158, 43) 0%, rgb(18, 67, 21) 100%)'
                 }}>
                   <span className="text-white font-bold text-2xl">2</span>
                 </div>
@@ -287,7 +287,7 @@ const RegisteredAgent = () => {
                 variants={fadeUp}
               >
                 <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10" style={{
-                  background: 'linear-gradient(180deg, rgb(6, 43, 68) 0%, rgba(10,40,90,1) 100%)'
+                  background: 'linear-gradient(180deg, rgb(44, 142, 139) 0%, rgb(9, 54, 67) 100%)'
                 }}>
                   <span className="text-white font-bold text-2xl">3</span>
                 </div>
@@ -307,7 +307,7 @@ const RegisteredAgent = () => {
                 variants={fadeUp}
               >
                 <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10" style={{
-                  background: 'linear-gradient(180deg, rgb(6, 43, 68) 0%, rgba(10,40,90,1) 100%)'
+                  background: 'linear-gradient(180deg, rgb(25, 93, 157) 0%, rgba(10,40,90,1) 100%)'
                 }}>
                   <span className="text-white font-bold text-2xl">4</span>
                 </div>

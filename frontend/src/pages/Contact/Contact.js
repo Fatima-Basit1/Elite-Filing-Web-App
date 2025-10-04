@@ -68,7 +68,11 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">Phone</h3>
-                    <p className="text-gray-600">+447723346951</p>
+                    <p className="text-gray-600">
+                      <a href="tel:+447723346951" className="text-blue-600 hover:underline">
+                        +44 7723 346951
+                      </a>
+                    </p>
                   </div>
                 </div>
                 
@@ -81,7 +85,11 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">Email</h3>
-                    <p className="text-gray-600">info@elite-filing.com</p>
+                    <p className="text-gray-600">
+                      <a href="mailto:info@elite-filing.com" className="text-blue-600 hover:underline">
+                        info@elite-filing.com
+                      </a>
+                    </p>
                   </div>
                 </div>
                 
@@ -94,8 +102,15 @@ const Contact = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">UK Office</h3>
                     <p className="text-gray-600">
-                      Office 1212 182-184, High street, North<br />
-                      Area 1/1, East Ham, London, United Kingdom
+                      <a
+                        href="https://www.google.com/maps?q=Office+1212+182-184+High+Street+North+East+Ham+London+United+Kingdom"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Office 1212 182-184, High Street, North<br />
+                        Area 1/1, East Ham, London, United Kingdom
+                      </a>
                     </p>
                   </div>
                 </div>
@@ -109,11 +124,18 @@ const Contact = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">Pakistan Office</h3>
                     <p className="text-gray-600">
+                    <a
+                      href="https://www.google.com/maps?q=Gate+No+4,+National+Aerospace+Science+and+Technology+Park,+Industrial+Innovative+Enclave,+Alpha+17,+Rawalpindi,+Pakistan"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
                       Gate No 4, National Aerospace Science<br />
                       and Technology Park, Industrial<br />
                       Innovative Enclave, Alpha 17,<br />
                       Rawalpindi, Pakistan
-                    </p>
+                    </a>
+                  </p>
                   </div>
                 </div>
               </div>

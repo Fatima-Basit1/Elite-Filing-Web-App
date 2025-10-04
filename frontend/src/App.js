@@ -20,6 +20,8 @@ import Contact from './pages/Contact/Contact';
 import About from './pages/About/About';
 import SignIn from './pages/Auth/SignIn';
 import SignUp from './pages/Auth/SignUp';
+import ForgotPassword from './pages/Auth/ForgotPassword';
+import ResetPassword from './pages/Auth/ForgotPassword';
 import NotFound from './pages/NotFound/NotFound';
 import USCompanyFiling from './pages/USCompanyFiling/USCompanyFiling';
 import UKCompanyFiling from './pages/UKCompanyFiling/UKCompanyFiling';
@@ -63,6 +65,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/get-started" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/blogs/company-filing-us" element={<USCompanyFiling />} />
         <Route path="/blogs/company-filing-uk" element={<UKCompanyFiling />} />
         <Route path="/blogs/digital-marketing" element={<DigitalMarketing />} />

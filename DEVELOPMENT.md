@@ -264,9 +264,13 @@ npm run start:prod
    - Kill existing processes
 
 2. **MongoDB connection failed**
-   - Check MongoDB is running
-   - Verify connection string
-   - Check network connectivity
+   - Check MongoDB is running (local: ensure port 27017 is open)
+   - Verify connection string and database name
+   - If using MongoDB Atlas:
+     - Add your current IP to Atlas IP Access List
+     - Ensure DNS can resolve SRV records and TLS is allowed
+     - Confirm username/password and role permissions
+   - Check firewall/VPN/network connectivity
 
 3. **File upload fails**
    - Check file size limits

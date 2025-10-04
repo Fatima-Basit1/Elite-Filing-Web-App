@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -98,6 +99,26 @@ const UserSchema = new mongoose.Schema({
 
 // Index for faster queries
 UserSchema.index({ email: 1 });
+
+// Normalize and hash sensitive fields before save
+UserSchema.pre('save', async function(next) {
+  try {
+    if (typeof this.email === 'string') {
+      this.email = this.email.toLowerCase().trim();
+    }
+    if (typeof this.name === 'string') {
+      this.name = this.name.trim();
+    }
+    if (this.isModified('password')) {
+      const rounds = parseInt(process.env.BCRYPT_ROUNDS) || 12;
+      const salt = await bcrypt.genSalt(rounds);
+      this.password = await bcrypt.hash(this.password, salt);
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Virtual for account lock status
 UserSchema.virtual('isLocked').get(function() {

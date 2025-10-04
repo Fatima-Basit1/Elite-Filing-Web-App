@@ -55,7 +55,7 @@ const AmazonEcommerce = () => {
               <span className="block text-yellow-400">with Elite Filing</span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed max-w-4xl mx-w-4xl">
-              Scale globally with Amazon - from setup to sales growth, we manage everything end-to-end.
+              Scale globally with Amazon, from setup to sales growth. We manage everything end to end.
             </p>
             <div className="flex flex-wrap justify-start gap-4 mb-8">
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
@@ -260,7 +260,7 @@ const AmazonEcommerce = () => {
               Amazon E-commerce Solutions
             </h2>
             <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Elite Filing provides complete Amazon selling solutions — from account creation and SEO-optimized product listings to fulfillment, advertising, and growth strategies. Whether you're starting fresh or scaling, we help improve visibility, rankings, and sales.
+              Elite Filing provides complete Amazon selling solutions, from account creation and SEO optimized product listings to fulfillment, advertising, and growth strategies. Whether you're starting fresh or scaling, we help improve visibility, rankings, and sales.
             </p>
           </div>
 
@@ -284,7 +284,7 @@ const AmazonEcommerce = () => {
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Product Listing</h3>
               <p className="text-gray-600 leading-relaxed">
-                We design SEO-driven product listings with optimized keywords, high-quality images, and detailed descriptions to boost search ranking and conversions.
+                We design SEO driven product listings with optimized keywords, high quality images, and detailed descriptions to boost search ranking and conversions.
               </p>
             </div>
 
@@ -295,7 +295,7 @@ const AmazonEcommerce = () => {
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Advertising & Marketing</h3>
               <p className="text-gray-600 leading-relaxed">
-                Our team manages targeted Amazon ad campaigns — Sponsored Products, Sponsored Brands, and more — to drive traffic, engagement, and sales.
+                Our team manages targeted Amazon ad campaigns, including Sponsored Products, Sponsored Brands, and more, to drive traffic, engagement, and sales.
               </p>
             </div>
           </div>

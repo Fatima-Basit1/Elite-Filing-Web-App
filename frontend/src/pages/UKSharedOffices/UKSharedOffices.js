@@ -196,7 +196,7 @@ const UKSharedOffices = () => {
               </h3>
               
               <p className="text-gray-600 text-sm leading-relaxed">
-                Receive mail and mail forwarding via scan to email for instant access to your correspondence.
+                Receive mail and forwarding via scan to email for instant access to your mail.
               </p>
             </motion.div>
             
@@ -218,7 +218,7 @@ const UKSharedOffices = () => {
               </h3>
               
               <p className="text-gray-600 text-sm leading-relaxed">
-                Free 24/7 call answering service with a dedicated UK phone line (1500 minutes included).
+                Free 24/7 call answering with a dedicated UK phone line and 1500 minutes.
               </p>
             </motion.div>
           </motion.div>

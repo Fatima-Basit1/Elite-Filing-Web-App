@@ -22,7 +22,7 @@ transporter.verify(function(error, success) {
   }
 });
 
-const sendLogoRequestEmail = async (formData, referenceImages) => {
+const sendLogoRequestEmail = async (formData, referenceImages, recipientEmailOverride) => {
   try {
     // Check if email credentials are configured
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS || process.env.SMTP_USER === 'your-email@gmail.com') {
@@ -183,7 +183,7 @@ const sendLogoRequestEmail = async (formData, referenceImages) => {
     // Send email with attachments
     await transporter.sendMail({
       from: process.env.SMTP_FROM || '"Elite Filing" <noreply@elitefiling.com>',
-      to: email,
+      to: recipientEmailOverride || email,
       subject: 'Logo Design Request Confirmation - Elite Filing',
       html: emailContent,
       attachments
@@ -196,6 +196,63 @@ const sendLogoRequestEmail = async (formData, referenceImages) => {
   }
 };
 
+const sendPasswordResetEmail = async ({ to, name, resetLink }) => {
+  try {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS || process.env.SMTP_USER === 'your-email@gmail.com') {
+      console.warn('Email credentials not configured. Skipping password reset email.');
+      return { success: false, error: 'Email service not configured' };
+    }
+
+    const emailContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8" />
+        <style>
+          body { font-family: Arial, sans-serif; color: #1f2937; }
+          .container { max-width: 600px; margin: 0 auto; padding: 24px; }
+          .header { background: #1d4ed8; color: #fff; padding: 20px; border-radius: 8px; text-align: center; }
+          .content { background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; margin-top: 16px; }
+          .btn { display: inline-block; background: #2563eb; color: #fff; padding: 12px 18px; border-radius: 6px; text-decoration: none; margin-top: 12px; }
+          .footer { color: #6b7280; font-size: 12px; margin-top: 16px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h2>Password Reset Request</h2>
+          </div>
+          <div class="content">
+            <p>Hi ${name || 'there'},</p>
+            <p>We received a request to reset your password for your Elite Filing account.</p>
+            <p>You can reset your password by clicking the button below:</p>
+            <p><a class="btn" href="${resetLink}" target="_blank" rel="noopener noreferrer">Reset Your Password</a></p>
+            <p>If the button doesn't work, copy and paste this link into your browser:</p>
+            <p><a href="${resetLink}" target="_blank" rel="noopener noreferrer">${resetLink}</a></p>
+            <p>This link will expire in 1 hour for security reasons.</p>
+            <p>If you did not request a password reset, you can safely ignore this email.</p>
+          </div>
+          <p class="footer">© ${new Date().getFullYear()} Elite Filing</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || 'Elite Filing <noreply@elitefiling.com>',
+      to,
+      subject: 'Reset your Elite Filing password',
+      html: emailContent,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+    return { success: false, error: error.message };
+  }
+};
+
 module.exports = {
-  sendLogoRequestEmail
+  sendLogoRequestEmail,
+  sendPasswordResetEmail
 };

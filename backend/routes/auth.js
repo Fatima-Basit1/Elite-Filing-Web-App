@@ -10,6 +10,7 @@ const {
   handleValidationErrors,
   sanitizeInput 
 } = require('../utils/validation');
+const { sendPasswordResetEmail } = require('../utils/emailService');
 const {
   generateTokenPair,
   setTokenCookies,
@@ -58,13 +59,8 @@ router.post('/signup',
       const user = new User({
         name: name.trim(),
         email: email.toLowerCase().trim(),
-        password: password // Will be hashed by pre-save middleware if we add it, or hash here
+        password: password
       });
-
-      // Hash password with high salt rounds
-      const saltRounds = parseInt(process.env.BCRYPT_ROUNDS) || 12;
-      const salt = await bcrypt.genSalt(saltRounds);
-      user.password = await bcrypt.hash(password, salt);
 
       // Save user
       await user.save();
@@ -222,6 +218,94 @@ router.post('/login',
     }
   }
 );
+
+// @route   POST /api/auth/forgot-password
+// @desc    Initiate password reset and send email
+// @access  Public
+router.post('/forgot-password', passwordResetLimiter, async (req, res) => {
+  try {
+    const { email } = sanitizeInput(req.body);
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    // Always respond success to prevent enumeration
+    if (!user) {
+      return res.status(200).json({ message: 'If the email exists, a reset link was sent.' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenHash = await bcrypt.hash(resetToken, 10);
+
+    user.passwordResetToken = resetTokenHash;
+    user.passwordResetExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+    await user.save();
+
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const resetLink = `${baseUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(user.email)}`;
+
+    await sendPasswordResetEmail({ to: user.email, name: user.name, resetLink });
+
+    return res.status(200).json({ message: 'If the email exists, a reset link was sent.' });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({ message: 'Server error during password reset' });
+  }
+});
+
+// @route   POST /api/auth/reset-password
+// @desc    Reset password using token
+// @access  Public
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, token, newPassword, confirmPassword } = sanitizeInput(req.body);
+
+    if (!email || !token || !newPassword || !confirmPassword) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Validate password via utility
+    const { validatePasswordStrength } = require('../utils/validation');
+    const validation = validatePasswordStrength(newPassword);
+    if (!validation.isValid) {
+      return res.status(400).json({ message: validation.errors.join(', ') });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user || !user.passwordResetToken || !user.passwordResetExpires) {
+      return res.status(400).json({ message: 'Invalid or expired reset token' });
+    }
+
+    if (user.passwordResetExpires < Date.now()) {
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save();
+      return res.status(400).json({ message: 'Reset token has expired' });
+    }
+
+    const isValidToken = await bcrypt.compare(token, user.passwordResetToken);
+    if (!isValidToken) {
+      return res.status(400).json({ message: 'Invalid reset token' });
+    }
+
+    // Assign plaintext; hashing handled by User model pre-save hook
+    user.password = newPassword;
+
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    return res.status(200).json({ message: 'Password reset successful. You can now log in.' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(500).json({ message: 'Server error during password reset' });
+  }
+});
 
 // @route   POST /api/auth/refresh
 // @desc    Refresh access token using refresh token
