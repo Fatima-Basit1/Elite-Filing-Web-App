@@ -252,7 +252,75 @@ const sendPasswordResetEmail = async ({ to, name, resetLink }) => {
   }
 };
 
+// Generic submission email for various service request forms
+const sendSubmissionEmail = async ({ to, subject, heading, formType, details }) => {
+  try {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS || process.env.SMTP_USER === 'your-email@gmail.com') {
+      console.warn('Email credentials not configured. Skipping submission email.');
+      return { success: false, error: 'Email service not configured' };
+    }
+
+    const detailRows = Object.entries(details || {})
+      .map(([key, value]) => `
+        <tr>
+          <td style="padding:8px;border:1px solid #e5e7eb;background:#f9fafb;font-weight:600;color:#374151;text-transform:capitalize">${String(key).replace(/_/g, ' ')}</td>
+          <td style="padding:8px;border:1px solid #e5e7eb">${Array.isArray(value) ? value.join(', ') : (value ?? '')}</td>
+        </tr>
+      `)
+      .join('');
+
+    const emailContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8" />
+        <style>
+          body { font-family: Arial, sans-serif; color: #1f2937; }
+          .container { max-width: 640px; margin: 0 auto; padding: 24px; }
+          .header { background: #1d4ed8; color: #fff; padding: 20px; border-radius: 8px; text-align: center; }
+          .content { background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; margin-top: 16px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+          .footer { color: #6b7280; font-size: 12px; margin-top: 16px; text-align: center; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h2>${heading || 'Submission Confirmation'}</h2>
+          </div>
+          <div class="content">
+            <p>Thanks for submitting your <strong>${formType || 'request'}</strong> to Elite Filing.</p>
+            ${detailRows ? `
+            <p>Here are the details we received:</p>
+            <table>
+              <tbody>
+                ${detailRows}
+              </tbody>
+            </table>` : ''}
+            <p>Our team will review your submission and follow up shortly.</p>
+          </div>
+          <p class="footer">© ${new Date().getFullYear()} Elite Filing</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || 'Elite Filing <noreply@elitefiling.com>',
+      to,
+      subject: subject || 'Your submission has been received',
+      html: emailContent,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending submission email:', error);
+    return { success: false, error: error.message };
+  }
+};
+
 module.exports = {
   sendLogoRequestEmail,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  sendSubmissionEmail
 };

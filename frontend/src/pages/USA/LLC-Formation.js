@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
+import { markUSLLCFormationSubmitted } from '../../store/slices/submissionsSlice';
+import { apiMethods } from '../../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
 const LLCFormation = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { isAuthenticated, token } = useSelector((state) => state.auth);
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
@@ -41,10 +49,78 @@ const LLCFormation = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        // Handle form submission logic here
+
+        if (!isAuthenticated || !token) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to submit your US LLC formation form.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
+
+        const payload = {
+            ...formData,
+            numberOfMembers: parseInt(formData.numberOfMembers, 10) || 1,
+            duration: formData.duration,
+        };
+
+        try {
+            const res = await apiMethods.submissions.submitUSLLCFormation(payload);
+            const refId = res?.data?.data?._id;
+            dispatch(
+                addUiNotification({
+                    type: 'success',
+                    title: 'Submission Received',
+                    message: `Your US LLC Formation Form has been successfully submitted${refId ? ` (Reference ID: ${refId})` : ''}.`,
+                })
+            );
+            dispatch(markUSLLCFormationSubmitted());
+            setFormData({
+                firstName: '',
+                lastName: '',
+                residentialAddress: '',
+                dateOfBirth: '',
+                email: '',
+                phoneNumber: '',
+                companyProposedName: '',
+                state: '',
+                numberOfMembers: '',
+                businessPurpose: '',
+                duration: 'perpetual',
+                message: ''
+            });
+        } catch (error) {
+            const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg;
+            const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Submission Failed',
+                    message,
+                })
+            );
+        }
+    };
+
+    const handleStartForm = () => {
+        if (!isAuthenticated || !token) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to access the US LLC formation form.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
+        setShowForm(true);
     };
 
     const services = [
@@ -112,7 +188,7 @@ const LLCFormation = () => {
                         <motion.button
                             whileHover={{ scale: 1.08 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => setShowForm(true)}
+                            onClick={handleStartForm}
                             className="flex items-center gap-3 bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-10 py-4 rounded-2xl text-lg font-semibold shadow-lg transition-all duration-300 group"
                         >
                             Start Your LLC Formation
@@ -326,12 +402,12 @@ const LLCFormation = () => {
                                                 <input
                                                     type="radio"
                                                     name="duration"
-                                                    value="limited"
-                                                    checked={formData.duration === 'limited'}
+                                                    value="fixed"
+                                                    checked={formData.duration === 'fixed'}
                                                     onChange={handleInputChange}
                                                     className="mr-3 text-[#1e3a8a] focus:ring-[#1e3a8a]"
                                                 />
-                                                <span className="text-gray-700">Limited</span>
+                                                <span className="text-gray-700">Fixed</span>
                                             </label>
                                         </div>
                                     </div>

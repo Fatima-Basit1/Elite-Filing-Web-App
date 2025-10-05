@@ -6,6 +6,7 @@ import authReducer from './slices/authSlice';
 import fileReducer from './slices/fileSlice';
 import uiReducer from './slices/uiSlice';
 import notificationReducer from './slices/notificationSlice';
+import submissionsReducer from './slices/submissionsSlice';
 
 const persistConfig = {
   key: 'root',
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   files: fileReducer,
   ui: uiReducer,
   notifications: notificationReducer,
+  submissions: submissionsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

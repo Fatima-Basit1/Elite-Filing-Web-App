@@ -121,6 +121,11 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/files', require('./routes/files'));
 app.use('/api/logo-requests', require('./routes/logoRequests'));
 app.use('/api/onboarding', require('./routes/onboarding'));
+app.use('/api/trademark-requests', require('./routes/trademarkRequests'));
+app.use('/api/uk-shared-office-requests', require('./routes/ukSharedOfficeRequests'));
+app.use('/api/registered-agent-requests', require('./routes/registeredAgentRequests'));
+app.use('/api/us-llc-formation-requests', require('./routes/usLlcFormationRequests'));
+app.use('/api/us-tax-filing-requests', require('./routes/usTaxFilingRequests'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

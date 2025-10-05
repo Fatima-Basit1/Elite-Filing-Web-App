@@ -1,5 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
+import { markRegisteredAgentSubmitted } from '../../store/slices/submissionsSlice';
+import { apiMethods } from '../../services/api';
 import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
@@ -7,7 +12,11 @@ import ChatWidget from '../../components/ChatWidget/ChatWidget';
 import bluebg from '../../assets/bluebg.jpg';
 
 const RegisteredAgent = () => {
-  const [formData, setFormData] = useState({
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated, token } = useSelector((state) => state.auth);
+
+  const initialFormData = {
     firstName: '',
     lastName: '',
     email: '',
@@ -16,9 +25,10 @@ const RegisteredAgent = () => {
     businessType: '',
     stateOfRegistration: '',
     serviceDuration: '',
-    symbolsElements: '',
     message: ''
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -31,10 +41,43 @@ const RegisteredAgent = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission logic here
+
+    if (!isAuthenticated || !token) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Sign In Required',
+          message: 'Please log in to request registered agent services.',
+        })
+      );
+      navigate('/get-started');
+      return;
+    }
+
+    try {
+      await apiMethods.submissions.submitRegisteredAgent(formData);
+      dispatch(
+        addUiNotification({
+          type: 'success',
+          title: 'Submission Received',
+          message: 'Your registered agent request has been submitted successfully.',
+        })
+      );
+      dispatch(markRegisteredAgentSubmitted());
+      setFormData(initialFormData);
+    } catch (error) {
+      const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg;
+      const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Submission Failed',
+          message,
+        })
+      );
+    }
   };
 
   const scrollToForm = () => {
@@ -548,40 +591,21 @@ const RegisteredAgent = () => {
               {/* Service Duration */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Duration of Service Required *
+                  Duration of Service Required (1 year, 2 years, etc.) *
                 </label>
-                <select
+                <input
+                  type="text"
                   name="serviceDuration"
                   value={formData.serviceDuration}
                   onChange={handleInputChange}
+                  placeholder="1 year, 2 years, etc."
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                   required
-                >
-                  <option value="">Select Duration</option>
-                  <option value="1 Year">1 Year</option>
-                  <option value="2 Years">2 Years</option>
-                  <option value="3 Years">3 Years</option>
-                  <option value="Ongoing">Ongoing</option>
-                </select>
-              </div>
-              
-              {/* Symbols/Elements */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Any Symbols / Elements
-                </label>
-                <textarea
-                  name="symbolsElements"
-                  value={formData.symbolsElements}
-                  onChange={handleInputChange}
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 resize-none"
-                  style={{
-                    '--tw-ring-color': 'rgba(6,30,68,1)'
-                  }}
-                  placeholder="Describe any specific symbols or elements you'd like to include..."
                 />
               </div>
+
+              
+              
               
               {/* Message */}
               <div>

@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
+import { markUKSharedOfficeSubmitted } from '../../store/slices/submissionsSlice';
+import { apiMethods } from '../../services/api';
 import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
@@ -6,17 +11,22 @@ import ChatWidget from '../../components/ChatWidget/ChatWidget';
 import bluebg from '../../assets/bluebg.jpg';
 
 const UKSharedOffices = () => {
-  const [formData, setFormData] = useState({
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated, token } = useSelector((state) => state.auth);
+
+  const initialFormData = {
     firstName: '',
     lastName: '',
     email: '',
     phoneNumber: '',
-    companyName: '',
+    officeLocation: '',
     businessType: '',
-    officeRequirements: '',
     duration: '',
     message: ''
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
       useEffect(() => {
     window.scrollTo(0, 0);
@@ -29,10 +39,43 @@ const UKSharedOffices = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission logic here
+
+    if (!isAuthenticated || !token) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Sign In Required',
+          message: 'Please log in to request a UK shared office.',
+        })
+      );
+      navigate('/get-started');
+      return;
+    }
+
+    try {
+      await apiMethods.submissions.submitUKSharedOffice(formData);
+      dispatch(
+        addUiNotification({
+          type: 'success',
+          title: 'Submission Received',
+          message: 'Your UK shared office request has been submitted successfully.',
+        })
+      );
+      dispatch(markUKSharedOfficeSubmitted());
+      setFormData(initialFormData);
+    } catch (error) {
+      const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg;
+      const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Submission Failed',
+          message,
+        })
+      );
+    }
   };
 
   const scrollToForm = () => {
@@ -433,27 +476,29 @@ const UKSharedOffices = () => {
                   />
                 </div>
               </div>
-              
-              {/* Company Name */}
+
+              {/* Preferred Office Location */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Company Name *
+                 Office Location *
                 </label>
                 <input
                   type="text"
-                  name="companyName"
-                  value={formData.companyName}
+                  name="officeLocation"
+                  value={formData.officeLocation}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white"
+                  placeholder="Preferred Office Location in UK"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                   required
                 />
               </div>
+             
               
               {/* Business Type and Duration */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Business Type *
+                    Type of Use *
                   </label>
                   <select
                     name="businessType"
@@ -465,13 +510,11 @@ const UKSharedOffices = () => {
                     }}
                     required
                   >
-                    <option value="">Select Business Type</option>
-                    <option value="Startup">Startup</option>
-                    <option value="Small Business">Small Business</option>
-                    <option value="Medium Enterprise">Medium Enterprise</option>
-                    <option value="Large Corporation">Large Corporation</option>
-                    <option value="Freelancer">Freelancer</option>
-                    <option value="Consultant">Consultant</option>
+                    <option value="">Select Type</option>
+                    <option value="Mail Forwarding">Mail Forwarding</option>
+                    <option value="Physical Office Space">Physical Office Space</option>
+                    <option value="Meeting Rooms">Meeting Rooms</option>
+                    
                   </select>
                 </div>
                 
@@ -490,32 +533,14 @@ const UKSharedOffices = () => {
                     required
                   >
                     <option value="">Select Duration</option>
-                    <option value="1 Month">1 Month</option>
-                    <option value="3 Months">3 Months</option>
-                    <option value="6 Months">6 Months</option>
-                    <option value="1 Year">1 Year</option>
-                    <option value="2+ Years">2+ Years</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Yearly">Yearly</option>
+                    
                   </select>
                 </div>
               </div>
               
-              {/* Office Requirements */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Office Requirements
-                </label>
-                <textarea
-                  name="officeRequirements"
-                  value={formData.officeRequirements}
-                  onChange={handleInputChange}
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 resize-none bg-white"
-                  style={{
-                    '--tw-ring-color': 'rgba(6,30,68,1)'
-                  }}
-                  placeholder="Describe your specific office requirements, team size, special needs, etc..."
-                />
-              </div>
+              
               
               {/* Message */}
               <div>

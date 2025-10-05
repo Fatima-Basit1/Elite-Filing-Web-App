@@ -42,10 +42,16 @@ import VATRegistration from './pages/UK/VATRegistration';
 import VATReturn from './pages/UK/VATReturn';
 import BankAccounts from './pages/UK/BankAccounts';
 import SPCFreeZone from './pages/UAE/SPCFreeZone';
+import CompanyFormationHome from './pages/CompanyFormation/CompanyFormationHome';
+import USAFormationHome from './pages/CompanyFormation/USAFormationHome';
+import UKFormationHome from './pages/CompanyFormation/UKFormationHome';
+
+import AllFormsSuccessModal from './components/UI/AllFormsSuccessModal';
 
 function App() {
   return (
     <div className="App">
+      <AllFormsSuccessModal />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/business-solutions" element={<BusinessSolutions />} />
@@ -58,6 +64,28 @@ function App() {
         <Route path="/ecommerce/amazon" element={<AmazonEcommerce />} />
         <Route path="/ecommerce/walmart" element={<WalmartEcommerce />} />
         <Route path="/ecommerce/etsy" element={<EtsyEcommerce />} />
+        {/* Company Formation Landing and Aliases */}
+        <Route path="/company-formation" element={<CompanyFormationHome />} />
+        <Route path="/company-formation/usa" element={<USAFormationHome />} />
+        <Route path="/company-formation/uk" element={<UKFormationHome />} />
+        
+        {/* USA Aliases */}
+        <Route path="/company-formation/usa/llc-formation" element={<LLCFormation />} />
+        <Route path="/company-formation/usa/tax" element={<Tax />} />
+        <Route path="/company-formation/usa/itin" element={<ITIN />} />
+        <Route path="/company-formation/usa/trademark" element={<Trademark />} />
+        <Route path="/company-formation/usa/complete-package" element={<CompletePackage />} />
+        {/* UK Aliases */}
+        <Route path="/company-formation/uk/company-registration" element={<CompanyRegistration />} />
+        <Route path="/company-formation/uk/annual-accounts" element={<AnnualAccounts />} />
+        <Route path="/company-formation/uk/company-closure" element={<CompanyClosure />} />
+        <Route path="/company-formation/uk/name-change" element={<CompanyNameChange />} />
+        <Route path="/company-formation/uk/structural-change" element={<StructuralChange />} />
+        <Route path="/company-formation/uk/confirmation-statement" element={<ConfirmationStatement />} />
+        <Route path="/company-formation/uk/eori-application" element={<EORIApplication />} />
+        <Route path="/company-formation/uk/vat-registration" element={<VATRegistration />} />
+        <Route path="/company-formation/uk/vat-return" element={<VATReturn />} />
+        <Route path="/company-formation/uk/bank-accounts" element={<BankAccounts />} />
         <Route path="/company-formation/pakistan/secp" element={<SECPRegistration />} />
         <Route path="/company-formation/pakistan/pseb" element={<PSEBRegistration />} />
         <Route path="/company-formation/pakistan/fbr" element={<FBRRegistration />} />
@@ -86,7 +114,7 @@ function App() {
         <Route path="/UK/VATReturn" element={<VATReturn />} />
         <Route path="/UK/BankAccounts" element={<BankAccounts />} />
         <Route path="/company-formation/uae/spc-free-zone" element={<SPCFreeZone />} />
-        
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

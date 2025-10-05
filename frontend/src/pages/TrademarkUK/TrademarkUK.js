@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
+import { markTrademarkUKSubmitted } from '../../store/slices/submissionsSlice';
+import { apiMethods } from '../../services/api';
 import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
@@ -6,15 +11,24 @@ import ChatWidget from '../../components/ChatWidget/ChatWidget';
 import bluebg from '../../assets/bluebg.jpg';
 
 const TrademarkUK = () => {
-  const [formData, setFormData] = useState({
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated, token } = useSelector((state) => state.auth);
+
+  const initialFormData = {
     firstName: '',
     lastName: '',
+    email: '',
     phone: '',
     companyName: '',
     trademarkType: '',
-    businessSector: '',
+    goodsServices: '',
+    classNumber: '',
+    existingTrademark: '',
     message: ''
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
     useEffect(() => {
     window.scrollTo(0, 0);
@@ -27,9 +41,43 @@ const TrademarkUK = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+
+    if (!isAuthenticated || !token) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Sign In Required',
+          message: 'Please log in to submit a trademark request.',
+        })
+      );
+      navigate('/get-started');
+      return;
+    }
+
+    try {
+      await apiMethods.submissions.submitTrademarkUK(formData);
+      dispatch(
+        addUiNotification({
+          type: 'success',
+          title: 'Submission Received',
+          message: 'Your UK trademark request has been submitted successfully.',
+        })
+      );
+      dispatch(markTrademarkUKSubmitted());
+      setFormData(initialFormData);
+    } catch (error) {
+      const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg;
+      const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Submission Failed',
+          message,
+        })
+      );
+    }
   };
 
   // Animation variants
@@ -299,154 +347,212 @@ const TrademarkUK = () => {
             className="max-w-4xl mx-auto"
           >
             <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-100">
-              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  <div>
-                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
-                      First Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
-                      style={{
-                        '--tw-ring-color': 'rgba(6,30,68,1)'
-                      }}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
-                      Last Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
-                      style={{
-                        '--tw-ring-color': 'rgba(6,30,68,1)'
-                      }}
-                      required
-                    />
-                  </div>
-                </div>
+               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+  {/* Two-column layout to match reference image ordering */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+    {/* First Row */}
+    <div>
+      <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+        First Name *
+      </label>
+      <input
+        type="text"
+        name="firstName"
+        value={formData.firstName}
+        onChange={handleInputChange}
+        className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
+        style={{
+          '--tw-ring-color': 'rgba(6,30,68,1)'
+        }}
+        required
+      />
+    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  <div>
-                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
-                      Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
-                      style={{
-                        '--tw-ring-color': 'rgba(6,30,68,1)'
-                      }}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
-                      Company Name
-                    </label>
-                    <input
-                      type="text"
-                      name="companyName"
-                      value={formData.companyName}
-                      onChange={handleInputChange}
-                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
-                      style={{
-                        '--tw-ring-color': 'rgba(6,30,68,1)'
-                      }}
-                    />
-                  </div>
-                </div>
+    <div>
+      <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+        Last Name *
+      </label>
+      <input
+        type="text"
+        name="lastName"
+        value={formData.lastName}
+        onChange={handleInputChange}
+        className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
+        style={{
+          '--tw-ring-color': 'rgba(6,30,68,1)'
+        }}
+        required
+      />
+    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  <div>
-                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
-                      Trademark Type *
-                    </label>
-                    <select
-                      name="trademarkType"
-                      value={formData.trademarkType}
-                      onChange={handleInputChange}
-                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
-                      style={{
-                        '--tw-ring-color': 'rgba(6,30,68,1)'
-                      }}
-                      required
-                    >
-                      <option value="">Select trademark type</option>
-                      <option value="word">Word Mark</option>
-                      <option value="logo">Logo/Design Mark</option>
-                      <option value="combined">Combined Mark</option>
-                      <option value="sound">Sound Mark</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
-                      Business Sector *
-                    </label>
-                    <select
-                      name="businessSector"
-                      value={formData.businessSector}
-                      onChange={handleInputChange}
-                      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
-                      style={{
-                        '--tw-ring-color': 'rgba(6,30,68,1)'
-                      }}
-                      required
-                    >
-                      <option value="">Select business sector</option>
-                      <option value="technology">Technology</option>
-                      <option value="retail">Retail</option>
-                      <option value="healthcare">Healthcare</option>
-                      <option value="finance">Finance</option>
-                      <option value="manufacturing">Manufacturing</option>
-                      <option value="services">Services</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                </div>
+    {/* Second Row */}
+    <div>
+      <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+        Email *
+      </label>
+      <input
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleInputChange}
+        className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
+        style={{
+          '--tw-ring-color': 'rgba(6,30,68,1)'
+        }}
+        required
+      />
+    </div>
 
-                <div>
-                  <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
-                    Additional Information
-                  </label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    rows={4}
-                    className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all resize-none text-base"
-                    style={{
-                      '--tw-ring-color': 'rgba(6,30,68,1)'
-                    }}
-                    placeholder="Tell us more about your trademark registration needs..."
-                  ></textarea>
-                </div>
+    <div>
+      <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+        Phone Number *
+      </label>
+      <input
+        type="tel"
+        name="phone"
+        value={formData.phone}
+        onChange={handleInputChange}
+        className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
+        style={{
+          '--tw-ring-color': 'rgba(6,30,68,1)'
+        }}
+        required
+      />
+    </div>
 
-                <motion.button
-                  type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full text-white py-3 sm:py-4 px-6 sm:px-8 rounded-lg font-semibold text-base sm:text-lg transition-colors shadow-lg"
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
-                  }}
-                >
-                  Submit Registration Request
-                </motion.button>
-              </form>
+    {/* Third Row */}
+    <div>
+      <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+        Company Proposed Name / Company Name *
+      </label>
+      <input
+        type="text"
+        name="companyName"
+        value={formData.companyName}
+        onChange={handleInputChange}
+        className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
+        style={{
+          '--tw-ring-color': 'rgba(6,30,68,1)'
+        }}
+        required
+      />
+    </div>
+
+    <div>
+      <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+        Trademark Type (Wordmark, Logo, Both) *
+      </label>
+      <input
+        type="text"
+        name="trademarkType"
+        value={formData.trademarkType}
+        onChange={handleInputChange}
+        placeholder="e.g., Wordmark, Logo, or Both"
+        className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
+        style={{
+          '--tw-ring-color': 'rgba(6,30,68,1)'
+        }}
+        required
+      />
+    </div>
+
+    {/* Fourth Row */}
+    <div>
+      <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+        Description of Goods / Services *
+      </label>
+      <input
+        type="text"
+        name="goodsServices"
+        value={formData.goodsServices}
+        onChange={handleInputChange}
+        className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
+        style={{
+          '--tw-ring-color': 'rgba(6,30,68,1)'
+        }}
+        required
+      />
+    </div>
+
+    <div>
+      <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+        Class Number(s) (if known)
+      </label>
+      <input
+        type="text"
+        name="classNumber"
+        value={formData.classNumber}
+        onChange={handleInputChange}
+        placeholder="e.g., 25, 35, 42"
+        className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
+        style={{
+          '--tw-ring-color': 'rgba(6,30,68,1)'
+        }}
+      />
+    </div>
+  </div>
+
+  {/* Existing Trademark Applications */}
+  <div>
+    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-3">
+      Existing Trademark Applications?
+    </label>
+    <div className="flex items-center space-x-6">
+      <label className="flex items-center cursor-pointer">
+        <input
+          type="radio"
+          name="existingTrademark"
+          value="Yes"
+          checked={formData.existingTrademark === 'Yes'}
+          onChange={handleInputChange}
+          className="w-5 h-5 text-blue-600"
+        />
+        <span className="ml-2 text-gray-700 font-medium">Yes</span>
+      </label>
+      <label className="flex items-center cursor-pointer">
+        <input
+          type="radio"
+          name="existingTrademark"
+          value="No"
+          checked={formData.existingTrademark === 'No'}
+          onChange={handleInputChange}
+          className="w-5 h-5 text-blue-600"
+        />
+        <span className="ml-2 text-gray-700 font-medium">No</span>
+      </label>
+    </div>
+  </div>
+
+  {/* Message Field */}
+  <div>
+    <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+      Message
+    </label>
+    <textarea
+      name="message"
+      value={formData.message}
+      onChange={handleInputChange}
+      rows={4}
+      className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all resize-none text-base"
+      style={{
+        '--tw-ring-color': 'rgba(6,30,68,1)'
+      }}
+      placeholder="Tell us more about your trademark registration needs..."
+    ></textarea>
+  </div>
+
+  <motion.button
+    type="submit"
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    className="w-full text-white py-3 sm:py-4 px-6 sm:px-8 rounded-lg font-semibold text-base sm:text-lg transition-colors shadow-lg"
+    style={{
+      background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+    }}
+  >
+    Submit Registration Request
+  </motion.button>
+</form>
             </div>
           </motion.div>
         </div>

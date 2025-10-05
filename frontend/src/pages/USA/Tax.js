@@ -1,27 +1,42 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
+import { markUSTaxFilingSubmitted } from '../../store/slices/submissionsSlice';
+import { apiMethods } from '../../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
 
 const Tax = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { isAuthenticated, token } = useSelector((state) => state.auth);
+
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         phoneNumber: '',
+        residentialAddress: '',
+        ssnOrItin: '',
         companyName: '',
-        taxFilingType: '',
+        filingType: '',
         taxYear: '',
-        federalEIN: '',
+        ein: '',
+        state: '',
+        incomeDetails: '',
+        deductions: '',
         message: ''
     });
 
     const taxFilingTypes = [
-        'Individual',
-        'Corporate',
-        'Partnership'
+        'individual',
+        'llc',
+        'corp',
+        'partnership'
     ];
 
     const handleInputChange = (e) => {
@@ -32,10 +47,79 @@ const Tax = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Tax form submitted:', formData);
-        // Handle form submission logic here
+
+        if (!isAuthenticated || !token) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to submit your USA Tax filing request.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
+
+        const payload = {
+            ...formData,
+            taxYear: parseInt(formData.taxYear, 10) || new Date().getFullYear(),
+        };
+
+        try {
+            const res = await apiMethods.submissions.submitUSTaxFiling(payload);
+            const refId = res?.data?.data?._id;
+            dispatch(
+                addUiNotification({
+                    type: 'success',
+                    title: 'Submission Received',
+                    message: `Your USA Tax Filing request has been successfully submitted${refId ? ` (Reference ID: ${refId})` : ''}.`,
+                })
+            );
+            dispatch(markUSTaxFilingSubmitted());
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                phoneNumber: '',
+                residentialAddress: '',
+                ssnOrItin: '',
+                companyName: '',
+                filingType: '',
+                taxYear: '',
+                ein: '',
+                state: '',
+                incomeDetails: '',
+                deductions: '',
+                message: ''
+            });
+        } catch (error) {
+            const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg;
+            const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Submission Failed',
+                    message,
+                })
+            );
+        }
+    };
+
+    const handleStartForm = () => {
+        if (!isAuthenticated || !token) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to access the USA Tax filing form.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
+        setShowForm(true);
     };
 
     const services = [
@@ -121,7 +205,7 @@ const Tax = () => {
                         <motion.button
                             whileHover={{ scale: 1.08 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => setShowForm(true)}
+                            onClick={handleStartForm}
                             className="flex items-center gap-3 bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-10 py-4 rounded-2xl text-lg font-semibold shadow-lg transition-all duration-300 group"
                         >
                             Start Your Tax Filing
@@ -225,6 +309,20 @@ const Tax = () => {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Residential Address *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="residentialAddress"
+                                            value={formData.residentialAddress}
+                                            onChange={handleInputChange}
+                                            required
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Company Name
                                         </label>
                                         <input
@@ -242,15 +340,15 @@ const Tax = () => {
                                                 Type of Tax Filing *
                                             </label>
                                             <select
-                                                name="taxFilingType"
-                                                value={formData.taxFilingType}
+                                                name="filingType"
+                                                value={formData.filingType}
                                                 onChange={handleInputChange}
                                                 required
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             >
                                                 <option value="">Select tax filing type</option>
                                                 {taxFilingTypes.map(type => (
-                                                    <option key={type} value={type}>{type}</option>
+                                                    <option key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -265,8 +363,8 @@ const Tax = () => {
                                                 value={formData.taxYear}
                                                 onChange={handleInputChange}
                                                 required
-                                                min="2020"
-                                                max="2025"
+                                                min="2000"
+                                                max={new Date().getFullYear()}
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
                                         </div>
@@ -274,14 +372,70 @@ const Tax = () => {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Federal EIN/SSN (Optional)
+                                            SSN/ITIN *
                                         </label>
                                         <input
                                             type="text"
-                                            name="federalEIN"
-                                            value={formData.federalEIN}
+                                            name="ssnOrItin"
+                                            value={formData.ssnOrItin}
                                             onChange={handleInputChange}
-                                            placeholder="Enter EIN or SSN (optional)"
+                                            required
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            EIN (Optional)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="ein"
+                                            value={formData.ein}
+                                            onChange={handleInputChange}
+                                            placeholder="Enter EIN (optional)"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            State (Optional)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="state"
+                                            value={formData.state}
+                                            onChange={handleInputChange}
+                                            placeholder="Enter your state (optional)"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Income Details (Optional)
+                                        </label>
+                                        <textarea
+                                            name="incomeDetails"
+                                            value={formData.incomeDetails}
+                                            onChange={handleInputChange}
+                                            rows={4}
+                                            placeholder="Provide details of your income sources (optional)"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Deductions (Optional)
+                                        </label>
+                                        <textarea
+                                            name="deductions"
+                                            value={formData.deductions}
+                                            onChange={handleInputChange}
+                                            rows={4}
+                                            placeholder="List any deductions you want to claim (optional)"
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                         />
                                     </div>

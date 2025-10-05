@@ -1,11 +1,12 @@
 import React, { useState,useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
 import bluebg from '../../assets/bluebg.jpg';
+import { markLogoRequestSubmitted } from '../../store/slices/submissionsSlice';
 
 const LogoCreation = () => {
   const navigate = useNavigate();
@@ -78,6 +79,8 @@ const LogoCreation = () => {
     setReferenceImages(prev => prev.filter((_, i) => i !== index));
   };
 
+  const dispatch = useDispatch();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -122,6 +125,8 @@ const LogoCreation = () => {
           message += '\nNote: Confirmation email could not be sent at this time, but your request has been saved.';
         }
         alert(message);
+        // Mark logo request as submitted for global success modal
+        dispatch(markLogoRequestSubmitted());
         // Reset form
         setFormData({
           firstName: '',

@@ -176,6 +176,15 @@ export const apiMethods = {
     updateFile: (id, data) => api.put(`/files/${id}`, data),
     deleteFile: (id) => api.delete(`/files/${id}`),
   },
+
+  // Form submission endpoints
+  submissions: {
+    submitTrademarkUK: (data) => api.post('/trademark-requests', data),
+    submitUKSharedOffice: (data) => api.post('/uk-shared-office-requests', data),
+    submitRegisteredAgent: (data) => api.post('/registered-agent-requests', data),
+    submitUSLLCFormation: (data) => api.post('/us-llc-formation-requests', data),
+    submitUSTaxFiling: (data) => api.post('/us-tax-filing-requests', data),
+  },
 };
 
 export default api;
