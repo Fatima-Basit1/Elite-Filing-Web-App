@@ -23,8 +23,12 @@ const trademarkValidationRules = [
     if (!v.isValid) throw new Error(v.errors.join(', '));
     return true;
   }),
-  body('phone').notEmpty().withMessage('Phone is required'),
-  body('companyName').notEmpty().withMessage('Company name is required'),
+  body('phoneNumber').notEmpty().withMessage('Phone number is required'),
+  body('trademarkName').notEmpty().withMessage('Trademark name is required'),
+  body('trademarkType').notEmpty().withMessage('Trademark type is required')
+    .isIn(['Word', 'Logo', 'Slogan', 'Other']).withMessage('Invalid trademark type'),
+  body('jurisdiction').notEmpty().withMessage('Jurisdiction is required'),
+  body('classOfGoods').notEmpty().withMessage('Class of goods/services is required')
 ];
 
 // Create a trademark request
@@ -34,23 +38,41 @@ router.post('/', auth, trademarkValidationRules, handleValidationErrors, async (
     const payload = { ...sanitized, userId: req.user._id };
     const request = await TrademarkRequest.create(payload);
 
-    // Send email notification to logged-in user
+    // Send detailed email notification
     try {
       await sendSubmissionEmail({
         to: req.user.email,
-        subject: 'Trademark Registration Submitted',
+        subject: 'Trademark Registration Submission Confirmation',
         heading: 'Your Trademark Registration Details',
         formType: 'Trademark Registration',
-        details: payload,
+        details: {
+          'First Name': request.firstName,
+          'Last Name': request.lastName,
+          'Email': request.email,
+          'Phone Number': request.phoneNumber,
+          'Trademark Name': request.trademarkName,
+          'Trademark Type': request.trademarkType,
+          'Jurisdiction': request.jurisdiction,
+          'Class of Goods/Services': request.classOfGoods,
+          'Additional Message': request.message || 'None provided'
+        }
       });
     } catch (emailErr) {
       console.error('Email send error (trademark):', emailErr.message);
     }
 
-    res.status(201).json({ message: 'Trademark request submitted', data: request });
+    res.status(201).json({
+      success: true,
+      message: 'Trademark request submitted successfully',
+      data: request
+    });
   } catch (err) {
     console.error('Trademark request error:', err);
-    res.status(500).json({ message: 'Server error', code: 'SERVER_ERROR' });
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 });
 

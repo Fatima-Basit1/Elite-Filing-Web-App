@@ -127,6 +127,7 @@ app.use('/api/registered-agent-requests', require('./routes/registeredAgentReque
 app.use('/api/us-llc-formation-requests', require('./routes/usLlcFormationRequests'));
 app.use('/api/us-tax-filing-requests', require('./routes/usTaxFilingRequests'));
 app.use('/api/itin-requests', require('./routes/itinRequests'));
+app.use('/api/us-complete-package-requests', require('./routes/usCompletePackageRequests'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

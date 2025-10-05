@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
+import useAuth from '../../hooks/useAuth';
 
 const CompletePackage = () => {
+    // Check authentication status; redirect on submit if not authenticated
+    const { isAuthenticated } = useAuth(false);
+    const navigate = useNavigate();
+
     const [showForm, setShowForm] = useState(false);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -46,11 +54,49 @@ const CompletePackage = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Complete Package form submitted:', formData);
-        // Handle form submission logic here
-        alert('Complete Package request submitted successfully!');
+        // Redirect unauthenticated users to Get Started page on submit
+        if (!isAuthenticated) {
+            navigate('/get-started');
+            return;
+        }
+        try {
+            const response = await fetch('/api/us-complete-package-requests', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setShowSuccessPopup(true);
+                // Reset form
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phoneNumber: '',
+                    companyName: '',
+                    businessType: '',
+                    state: '',
+                    message: ''
+                });
+                // Hide success popup after 3 seconds
+                setTimeout(() => {
+                    setShowSuccessPopup(false);
+                }, 3000);
+            } else {
+                throw new Error(data.message || 'Error submitting form');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error submitting form. Please try again.');
+        }
     };
 
     const packageItems = [
@@ -172,6 +218,50 @@ const CompletePackage = () => {
                     </motion.div>
                 </div>
             </section>
+
+            {/* Success Popup */}
+            <AnimatePresence>
+                {showSuccessPopup && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50"
+                    >
+                        <motion.div
+                            initial={{ y: -20 }}
+                            animate={{ y: 0 }}
+                            className="bg-white p-6 rounded-xl shadow-xl flex flex-col items-center max-w-sm mx-4"
+                        >
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1, rotate: 360 }}
+                                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                                className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4"
+                            >
+                                <FiCheckCircle className="w-10 h-10 text-green-500" />
+                            </motion.div>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
+                                Complete Package Request Submitted!
+                            </h3>
+                            <p className="text-gray-600 text-center mb-4">
+                                Thank you for your submission. We'll contact you soon!
+                            </p>
+                            <motion.div
+                                className="w-full h-2 bg-gray-200 rounded-full overflow-hidden"
+                                initial={{ width: "100%" }}
+                            >
+                                <motion.div
+                                    className="h-full bg-green-500"
+                                    initial={{ width: "0%" }}
+                                    animate={{ width: "100%" }}
+                                    transition={{ duration: 3 }}
+                                />
+                            </motion.div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Form Section */}
             <AnimatePresence>

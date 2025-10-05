@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,7 +15,7 @@ import bluebg from '../../assets/bluebg.jpg';
 const ITIN = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { isAuthenticated, loading } = useAuth();
+    const { isAuthenticated } = useAuth(false);
     const [showForm, setShowForm] = useState(true);
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [formData, setFormData] = useState({
@@ -30,19 +30,7 @@ const ITIN = () => {
     });
     const [formErrors, setFormErrors] = useState({});
 
-    // Redirect if not authenticated
-    useEffect(() => {
-        if (!loading && !isAuthenticated) {
-            dispatch(
-                addUiNotification({
-                    type: 'warning',
-                    title: 'Sign In Required',
-                    message: 'Please log in to access the ITIN application form.',
-                })
-            );
-            navigate('/login');
-        }
-    }, [isAuthenticated, loading, navigate, dispatch]);
+    // Allow viewing the page; redirect on submit if not logged in
 
     const itinReasons = [
         'Tax Filing',
@@ -126,6 +114,18 @@ const ITIN = () => {
 
     const handleSubmit = async (e) => {
         if (e) e.preventDefault();
+        // Redirect unauthenticated users to Get Started page on submit
+        if (!isAuthenticated) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to submit the ITIN form.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
         console.log('Form submission started');
         console.log('Form data:', formData);
         console.log('Auth status:', isAuthenticated);

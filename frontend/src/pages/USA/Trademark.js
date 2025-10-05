@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
+import useAuth from '../../hooks/useAuth';
 
 const Trademark = () => {
+    // Check authentication status; redirect on submit if not authenticated
+    const { isAuthenticated } = useAuth(false);
+    const navigate = useNavigate();
+
     const [showForm, setShowForm] = useState(false);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -33,11 +41,51 @@ const Trademark = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Trademark form submitted:', formData);
-        // Handle form submission logic here
-        alert('Trademark registration request submitted successfully!');
+        // Redirect unauthenticated users to Get Started page on submit
+        if (!isAuthenticated) {
+            navigate('/get-started');
+            return;
+        }
+        try {
+            const response = await fetch('/api/trademark-requests', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to submit trademark request');
+            }
+
+            // Show success popup
+            setShowSuccessPopup(true);
+
+            // Reset form and hide after delay
+            setTimeout(() => {
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phoneNumber: '',
+                    trademarkName: '',
+                    trademarkType: '',
+                    jurisdiction: '',
+                    classOfGoods: '',
+                    message: ''
+                });
+                setShowForm(false);
+                setShowSuccessPopup(false);
+            }, 3000);
+
+        } catch (error) {
+            console.error('Error submitting trademark request:', error);
+            // Handle error (show error message to user)
+        }
     };
 
     const services = [
@@ -83,6 +131,42 @@ const Trademark = () => {
         <div className="min-h-screen bg-white">
             <Navigation />
 
+            {/* Success Popup */}
+            <AnimatePresence>
+                {showSuccessPopup && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.5, opacity: 0 }}
+                            className="bg-white rounded-2xl p-8 flex flex-col items-center relative overflow-hidden"
+                        >
+                            <div className="text-green-500 mb-4">
+                                <FiCheckCircle className="w-16 h-16" />
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                                Success!
+                            </h3>
+                            <p className="text-gray-600 text-center mb-4">
+                                Your trademark registration request has been submitted successfully.
+                            </p>
+                            {/* Progress bar */}
+                            <motion.div
+                                initial={{ width: "0%" }}
+                                animate={{ width: "100%" }}
+                                transition={{ duration: 3 }}
+                                className="absolute bottom-0 left-0 h-1 bg-green-500"
+                            />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Hero Section */}
             <section
                 className="pt-32 pb-20 relative overflow-hidden"
@@ -123,11 +207,10 @@ const Trademark = () => {
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                strokeWidth={2}
                                 stroke="currentColor"
-                                className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1"
+                                className="w-6 h-6 transform group-hover:translate-x-1 transition-transform"
                             >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
                         </motion.button>
                     </motion.div>
@@ -138,13 +221,12 @@ const Trademark = () => {
             <AnimatePresence>
                 {showForm && (
                     <motion.section
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.5 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
                         className="py-16 bg-gray-50"
                     >
-                        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-4xl mx-auto px-6">
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -167,6 +249,7 @@ const Trademark = () => {
                                                 value={formData.firstName}
                                                 onChange={handleInputChange}
                                                 required
+                                                placeholder="Enter your first name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
                                         </div>
@@ -181,6 +264,7 @@ const Trademark = () => {
                                                 value={formData.lastName}
                                                 onChange={handleInputChange}
                                                 required
+                                                placeholder="Enter your last name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
                                         </div>
@@ -197,6 +281,7 @@ const Trademark = () => {
                                                 value={formData.email}
                                                 onChange={handleInputChange}
                                                 required
+                                                placeholder="Enter your email"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
                                         </div>
@@ -211,6 +296,7 @@ const Trademark = () => {
                                                 value={formData.phoneNumber}
                                                 onChange={handleInputChange}
                                                 required
+                                                placeholder="Enter your phone number"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
                                         </div>
@@ -244,15 +330,17 @@ const Trademark = () => {
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             >
                                                 <option value="">Select trademark type</option>
-                                                {trademarkTypes.map(type => (
-                                                    <option key={type} value={type}>{type}</option>
+                                                {trademarkTypes.map((type) => (
+                                                    <option key={type} value={type}>
+                                                        {type}
+                                                    </option>
                                                 ))}
                                             </select>
                                         </div>
 
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Jurisdiction / Country *
+                                                Jurisdiction *
                                             </label>
                                             <input
                                                 type="text"
@@ -260,7 +348,7 @@ const Trademark = () => {
                                                 value={formData.jurisdiction}
                                                 onChange={handleInputChange}
                                                 required
-                                                placeholder="e.g., United States, United Kingdom"
+                                                placeholder="Enter jurisdiction (e.g., USA)"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
                                         </div>
@@ -268,7 +356,7 @@ const Trademark = () => {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Class of Goods or Services *
+                                            Class of Goods/Services *
                                         </label>
                                         <input
                                             type="text"
@@ -283,7 +371,7 @@ const Trademark = () => {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Message / Additional Information
+                                            Additional Message
                                         </label>
                                         <textarea
                                             name="message"
