@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
+import useAuth from '../../hooks/useAuth';
+import { apiMethods } from '../../services/api';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
@@ -7,7 +13,11 @@ import cr from '../../assets/cr.jpg';
 import cr2 from '../../assets/cr2.png';
 
 const CompanyRegistration = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { isAuthenticated } = useAuth(false);
     const [showForm, setShowForm] = useState(false);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -20,6 +30,7 @@ const CompanyRegistration = () => {
         businessActivity: '',
         shareholdersDirectorsInfo: ''
     });
+    const [formErrors, setFormErrors] = useState({});
 
     const companyTypes = [
         'Private Ltd',
@@ -35,10 +46,89 @@ const CompanyRegistration = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const validateForm = () => {
+        const errors = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.firstName?.trim()) errors.firstName = 'First name is required';
+        if (!formData.lastName?.trim()) errors.lastName = 'Last name is required';
+        if (!formData.email?.trim() || !emailRegex.test(formData.email)) errors.email = 'Valid email is required';
+        if (!formData.phoneNumber?.trim()) errors.phoneNumber = 'Phone number is required';
+        if (!formData.dateOfBirth) errors.dateOfBirth = 'Date of birth is required';
+        if (!formData.residentialAddress?.trim()) errors.residentialAddress = 'Residential address is required';
+        if (!formData.companyProposedName?.trim()) errors.companyProposedName = 'Company proposed name is required';
+        if (!formData.companyType?.trim()) errors.companyType = 'Company type is required';
+        if (!formData.businessActivity?.trim()) errors.businessActivity = 'Business activity is required';
+        if (!formData.shareholdersDirectorsInfo?.trim()) errors.shareholdersDirectorsInfo = 'Shareholders & Directors information is required';
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        // Handle form submission logic here
+        // Redirect unauthenticated users to Get Started page on submit
+        if (!isAuthenticated) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to submit the UK Company Registration form.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
+
+        if (!validateForm()) {
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Validation Error',
+                    message: 'Please check the form for errors and try again.',
+                })
+            );
+            return;
+        }
+
+        try {
+            const res = await apiMethods.submissions.submitUKCompanyRegistration(formData);
+            const refId = res?.data?.data?._id;
+            dispatch(
+                addUiNotification({
+                    type: 'success',
+                    title: 'Submission Received',
+                    message: `Your UK Company Registration has been submitted successfully${refId ? ` (Reference ID: ${refId})` : ''}.`,
+                })
+            );
+            setShowSuccessPopup(true);
+            // Reset form and hide after delay
+            setTimeout(() => {
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    dateOfBirth: '',
+                    residentialAddress: '',
+                    companyProposedName: '',
+                    email: '',
+                    phoneNumber: '',
+                    companyType: '',
+                    businessActivity: '',
+                    shareholdersDirectorsInfo: ''
+                });
+                setShowForm(false);
+                setShowSuccessPopup(false);
+            }, 3000);
+        } catch (error) {
+            let message = 'Unable to submit your request. Please try again.';
+            const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.errors?.[0]?.message;
+            message = firstErrorMsg || error?.response?.data?.message || message;
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Submission Failed',
+                    message,
+                })
+            );
+        }
     };
 
     const handleShowForm = () => {
@@ -165,6 +255,7 @@ const CompanyRegistration = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="First Name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
 
@@ -179,6 +270,7 @@ const CompanyRegistration = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Last Name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
                                     </div>
@@ -195,6 +287,7 @@ const CompanyRegistration = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Date of Birth"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
                                         <div></div>
@@ -211,6 +304,7 @@ const CompanyRegistration = () => {
                                             placeholder="Residential Address"
                                             rows={3}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            required
                                         />
                                     </div>
 
@@ -226,6 +320,7 @@ const CompanyRegistration = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Company Proposed Name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
 
@@ -240,6 +335,7 @@ const CompanyRegistration = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Email"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
                                     </div>
@@ -256,6 +352,7 @@ const CompanyRegistration = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Company Type (Private Ltd, Public Ltd, etc.)"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
 
@@ -268,6 +365,7 @@ const CompanyRegistration = () => {
                                                 value={formData.companyType}
                                                 onChange={handleInputChange}
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             >
                                                 <option value="">Select Company Type</option>
                                                 {companyTypes.map(type => (
@@ -289,6 +387,7 @@ const CompanyRegistration = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Shareholders & Directors Information"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
 
@@ -303,6 +402,7 @@ const CompanyRegistration = () => {
                                                 placeholder="Shareholders & Directors Information"
                                                 rows={3}
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
                                     </div>
@@ -316,6 +416,31 @@ const CompanyRegistration = () => {
                                         SUBMIT
                                     </motion.button>
                                 </form>
+
+                                {/* Success Popup */}
+                                <AnimatePresence>
+                                    {showSuccessPopup && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                                        >
+                                            <motion.div
+                                                initial={{ scale: 0.9, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                exit={{ scale: 0.9, opacity: 0 }}
+                                                className="bg-white rounded-2xl p-8 shadow-2xl text-center max-w-md w-full"
+                                            >
+                                                <div className="flex items-center justify-center mb-4">
+                                                    <FiCheckCircle className="text-green-500" size={56} />
+                                                </div>
+                                                <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">Submission Successful</h3>
+                                                <p className="text-gray-600">Your UK Company Registration has been submitted. We will contact you shortly.</p>
+                                            </motion.div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </motion.div>
                         </div>
                     </motion.section>

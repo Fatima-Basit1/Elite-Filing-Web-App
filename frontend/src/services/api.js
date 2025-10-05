@@ -185,6 +185,12 @@ export const apiMethods = {
     submitUSLLCFormation: (data) => api.post('/us-llc-formation-requests', data),
     submitUSTaxFiling: (data) => api.post('/us-tax-filing-requests', data),
     submitITINRequest: (data) => api.post('/itin-requests', data),
+    submitUKCompanyRegistration: (data) => api.post('/uk-company-registration-requests', data),
+    submitUKAnnualAccounts: (data) => api.post('/uk-annual-accounts-requests', data),
+    submitUKCompanyNameChange: (data) => api.post('/uk-company-name-change-requests', data),
+    submitUKStructureChange: (data) => api.post('/uk-structure-change-requests', data),
+    submitUKConfirmationStatement: (data) => api.post('/uk-confirmation-statement-requests', data),
+    submitUKEoriApplication: (data) => api.post('/uk-eori-application-requests', data),
   },
 };
 

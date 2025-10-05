@@ -128,6 +128,12 @@ app.use('/api/us-llc-formation-requests', require('./routes/usLlcFormationReques
 app.use('/api/us-tax-filing-requests', require('./routes/usTaxFilingRequests'));
 app.use('/api/itin-requests', require('./routes/itinRequests'));
 app.use('/api/us-complete-package-requests', require('./routes/usCompletePackageRequests'));
+app.use('/api/uk-company-registration-requests', require('./routes/ukCompanyRegistrationRequests'));
+  app.use('/api/uk-annual-accounts-requests', require('./routes/ukAnnualAccountsRequests'));
+  app.use('/api/uk-company-name-change-requests', require('./routes/ukCompanyNameChangeRequests'));
+  app.use('/api/uk-structure-change-requests', require('./routes/ukStructureChangeRequests'));
+  app.use('/api/uk-confirmation-statement-requests', require('./routes/ukConfirmationStatementRequests'));
+  app.use('/api/uk-eori-application-requests', require('./routes/ukEoriApplicationRequests'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

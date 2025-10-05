@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
 import eori1 from '../../assets/eori1.jpg';
 import eori2 from '../../assets/eori2.jpg';
+import useAuth from '../../hooks/useAuth';
+import { apiMethods } from '../../services/api';
 
 const EORIApplication = () => {
+    const { isAuthenticated } = useAuth(false);
+    const navigate = useNavigate();
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
@@ -30,21 +36,83 @@ const EORIApplication = () => {
     };
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState(null);
+    const [errors, setErrors] = useState({});
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+
+    const validate = (data) => {
+        const v = {};
+        const isEmpty = (val) => !val || !String(val).trim();
+
+        if (isEmpty(data.firstName)) v.firstName = 'First name is required.';
+        if (isEmpty(data.lastName)) v.lastName = 'Last name is required.';
+        if (isEmpty(data.companyName)) v.companyName = 'Company name is required.';
+
+        if (isEmpty(data.email)) {
+            v.email = 'Email is required.';
+        } else {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(data.email)) v.email = 'Enter a valid email address.';
+        }
+
+        if (isEmpty(data.phoneNumber)) {
+            v.phoneNumber = 'Phone number is required.';
+        } else {
+            const cleaned = String(data.phoneNumber).replace(/[^0-9]/g, '');
+            if (cleaned.length < 7 || cleaned.length > 15) v.phoneNumber = 'Enter a valid phone number.';
+        }
+
+        if (isEmpty(data.natureOfImportExport)) v.natureOfImportExport = 'This field is required.';
+
+        if (!isEmpty(data.vatNumber)) {
+            const vatRegex = /^(GB)?[0-9A-Za-z]{9,12}$/;
+            if (!vatRegex.test(data.vatNumber)) v.vatNumber = 'Enter a valid VAT number or leave blank.';
+        }
+
+        if (!isEmpty(data.message) && data.message.trim().length > 1000) {
+            v.message = 'Message must be 1000 characters or fewer.';
+        }
+
+        return v;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
-        setSubmitStatus(null);
-        
+        if (isSubmitting) return;
+
+        const validationErrors = validate(formData);
+        setErrors(validationErrors);
+        if (Object.keys(validationErrors).length > 0) return;
+
+        if (!isAuthenticated) {
+            navigate('/get-started');
+            return;
+        }
+
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            console.log('Form submitted:', formData);
-            setSubmitStatus('success');
+            setIsSubmitting(true);
+            const payload = Object.fromEntries(
+                Object.entries(formData).map(([k, v]) => [k, typeof v === 'string' ? v.trim() : v])
+            );
+            await apiMethods.submissions.submitUKEoriApplication(payload);
+            setShowSuccessPopup(true);
+            setFormData({
+                firstName: '',
+                lastName: '',
+                companyName: '',
+                email: '',
+                phoneNumber: '',
+                natureOfImportExport: '',
+                vatNumber: '',
+                message: ''
+            });
+            setTimeout(() => {
+                setShowForm(false);
+                setShowSuccessPopup(false);
+            }, 3000);
         } catch (error) {
-            console.error('Submission error:', error);
-            setSubmitStatus('error');
+            console.error('Error submitting EORI application:', error);
+            const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.errors?.[0]?.message;
+            setErrors({ api: firstErrorMsg || error?.response?.data?.message || 'Submission failed. Please try again.' });
         } finally {
             setIsSubmitting(false);
         }
@@ -160,7 +228,7 @@ const EORIApplication = () => {
                                     EORI NUMBER APPLICATION FORM
                                 </h2>
 
-                                <form onSubmit={handleSubmit} className="space-y-6">
+                                <form onSubmit={handleSubmit} noValidate className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <input
@@ -169,8 +237,11 @@ const EORIApplication = () => {
                                                 value={formData.firstName}
                                                 onChange={handleInputChange}
                                                 placeholder="First Name"
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.firstName && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.firstName}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -180,8 +251,11 @@ const EORIApplication = () => {
                                                 value={formData.lastName}
                                                 onChange={handleInputChange}
                                                 placeholder="Last Name"
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.lastName && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.lastName}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -193,7 +267,10 @@ const EORIApplication = () => {
                                             onChange={handleInputChange}
                                             placeholder="Company Name"
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
-                                        />
+                                            />
+                                        {errors.companyName && (
+                                            <p className="mt-2 text-sm text-red-600">{errors.companyName}</p>
+                                        )}
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -204,8 +281,11 @@ const EORIApplication = () => {
                                                 value={formData.email}
                                                 onChange={handleInputChange}
                                                 placeholder="Email"
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.email && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -215,8 +295,11 @@ const EORIApplication = () => {
                                                 value={formData.phoneNumber}
                                                 onChange={handleInputChange}
                                                 placeholder="Phone Number"
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.phoneNumber && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.phoneNumber}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -228,8 +311,11 @@ const EORIApplication = () => {
                                                 value={formData.natureOfImportExport}
                                                 onChange={handleInputChange}
                                                 placeholder="Nature of Import/Export"
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.natureOfImportExport && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.natureOfImportExport}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -238,9 +324,12 @@ const EORIApplication = () => {
                                                 name="vatNumber"
                                                 value={formData.vatNumber}
                                                 onChange={handleInputChange}
-                                                placeholder="VAT Number (if available)"
+                                                placeholder="VAT Number (optional)"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.vatNumber && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.vatNumber}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -252,8 +341,11 @@ const EORIApplication = () => {
                                             placeholder="Message"
                                             rows={4}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
-                                        />
-                                    </div>
+                                            />
+                                            {errors.message && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.message}</p>
+                                            )}
+                                        </div>
 
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
@@ -268,19 +360,34 @@ const EORIApplication = () => {
                                     >
                                         {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
                                     </motion.button>
-                                    
-                                    {submitStatus === 'success' && (
-                                        <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-                                            Form submitted successfully!
-                                        </div>
-                                    )}
-                                    
-                                    {submitStatus === 'error' && (
-                                        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                                            There was an error submitting the form. Please try again.
-                                        </div>
+                                    {errors.api && (
+                                        <p className="mt-4 text-center text-sm text-red-600">{errors.api}</p>
                                     )}
                                 </form>
+                                {/* Success Popup */}
+                                <AnimatePresence>
+                                    {showSuccessPopup && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                                        >
+                                            <motion.div
+                                                initial={{ scale: 0.9, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                exit={{ scale: 0.9, opacity: 0 }}
+                                                className="bg-white rounded-2xl p-8 shadow-2xl text-center max-w-md w-full"
+                                            >
+                                                <div className="flex items-center justify-center mb-4">
+                                                    <FiCheckCircle className="text-green-500" size={56} />
+                                                </div>
+                                                <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">Submission Successful</h3>
+                                                <p className="text-gray-600">Your UK EORI Application has been submitted. We will contact you shortly.</p>
+                                            </motion.div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </motion.div>
                         </div>
                     </motion.section>

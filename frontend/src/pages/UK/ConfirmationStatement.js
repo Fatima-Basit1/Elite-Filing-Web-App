@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
 import cs1 from '../../assets/cs1.jpg';
 import cs2 from '../../assets/cs2.jpg';
+import useAuth from '../../hooks/useAuth';
+import { apiMethods } from '../../services/api';
 
 const ConfirmationStatement = () => {
+    // Allow viewing this page without forcing auth; enforce on submit
+    const { isAuthenticated } = useAuth(false);
+    const navigate = useNavigate();
+
     const [showForm, setShowForm] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -18,7 +29,21 @@ const ConfirmationStatement = () => {
         message: ''
     });
 
-    
+    const validate = (data) => {
+        const errs = {};
+        if (!data.firstName?.trim()) errs.firstName = 'First name is required';
+        if (!data.lastName?.trim()) errs.lastName = 'Last name is required';
+        if (!data.companyName?.trim()) errs.companyName = 'Company name is required';
+        if (!data.email?.trim()) {
+            errs.email = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+            errs.email = 'Enter a valid email address';
+        }
+        if (!data.phoneNumber?.trim()) errs.phoneNumber = 'Phone number is required';
+        if (!data.confirmationPeriodEndDate?.trim()) errs.confirmationPeriodEndDate = 'End date is required';
+        if (!data.message?.trim()) errs.message = 'Message is required';
+        return errs;
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -28,10 +53,49 @@ const ConfirmationStatement = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        // Handle form submission logic here
+        if (isSubmitting) return;
+
+        // Client-side validation
+        const validationErrors = validate(formData);
+        setErrors(validationErrors);
+        if (Object.keys(validationErrors).length > 0) return;
+
+        // Redirect unauthenticated users to Get Started page on submit
+        if (!isAuthenticated) {
+            navigate('/get-started');
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+
+            await apiMethods.submissions.submitUKConfirmationStatement(formData);
+
+            // Show success state and reset form
+            setShowSuccessPopup(true);
+            setFormData({
+                firstName: '',
+                lastName: '',
+                companyName: '',
+                email: '',
+                phoneNumber: '',
+                confirmationPeriodEndDate: '',
+                message: ''
+            });
+
+            // Auto-hide form after short delay
+            setTimeout(() => {
+                setShowForm(false);
+                setShowSuccessPopup(false);
+            }, 3000);
+        } catch (error) {
+            console.error('Error submitting confirmation statement request:', error);
+            setErrors({ api: error.response?.data?.message || 'Submission failed. Please try again.' });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleShowForm = () => {
@@ -144,7 +208,7 @@ const ConfirmationStatement = () => {
                                     CONFIRMATION STATEMENT FILING FORM
                                 </h2>
 
-                                <form onSubmit={handleSubmit} className="space-y-6">
+                                <form onSubmit={handleSubmit} noValidate className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <input
@@ -155,6 +219,9 @@ const ConfirmationStatement = () => {
                                                 placeholder="First Name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.firstName && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.firstName}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -166,6 +233,9 @@ const ConfirmationStatement = () => {
                                                 placeholder="Last Name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.lastName && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.lastName}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -178,6 +248,9 @@ const ConfirmationStatement = () => {
                                             placeholder="Company Name"
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                         />
+                                        {errors.companyName && (
+                                            <p className="mt-2 text-sm text-red-600">{errors.companyName}</p>
+                                        )}
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -190,6 +263,9 @@ const ConfirmationStatement = () => {
                                                 placeholder="Email"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.email && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -201,6 +277,9 @@ const ConfirmationStatement = () => {
                                                 placeholder="Phone Number"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.phoneNumber && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.phoneNumber}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -215,6 +294,9 @@ const ConfirmationStatement = () => {
                                                 placeholder="Confirmation Period End Date"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
+                                            {errors.confirmationPeriodEndDate && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.confirmationPeriodEndDate}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -227,17 +309,49 @@ const ConfirmationStatement = () => {
                                             rows={4}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                         />
+                                        {errors.message && (
+                                            <p className="mt-2 text-sm text-red-600">{errors.message}</p>
+                                        )}
                                     </div>
 
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         type="submit"
-                                        className="w-full bg-[#1e3a8a] hover:bg-[#facc15] text-white hover:text-[#1e3a8a] py-4 px-6 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
+                                        className={`w-full ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#1e3a8a] hover:bg-[#facc15]'} text-white hover:text-[#1e3a8a] py-4 px-6 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl`}
+                                        disabled={isSubmitting}
                                     >
-                                        SUBMIT
+                                        {isSubmitting ? 'Submitting...' : 'SUBMIT'}
                                     </motion.button>
+
+                                    {errors.api && (
+                                        <p className="mt-4 text-center text-sm text-red-600">{errors.api}</p>
+                                    )}
                                 </form>
+                                {/* Success Popup */}
+                                <AnimatePresence>
+                                    {showSuccessPopup && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                                        >
+                                            <motion.div
+                                                initial={{ scale: 0.9, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                exit={{ scale: 0.9, opacity: 0 }}
+                                                className="bg-white rounded-2xl p-8 shadow-2xl text-center max-w-md w-full"
+                                            >
+                                                <div className="flex items-center justify-center mb-4">
+                                                    <FiCheckCircle className="text-green-500" size={56} />
+                                                </div>
+                                                <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">Submission Successful</h3>
+                                                <p className="text-gray-600">Your UK Confirmation Statement request has been submitted. We will contact you shortly.</p>
+                                            </motion.div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </motion.div>
                         </div>
                     </motion.section>

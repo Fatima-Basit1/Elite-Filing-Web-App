@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
+import useAuth from '../../hooks/useAuth';
+import { apiMethods } from '../../services/api';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
@@ -7,7 +13,11 @@ import sc1 from '../../assets/sc1.jpg';
 import sc2 from '../../assets/sc2.jpg';
 
 const StructuralChange = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { isAuthenticated } = useAuth(false);
     const [showForm, setShowForm] = useState(false);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -17,6 +27,7 @@ const StructuralChange = () => {
         typeOfChange: '',
         message: ''
     });
+    const [formErrors, setFormErrors] = useState({});
 
     
 
@@ -28,15 +39,96 @@ const StructuralChange = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const validateForm = () => {
+        const errors = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.firstName?.trim()) errors.firstName = 'First name is required';
+        if (!formData.lastName?.trim()) errors.lastName = 'Last name is required';
+        if (!formData.companyName?.trim()) errors.companyName = 'Company name is required';
+        if (!formData.email?.trim() || !emailRegex.test(formData.email)) errors.email = 'Valid email is required';
+        if (!formData.phoneNumber?.trim()) errors.phoneNumber = 'Phone number is required';
+        if (!formData.typeOfChange?.trim()) errors.typeOfChange = 'Type of change is required';
+        if (!formData.message?.trim()) errors.message = 'Message is required';
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        // Handle form submission logic here
+        // Redirect unauthenticated users to Get Started page on submit
+        if (!isAuthenticated) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to submit the UK Structural Change form.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
+
+        if (!validateForm()) {
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Validation Error',
+                    message: 'Please check the form for errors and try again.',
+                })
+            );
+            return;
+        }
+
+        try {
+            const res = await apiMethods.submissions.submitUKStructureChange(formData);
+            const refId = res?.data?.data?._id;
+            dispatch(
+                addUiNotification({
+                    type: 'success',
+                    title: 'Submission Received',
+                    message: `Your UK Structural Change request has been submitted successfully${refId ? ` (Reference ID: ${refId})` : ''}.`,
+                })
+            );
+            setShowSuccessPopup(true);
+            setTimeout(() => {
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    companyName: '',
+                    email: '',
+                    phoneNumber: '',
+                    typeOfChange: '',
+                    message: ''
+                });
+                setShowForm(false);
+                setShowSuccessPopup(false);
+            }, 3000);
+        } catch (error) {
+            const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.errors?.[0]?.message;
+            const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Submission Failed',
+                    message,
+                })
+            );
+        }
     };
 
     const handleShowForm = () => {
+        if (!isAuthenticated) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to access the UK Structural Change form.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
         setShowForm(true);
-        // Scroll to top of the page
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -133,6 +225,30 @@ const StructuralChange = () => {
                         transition={{ duration: 0.5 }}
                         className="py-16 bg-gray-50"
                     >
+                        {/* Success Popup - standardized to modal overlay pattern */}
+                        <AnimatePresence>
+                            {showSuccessPopup && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                                >
+                                    <motion.div
+                                        initial={{ scale: 0.9, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        exit={{ scale: 0.9, opacity: 0 }}
+                                        className="bg-white rounded-2xl p-8 shadow-2xl text-center max-w-md w-full"
+                                    >
+                                        <div className="flex items-center justify-center mb-4">
+                                            <FiCheckCircle className="text-green-500" size={56} />
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">Submission Successful</h3>
+                                        <p className="text-gray-600">Your UK Structural Change request has been submitted. We will contact you shortly.</p>
+                                    </motion.div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
@@ -154,6 +270,7 @@ const StructuralChange = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="First Name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
 
@@ -165,6 +282,7 @@ const StructuralChange = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Last Name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
                                     </div>
@@ -177,6 +295,7 @@ const StructuralChange = () => {
                                             onChange={handleInputChange}
                                             placeholder="Company Name"
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            required
                                         />
                                     </div>
 
@@ -189,6 +308,7 @@ const StructuralChange = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Email"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
 
@@ -200,6 +320,7 @@ const StructuralChange = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Phone Number"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                required
                                             />
                                         </div>
                                     </div>
@@ -215,6 +336,7 @@ const StructuralChange = () => {
                                                     checked={formData.typeOfChange === 'shareholders'}
                                                     onChange={handleInputChange}
                                                     className="mr-2 text-[#1e3a8a] focus:ring-[#1e3a8a]"
+                                                    required
                                                 />
                                                 <span className="text-gray-700">Shareholders</span>
                                             </label>
@@ -226,6 +348,7 @@ const StructuralChange = () => {
                                                     checked={formData.typeOfChange === 'directors'}
                                                     onChange={handleInputChange}
                                                     className="mr-2 text-[#1e3a8a] focus:ring-[#1e3a8a]"
+                                                    required
                                                 />
                                                 <span className="text-gray-700">Directors</span>
                                             </label>
@@ -237,6 +360,7 @@ const StructuralChange = () => {
                                                     checked={formData.typeOfChange === 'shares-structure'}
                                                     onChange={handleInputChange}
                                                     className="mr-2 text-[#1e3a8a] focus:ring-[#1e3a8a]"
+                                                    required
                                                 />
                                                 <span className="text-gray-700">Shares Structure</span>
                                             </label>
@@ -251,6 +375,7 @@ const StructuralChange = () => {
                                             placeholder="Message"
                                             rows={4}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            required
                                         />
                                     </div>
 
