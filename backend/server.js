@@ -126,6 +126,7 @@ app.use('/api/uk-shared-office-requests', require('./routes/ukSharedOfficeReques
 app.use('/api/registered-agent-requests', require('./routes/registeredAgentRequests'));
 app.use('/api/us-llc-formation-requests', require('./routes/usLlcFormationRequests'));
 app.use('/api/us-tax-filing-requests', require('./routes/usTaxFilingRequests'));
+app.use('/api/itin-requests', require('./routes/itinRequests'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

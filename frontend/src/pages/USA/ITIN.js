@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
+import useAuth from '../../hooks/useAuth';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
+import { markITINRequestSubmitted } from '../../store/slices/submissionsSlice';
+import { apiMethods } from '../../services/api';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
 
+
 const ITIN = () => {
-    const [showForm, setShowForm] = useState(false);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { isAuthenticated, loading } = useAuth();
+    const [showForm, setShowForm] = useState(true);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -16,6 +28,21 @@ const ITIN = () => {
         passportNumber: '',
         message: ''
     });
+    const [formErrors, setFormErrors] = useState({});
+
+    // Redirect if not authenticated
+    useEffect(() => {
+        if (!loading && !isAuthenticated) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to access the ITIN application form.',
+                })
+            );
+            navigate('/login');
+        }
+    }, [isAuthenticated, loading, navigate, dispatch]);
 
     const itinReasons = [
         'Tax Filing',
@@ -29,12 +56,154 @@ const ITIN = () => {
             ...prev,
             [name]: value
         }));
+        // Clear error when user starts typing
+        if (formErrors[name]) {
+            setFormErrors(prev => ({
+                ...prev,
+                [name]: ''
+            }));
+        }
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('ITIN form submitted:', formData);
-        // Handle form submission logic here
+    const validateForm = () => {
+        const errors = {};
+        
+        // Name validation (2-50 chars, letters, spaces, hyphens, apostrophes only)
+        const nameRegex = /^[a-zA-Z\s\-']{2,50}$/;
+        if (!formData.firstName.trim()) {
+            errors.firstName = 'First name is required';
+        } else if (!nameRegex.test(formData.firstName)) {
+            errors.firstName = 'First name can only contain letters, spaces, hyphens, and apostrophes (2-50 characters)';
+        }
+
+        if (!formData.lastName.trim()) {
+            errors.lastName = 'Last name is required';
+        } else if (!nameRegex.test(formData.lastName)) {
+            errors.lastName = 'Last name can only contain letters, spaces, hyphens, and apostrophes (2-50 characters)';
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.email.trim()) {
+            errors.email = 'Email is required';
+        } else if (!emailRegex.test(formData.email)) {
+            errors.email = 'Please enter a valid email address';
+        } else if (formData.email.length > 254) {
+            errors.email = 'Email address is too long';
+        }
+
+        // Phone validation (international format)
+        const phoneRegex = /^\+?[\d\s-]{10,}$/;
+        if (!formData.phoneNumber.trim()) {
+            errors.phoneNumber = 'Phone number is required';
+        } else if (!phoneRegex.test(formData.phoneNumber)) {
+            errors.phoneNumber = 'Please enter a valid phone number (minimum 10 digits)';
+        }
+
+        // Reason for ITIN validation
+        const validReasons = ['Tax Filing', 'Bank Account', 'Other'];
+        if (!formData.reasonForITIN) {
+            errors.reasonForITIN = 'Please select a reason for ITIN';
+        } else if (!validReasons.includes(formData.reasonForITIN)) {
+            errors.reasonForITIN = 'Please select a valid reason for ITIN';
+        }
+
+        // Nationality validation
+        if (!formData.nationality.trim()) {
+            errors.nationality = 'Nationality is required';
+        } else if (!nameRegex.test(formData.nationality)) {
+            errors.nationality = 'Nationality can only contain letters, spaces, hyphens, and apostrophes';
+        }
+
+        // Passport validation
+        if (!formData.passportNumber.trim()) {
+            errors.passportNumber = 'Passport number is required';
+        }
+
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
+        if (e) e.preventDefault();
+        console.log('Form submission started');
+        console.log('Form data:', formData);
+        console.log('Auth status:', isAuthenticated);
+
+        if (!validateForm()) {
+            console.log('Form validation failed', formErrors);
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Validation Error',
+                    message: 'Please check the form for errors and try again.',
+                })
+            );
+            return;
+        }
+
+        try {
+            console.log('Making API call to submit ITIN request');
+            console.log('API URL:', process.env.REACT_APP_API_URL || 'http://localhost:5000/api');
+            console.log('Token:', localStorage.getItem('token'));
+            const res = await apiMethods.submissions.submitITINRequest(formData);
+            console.log('API response:', res);
+            console.log('Response data:', res?.data);
+            const refId = res?.data?.data?._id;
+            
+            dispatch(
+                addUiNotification({
+                    type: 'success',
+                    title: 'Submission Received',
+                    message: `Your ITIN application has been successfully submitted${refId ? ` (Reference ID: ${refId})` : ''}.`,
+                })
+            );
+            dispatch(markITINRequestSubmitted());
+            
+            // Show success popup
+            setShowSuccessPopup(true);
+
+            // Reset form and hide after delay
+            setTimeout(() => {
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phoneNumber: '',
+                    reasonForITIN: '',
+                    nationality: '',
+                    passportNumber: '',
+                    message: ''
+                });
+                setShowForm(false);
+                setShowSuccessPopup(false);
+            }, 3000);
+        } catch (error) {
+            let errorMessage = 'Unable to submit your request. Please try again.';
+            
+            if (error?.response?.data?.errors) {
+                // Handle validation errors from backend
+                const backendErrors = error.response.data.errors;
+                const newFormErrors = {};
+                
+                backendErrors.forEach(err => {
+                    newFormErrors[err.field] = err.message;
+                });
+                
+                setFormErrors(newFormErrors);
+                errorMessage = backendErrors[0]?.message || errorMessage;
+            } else if (error?.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            }
+
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Submission Failed',
+                    message: errorMessage,
+                })
+            );
+        }
     };
 
     const services = [
@@ -79,6 +248,42 @@ const ITIN = () => {
     return (
         <div className="min-h-screen bg-white">
             <Navigation />
+
+            {/* Success Popup */}
+            <AnimatePresence>
+                {showSuccessPopup && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.5, opacity: 0 }}
+                            className="bg-white rounded-2xl p-8 flex flex-col items-center relative overflow-hidden"
+                        >
+                            <div className="text-green-500 mb-4">
+                                <FiCheckCircle className="w-16 h-16" />
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                                Success!
+                            </h3>
+                            <p className="text-gray-600 text-center mb-4">
+                                Your ITIN application has been submitted successfully.
+                            </p>
+                            {/* Progress bar */}
+                            <motion.div
+                                initial={{ width: "0%" }}
+                                animate={{ width: "100%" }}
+                                transition={{ duration: 3 }}
+                                className="absolute bottom-0 left-0 h-1 bg-green-500"
+                            />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Hero Section */}
             <section
@@ -163,8 +368,13 @@ const ITIN = () => {
                                                 value={formData.firstName}
                                                 onChange={handleInputChange}
                                                 required
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300 ${
+                                                    formErrors.firstName ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             />
+                                            {formErrors.firstName && (
+                                                <p className="mt-1 text-sm text-red-500">{formErrors.firstName}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -177,8 +387,13 @@ const ITIN = () => {
                                                 value={formData.lastName}
                                                 onChange={handleInputChange}
                                                 required
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300 ${
+                                                    formErrors.lastName ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             />
+                                            {formErrors.lastName && (
+                                                <p className="mt-1 text-sm text-red-500">{formErrors.lastName}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -193,8 +408,13 @@ const ITIN = () => {
                                                 value={formData.email}
                                                 onChange={handleInputChange}
                                                 required
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300 ${
+                                                    formErrors.email ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             />
+                                            {formErrors.email && (
+                                                <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -207,8 +427,13 @@ const ITIN = () => {
                                                 value={formData.phoneNumber}
                                                 onChange={handleInputChange}
                                                 required
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300 ${
+                                                    formErrors.phoneNumber ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             />
+                                            {formErrors.phoneNumber && (
+                                                <p className="mt-1 text-sm text-red-500">{formErrors.phoneNumber}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -222,13 +447,18 @@ const ITIN = () => {
                                                 value={formData.reasonForITIN}
                                                 onChange={handleInputChange}
                                                 required
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300 ${
+                                                    formErrors.reasonForITIN ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             >
                                                 <option value="">Select reason</option>
                                                 {itinReasons.map(reason => (
                                                     <option key={reason} value={reason}>{reason}</option>
                                                 ))}
                                             </select>
+                                            {formErrors.reasonForITIN && (
+                                                <p className="mt-1 text-sm text-red-500">{formErrors.reasonForITIN}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -242,8 +472,13 @@ const ITIN = () => {
                                                 onChange={handleInputChange}
                                                 required
                                                 placeholder="Enter your nationality"
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300 ${
+                                                    formErrors.nationality ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             />
+                                            {formErrors.nationality && (
+                                                <p className="mt-1 text-sm text-red-500">{formErrors.nationality}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -258,8 +493,13 @@ const ITIN = () => {
                                             onChange={handleInputChange}
                                             required
                                             placeholder="Enter your passport number"
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300 ${
+                                                formErrors.passportNumber ? 'border-red-500' : 'border-gray-300'
+                                            }`}
                                         />
+                                        {formErrors.passportNumber && (
+                                            <p className="mt-1 text-sm text-red-500">{formErrors.passportNumber}</p>
+                                        )}
                                     </div>
 
                                     <div>

@@ -7,6 +7,7 @@ const initialState = {
   logoRequest: false,
   usLLCFormation: false,
   usTaxFiling: false,
+  itinRequest: false,
 };
 
 const submissionsSlice = createSlice({
@@ -31,6 +32,9 @@ const submissionsSlice = createSlice({
     markUSTaxFilingSubmitted(state) {
       state.usTaxFiling = true;
     },
+    markITINRequestSubmitted(state) {
+      state.itinRequest = true;
+    },
     resetSubmissions() {
       return { ...initialState };
     },
@@ -44,13 +48,14 @@ export const {
   markLogoRequestSubmitted,
   markUSLLCFormationSubmitted,
   markUSTaxFilingSubmitted,
+  markITINRequestSubmitted,
   resetSubmissions,
 } = submissionsSlice.actions;
 
 export const selectSubmissions = (state) => state.submissions;
 export const selectAllSubmitted = (state) => {
   const s = state.submissions;
-  return s.trademarkUK && s.ukSharedOffice && s.registeredAgent && s.logoRequest && s.usLLCFormation && s.usTaxFiling;
+  return s.trademarkUK && s.ukSharedOffice && s.registeredAgent && s.logoRequest && s.usLLCFormation && s.usTaxFiling && s.itinRequest;
 };
 
 export default submissionsSlice.reducer;

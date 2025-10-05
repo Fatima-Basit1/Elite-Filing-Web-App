@@ -184,6 +184,7 @@ export const apiMethods = {
     submitRegisteredAgent: (data) => api.post('/registered-agent-requests', data),
     submitUSLLCFormation: (data) => api.post('/us-llc-formation-requests', data),
     submitUSTaxFiling: (data) => api.post('/us-tax-filing-requests', data),
+    submitITINRequest: (data) => api.post('/itin-requests', data),
   },
 };
 

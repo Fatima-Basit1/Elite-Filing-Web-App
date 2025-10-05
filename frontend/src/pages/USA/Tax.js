@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
+import { FiCheckCircle } from 'react-icons/fi';
 
 const Tax = () => {
     const dispatch = useDispatch();
@@ -15,6 +16,7 @@ const Tax = () => {
     const { isAuthenticated, token } = useSelector((state) => state.auth);
 
     const [showForm, setShowForm] = useState(false);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -78,22 +80,27 @@ const Tax = () => {
                 })
             );
             dispatch(markUSTaxFilingSubmitted());
-            setFormData({
-                firstName: '',
-                lastName: '',
-                email: '',
-                phoneNumber: '',
-                residentialAddress: '',
-                ssnOrItin: '',
-                companyName: '',
-                filingType: '',
-                taxYear: '',
-                ein: '',
-                state: '',
-                incomeDetails: '',
-                deductions: '',
-                message: ''
-            });
+            setShowSuccessPopup(true);
+            setTimeout(() => {
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phoneNumber: '',
+                    residentialAddress: '',
+                    ssnOrItin: '',
+                    companyName: '',
+                    filingType: '',
+                    taxYear: '',
+                    ein: '',
+                    state: '',
+                    incomeDetails: '',
+                    deductions: '',
+                    message: ''
+                });
+                setShowForm(false);
+                setShowSuccessPopup(false);
+            }, 3000);
         } catch (error) {
             const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg;
             const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
@@ -514,6 +521,46 @@ const Tax = () => {
             </section>
 
             <Footer />
+
+            {/* Success Popup */}
+            <AnimatePresence>
+                {showSuccessPopup && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.3 }}
+                        className="fixed inset-0 flex items-center justify-center z-50"
+                    >
+                        <div className="fixed inset-0 bg-black bg-opacity-50" />
+                        <div className="bg-white rounded-2xl p-8 shadow-2xl relative z-10 max-w-md w-full mx-4">
+                            <div className="flex flex-col items-center text-center">
+                                <motion.div
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                                >
+                                    <FiCheckCircle className="w-16 h-16 text-green-500 mb-4" />
+                                </motion.div>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                                    Tax Filing Submitted!
+                                </h3>
+                                <p className="text-gray-600 mb-6">
+                                    Your tax filing request has been submitted successfully. Our team will review your information and contact you soon.
+                                </p>
+                                <motion.div
+                                    className="w-full h-2 bg-gray-200 rounded-full overflow-hidden"
+                                    initial={{ width: "0%" }}
+                                    animate={{ width: "100%" }}
+                                    transition={{ duration: 3, ease: "linear" }}
+                                >
+                                    <div className="h-full bg-green-500 rounded-full" />
+                                </motion.div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

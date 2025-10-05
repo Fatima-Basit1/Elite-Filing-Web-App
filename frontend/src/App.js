@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loadUser } from './store/slices/authSlice';
 
 // Pages
 import Home from './pages/Home/Home';
@@ -49,6 +51,12 @@ import UKFormationHome from './pages/CompanyFormation/UKFormationHome';
 import AllFormsSuccessModal from './components/UI/AllFormsSuccessModal';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadUser());
+  }, [dispatch]);
+
   return (
     <div className="App">
       <AllFormsSuccessModal />
