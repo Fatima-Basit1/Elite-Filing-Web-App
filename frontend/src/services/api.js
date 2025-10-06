@@ -191,6 +191,9 @@ export const apiMethods = {
     submitUKStructureChange: (data) => api.post('/uk-structure-change-requests', data),
     submitUKConfirmationStatement: (data) => api.post('/uk-confirmation-statement-requests', data),
     submitUKEoriApplication: (data) => api.post('/uk-eori-application-requests', data),
+    submitUKVATReturn: (data) => api.post('/uk-vat-return-requests', data),
+    submitUKBankAccount: (data) => api.post('/uk-bank-account-requests', data),
+    submitUKVATRegistration: (data) => api.post('/uk-vat-registration-requests', data),
   },
 };
 

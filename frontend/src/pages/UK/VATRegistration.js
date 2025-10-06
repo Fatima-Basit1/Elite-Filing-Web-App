@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
+import useAuth from '../../hooks/useAuth';
+import { apiMethods } from '../../services/api';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
@@ -7,7 +13,11 @@ import vat1 from '../../assets/vat1.jpg';
 import vat2 from '../../assets/vat2.jpg';
 
 const VATRegistration = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { isAuthenticated } = useAuth(false);
     const [showForm, setShowForm] = useState(false);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -15,9 +25,10 @@ const VATRegistration = () => {
         email: '',
         phoneNumber: '',
         annualTurnoverEstimate: '',
-        typeofBusinessActivity: '',
+        typeOfBusinessActivity: '',
         message: ''
     });
+    const [formErrors, setFormErrors] = useState({});
 
     
 
@@ -30,20 +41,93 @@ const VATRegistration = () => {
     };
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState(null);
+
+    const validateForm = () => {
+        const errors = {};
+        if (!formData.firstName.trim()) errors.firstName = 'First name is required';
+        if (!formData.lastName.trim()) errors.lastName = 'Last name is required';
+        if (!formData.companyName.trim()) errors.companyName = 'Company name is required';
+        if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errors.email = 'Valid email is required';
+        if (!formData.phoneNumber.trim()) errors.phoneNumber = 'Phone number is required';
+        if (!formData.annualTurnoverEstimate.trim()) errors.annualTurnoverEstimate = 'Annual turnover estimate is required';
+        if (!formData.typeOfBusinessActivity.trim()) errors.typeOfBusinessActivity = 'Type of business activity is required';
+        if (!formData.message.trim()) errors.message = 'Message is required';
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!isAuthenticated) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to submit the UK VAT Registration form.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
+
+        if (!validateForm()) {
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Validation Error',
+                    message: 'Please check the form for errors and try again.',
+                })
+            );
+            return;
+        }
+
         setIsSubmitting(true);
-        setSubmitStatus(null);
-        
         try {
-            console.log('Form submitted:', formData);
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            setSubmitStatus('success');
+            const res = await apiMethods.submissions.submitUKVATRegistration({
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                companyName: formData.companyName,
+                email: formData.email,
+                phoneNumber: formData.phoneNumber,
+                annualTurnoverEstimate: formData.annualTurnoverEstimate,
+                typeOfBusinessActivity: formData.typeOfBusinessActivity,
+                message: formData.message,
+            });
+            const refId = res?.data?.data?._id;
+            dispatch(
+                addUiNotification({
+                    type: 'success',
+                    title: 'Submission Received',
+                    message: `Your UK VAT Registration request has been submitted successfully${refId ? ` (Reference ID: ${refId})` : ''}.`,
+                })
+            );
+            setShowSuccessPopup(true);
+            setTimeout(() => {
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    companyName: '',
+                    email: '',
+                    phoneNumber: '',
+                    annualTurnoverEstimate: '',
+                    typeOfBusinessActivity: '',
+                    message: '',
+                });
+                setShowForm(false);
+                setShowSuccessPopup(false);
+            }, 2000);
         } catch (error) {
-            setSubmitStatus('error');
+            let message = 'Unable to submit your request. Please try again.';
+            const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.errors?.[0]?.message;
+            message = firstErrorMsg || error?.response?.data?.message || message;
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Submission Failed',
+                    message,
+                })
+            );
         } finally {
             setIsSubmitting(false);
         }
@@ -156,7 +240,7 @@ const VATRegistration = () => {
                                 className="bg-white rounded-2xl shadow-xl p-8"
                             >
                                 <h2 className="text-3xl font-bold text-[#1e3a8a] mb-8 text-center">
-                                    EORI NUMBER APPLICATION FORM
+                                    VAT NUMBER REGISTRATION FORM
                                 </h2>
 
                                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -223,19 +307,19 @@ const VATRegistration = () => {
                                         <div>
                                             <input
                                                 type="text"
-                                                name="annualTurnoverEstimate"
-                                                value={formData.annualTurnover}
-                                                onChange={handleInputChange}
-                                                placeholder="Annual Turnover Estimate"
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            name="annualTurnoverEstimate"
+                                            value={formData.annualTurnoverEstimate}
+                                            onChange={handleInputChange}
+                                            placeholder="Annual Turnover Estimate"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                             />
                                         </div>
 
                                         <div>
                                             <input
                                                 type="text"
-                                                name="typeofBusinessActivity"
-                                                value={formData.vatNumber}
+                                                name="typeOfBusinessActivity"
+                                                value={formData.typeOfBusinessActivity}
                                                 onChange={handleInputChange}
                                                 placeholder="Type of Business Activity"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
@@ -267,22 +351,38 @@ const VATRegistration = () => {
                                     >
                                         {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
                                     </motion.button>
-                                    {submitStatus === 'success' && (
-                                        <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-                                            Form submitted successfully!
-                                        </div>
-                                    )}
-                                    {submitStatus === 'error' && (
-                                        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                                            An error occurred. Please try again.
-                                        </div>
-                                    )}
+                                    {/* Success Popup */}
+                                    <AnimatePresence>
+                                        {showSuccessPopup && (
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                                            >
+                                                <motion.div
+                                                    initial={{ scale: 0.9, opacity: 0 }}
+                                                    animate={{ scale: 1, opacity: 1 }}
+                                                    exit={{ scale: 0.9, opacity: 0 }}
+                                                    className="bg-white rounded-2xl p-8 shadow-2xl text-center max-w-md w-full"
+                                                >
+                                                    <div className="flex items-center justify-center mb-4">
+                                                        <FiCheckCircle className="text-green-500" size={56} />
+                                                    </div>
+                                                    <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">Submission Successful</h3>
+                                                    <p className="text-gray-600">Your UK VAT Registration request has been submitted. We will contact you shortly.</p>
+                                                </motion.div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </form>
                             </motion.div>
                         </div>
                     </motion.section>
                 )}
             </AnimatePresence>
+
+            {/* Auto-hide handled in submit logic */}
 
             {/* VAT REGISTRATION   */}
             <section className="py-16 bg-white">

@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import useAuth from '../../hooks/useAuth';
+import { apiMethods } from '../../services/api';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
@@ -18,7 +24,20 @@ const BankAccounts = () => {
         accountType: 'Select',
         message: ''
     });
-
+    const [formErrors, setFormErrors] = useState({});
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { isAuthenticated } = useAuth(false); // we'll check at submit time
+    
+    // Auto-hide success popup after 2 seconds
+    useEffect(() => {
+        if (!showSuccessPopup) return;
+        const timer = setTimeout(() => {
+            setShowSuccessPopup(false);
+        }, 2000);
+        return () => clearTimeout(timer);
+    }, [showSuccessPopup]);
     
 
     const handleInputChange = (e) => {
@@ -30,21 +49,69 @@ const BankAccounts = () => {
     };
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState(null);
+
+    const validateForm = () => {
+        const errors = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.firstName.trim()) errors.firstName = 'First name is required';
+        if (!formData.lastName.trim()) errors.lastName = 'Last name is required';
+        if (!formData.companyName.trim()) errors.companyName = 'Company name is required';
+        if (!formData.email.trim() || !emailRegex.test(formData.email)) errors.email = 'Valid email is required';
+        if (!formData.phoneNumber.trim()) errors.phoneNumber = 'Phone number is required';
+        if (!formData.preferredBank.trim()) errors.preferredBank = 'Preferred bank is required';
+        if (!formData.accountType || formData.accountType === 'Select') errors.accountType = 'Select Personal or Business';
+        if (!formData.message.trim()) errors.message = 'Message is required';
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Redirect if not logged in
+        if (!isAuthenticated) {
+            navigate('/get-started');
+            return;
+        }
+
+        if (!validateForm()) {
+            dispatch(addUiNotification({
+                type: 'error',
+                title: 'Validation Error',
+                message: 'Please correct the highlighted fields.',
+            }));
+            return;
+        }
+
         setIsSubmitting(true);
-        setSubmitStatus(null);
-        
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            console.log('Form submitted:', formData);
-            setSubmitStatus('success');
+            const payload = { ...formData };
+            await apiMethods.submissions.submitUKBankAccount(payload);
+
+            dispatch(addUiNotification({
+                type: 'success',
+                title: 'Submitted',
+                message: 'UK Bank Account request submitted successfully.',
+            }));
+            setShowSuccessPopup(true);
+            setFormData({
+                firstName: '',
+                lastName: '',
+                companyName: '',
+                email: '',
+                phoneNumber: '',
+                preferredBank: '',
+                accountType: 'Select',
+                message: ''
+            });
+            setFormErrors({});
         } catch (error) {
             console.error('Submission error:', error);
-            setSubmitStatus('error');
+            dispatch(addUiNotification({
+                type: 'error',
+                title: 'Submission Failed',
+                message: 'Unable to submit at the moment. Please try again.',
+            }));
         } finally {
             setIsSubmitting(false);
         }
@@ -157,7 +224,7 @@ const BankAccounts = () => {
                                 className="bg-white rounded-2xl shadow-xl p-8"
                             >
                                 <h2 className="text-3xl font-bold text-[#1e3a8a] mb-8 text-center">
-                                    VAT RETURN FILING FORM
+                                    UK BANK ACCOUNTS FORM
                                 </h2>
 
                                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -170,7 +237,11 @@ const BankAccounts = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="First Name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            required
                                             />
+                                            {formErrors.firstName && (
+                                                <p className="mt-2 text-sm text-red-600">{formErrors.firstName}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -181,7 +252,11 @@ const BankAccounts = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Last Name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            required
                                             />
+                                            {formErrors.lastName && (
+                                                <p className="mt-2 text-sm text-red-600">{formErrors.lastName}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -194,7 +269,11 @@ const BankAccounts = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Company Name"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            required
                                             />
+                                            {formErrors.companyName && (
+                                                <p className="mt-2 text-sm text-red-600">{formErrors.companyName}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -205,7 +284,11 @@ const BankAccounts = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Email"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            required
                                             />
+                                            {formErrors.email && (
+                                                <p className="mt-2 text-sm text-red-600">{formErrors.email}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -218,7 +301,11 @@ const BankAccounts = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Phone Number"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            required
                                             />
+                                            {formErrors.phoneNumber && (
+                                                <p className="mt-2 text-sm text-red-600">{formErrors.phoneNumber}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -229,7 +316,11 @@ const BankAccounts = () => {
                                                 onChange={handleInputChange}
                                                 placeholder="Preferred Bank"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            required
                                             />
+                                            {formErrors.preferredBank && (
+                                                <p className="mt-2 text-sm text-red-600">{formErrors.preferredBank}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -241,11 +332,15 @@ const BankAccounts = () => {
                                                 value={formData.accountType}
                                                 onChange={handleInputChange}
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300 bg-white"
+                                            required
                                             >
                                                 <option value="Select">Select</option>
                                                 <option value="Personal">Personal</option>
                                                 <option value="Business">Business</option>
                                             </select>
+                                            {formErrors.accountType && (
+                                                <p className="mt-2 text-sm text-red-600">{formErrors.accountType}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -257,7 +352,11 @@ const BankAccounts = () => {
                                             placeholder="Message"
                                             rows={4}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            required
                                         />
+                                        {formErrors.message && (
+                                            <p className="mt-2 text-sm text-red-600">{formErrors.message}</p>
+                                        )}
                                     </div>
 
                                     <motion.button
@@ -274,18 +373,45 @@ const BankAccounts = () => {
                                         {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
                                     </motion.button>
                                     
-                                    {submitStatus === 'success' && (
-                                        <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-                                            Form submitted successfully!
-                                        </div>
-                                    )}
-                                    
-                                    {submitStatus === 'error' && (
-                                        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                                            There was an error submitting the form. Please try again.
-                                        </div>
-                                    )}
+                                    <AnimatePresence>
+                                        {showSuccessPopup && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: 20 }}
+                                                transition={{ duration: 0.3 }}
+                                                className="mt-6 flex items-center gap-3 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg"
+                                            >
+                                                <FiCheckCircle className="text-green-600 w-6 h-6" />
+                                                <span>Form submitted successfully!</span>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </form>
+                                                                {/* Success Popup */}
+                                <AnimatePresence>
+                                    {showSuccessPopup && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                                        >
+                                            <motion.div
+                                                initial={{ scale: 0.9, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                exit={{ scale: 0.9, opacity: 0 }}
+                                                className="bg-white rounded-2xl p-8 shadow-2xl text-center max-w-md w-full"
+                                            >
+                                                <div className="flex items-center justify-center mb-4">
+                                                    <FiCheckCircle className="text-green-500" size={56} />
+                                                </div>
+                                                <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">Submission Successful</h3>
+                                                <p className="text-gray-600">Your UK VAT Return request has been submitted. We will contact you shortly.</p>
+                                            </motion.div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </motion.div>
                         </div>
                     </motion.section>
