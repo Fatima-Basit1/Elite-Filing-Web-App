@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,7 +17,9 @@ const WalmartEcommerce = () => {
   const { isAuthenticated } = useAuth(false);
   const [showForm, setShowForm] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -36,6 +38,39 @@ const WalmartEcommerce = () => {
     });
   };
 
+  const validateForm = () => {
+    const errors = {};
+
+    const nameRegex = /^[a-zA-Z\s'-]{2,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[+]?\d{7,15}$/;
+
+    if (!nameRegex.test(formData.firstName)) {
+      errors.firstName = 'Please enter a valid first name.';
+    }
+    if (!nameRegex.test(formData.lastName)) {
+      errors.lastName = 'Please enter a valid last name.';
+    }
+    if (!emailRegex.test(formData.email)) {
+      errors.email = 'Please enter a valid email address.';
+    }
+    if (!phoneRegex.test(formData.phoneNumber)) {
+      errors.phoneNumber = 'Please enter a valid phone number.';
+    }
+    if (!formData.companyName || formData.companyName.trim().length < 2) {
+      errors.companyName = 'Company name is required.';
+    }
+    if (!formData.productType || formData.productType.trim().length < 2) {
+      errors.productType = 'Product type is required.';
+    }
+    if (!formData.businessRegistration) {
+      errors.businessRegistration = 'Please select a registration type.';
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -48,6 +83,18 @@ const WalmartEcommerce = () => {
         })
       );
       navigate('/get-started');
+      return;
+    }
+
+    const isValid = validateForm();
+    if (!isValid) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Invalid Form',
+          message: 'Please fix the highlighted fields and try again.',
+        })
+      );
       return;
     }
 
@@ -66,7 +113,16 @@ const WalmartEcommerce = () => {
       );
 
       setShowSuccessPopup(true);
+      setProgress(0);
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          const next = prev + 5;
+          return next >= 100 ? 100 : next;
+        });
+      }, 150);
+
       setTimeout(() => {
+        clearInterval(interval);
         setFormData({
           firstName: '',
           lastName: '',
@@ -77,8 +133,10 @@ const WalmartEcommerce = () => {
           businessRegistration: '',
           message: '',
         });
+        setFormErrors({});
         setShowForm(false);
         setShowSuccessPopup(false);
+        setProgress(0);
       }, 3000);
     } catch (error) {
       const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.errors?.[0]?.message;
@@ -95,13 +153,23 @@ const WalmartEcommerce = () => {
     }
   };
 
+  useEffect(() => {
+    let timer;
+    if (showSuccessPopup) {
+      timer = setTimeout(() => setShowSuccessPopup(false), 3200);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [showSuccessPopup]);
+
   return (
     <div className="min-h-screen">
       <Navigation />
       
       {/* Hero Section */}
       <div 
-        className="relative min-h-screen flex items-center"
+        className="relative min-h-[75vh] flex items-center"
         style={{
           backgroundImage: `url(${bluebg})`,
           backgroundSize: 'cover',
@@ -192,6 +260,9 @@ const WalmartEcommerce = () => {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your first name"
                       />
+                      {formErrors.firstName && (
+                        <p className="mt-1 text-sm text-red-600">{formErrors.firstName}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -206,6 +277,9 @@ const WalmartEcommerce = () => {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your last name"
                       />
+                      {formErrors.lastName && (
+                        <p className="mt-1 text-sm text-red-600">{formErrors.lastName}</p>
+                      )}
                     </div>
                   </div>
 
@@ -222,6 +296,9 @@ const WalmartEcommerce = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                       placeholder="Enter your company name"
                     />
+                    {formErrors.companyName && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.companyName}</p>
+                    )}
                   </div>
 
                   <div>
@@ -237,6 +314,9 @@ const WalmartEcommerce = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                       placeholder="Enter your email address"
                     />
+                    {formErrors.email && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
+                    )}
                   </div>
 
                   <div>
@@ -252,6 +332,9 @@ const WalmartEcommerce = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                       placeholder="Enter your phone number"
                     />
+                    {formErrors.phoneNumber && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.phoneNumber}</p>
+                    )}
                   </div>
 
                   <div>
@@ -267,6 +350,9 @@ const WalmartEcommerce = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                       placeholder="e.g., Electronics, Clothing, Home & Garden"
                     />
+                    {formErrors.productType && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.productType}</p>
+                    )}
                   </div>
 
                   <div>
@@ -287,6 +373,9 @@ const WalmartEcommerce = () => {
                       <option value="Sole Proprietorship">Sole Proprietorship</option>
                       <option value="Other">Other</option>
                     </select>
+                    {formErrors.businessRegistration && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.businessRegistration}</p>
+                    )}
                   </div>
 
                   <div>
@@ -305,10 +394,11 @@ const WalmartEcommerce = () => {
 
                   <button
                     type="submit"
-                    className="w-full text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+                    className={`w-full text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 hover:shadow-lg'}`}
                     style={{
                       background: "linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)",
                     }}
+                    disabled={isSubmitting}
                   >
                     {isSubmitting ? 'SUBMITTING...' : 'Start Your Walmart Journey'}
                   </button>
@@ -445,12 +535,12 @@ const WalmartEcommerce = () => {
                 Your Walmart E-commerce request has been submitted successfully.
               </p>
               {/* Progress bar */}
-              <motion.div
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 3 }}
-                className="absolute bottom-0 left-0 h-1 bg-green-500"
-              />
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-200">
+                <div
+                  className="h-1 bg-green-500"
+                  style={{ width: `${progress}%`, transition: 'width 0.15s linear' }}
+                />
+              </div>
             </motion.div>
           </motion.div>
         )}
