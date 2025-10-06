@@ -148,6 +148,10 @@ app.use('/api/registered-agent-requests', require('./routes/registeredAgentReque
 app.use('/api/us-llc-formation-requests', require('./routes/usLlcFormationRequests'));
 app.use('/api/us-tax-filing-requests', require('./routes/usTaxFilingRequests'));
 app.use('/api/itin-requests', require('./routes/itinRequests'));
+// Pakistan submissions
+app.use('/api/pak-secp-registration-requests', require('./routes/pakSecpRegistrationRequests'));
+app.use('/api/pak-fbr-registration-requests', require('./routes/pakFbrRegistrationRequests'));
+app.use('/api/pak-pseb-registration-requests', require('./routes/pakPsebRegistrationRequests'));
 app.use('/api/us-complete-package-requests', require('./routes/usCompletePackageRequests'));
 app.use('/api/uk-company-registration-requests', require('./routes/ukCompanyRegistrationRequests'));
   app.use('/api/uk-annual-accounts-requests', require('./routes/ukAnnualAccountsRequests'));

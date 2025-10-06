@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
+import useAuth from '../../../hooks/useAuth';
+import { apiMethods } from '../../../services/api';
+import { addNotification as addUiNotification } from '../../../store/slices/uiSlice';
 import Navigation from '../../../components/Navigation/Navigation';
 import Footer from '../../../components/Footer/Footer';
 import ChatWidget from '../../../components/ChatWidget/ChatWidget';
 import bluebg from '../../../assets/bluebg.jpg';
 
 const FBRRegistration = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useAuth(false);
   const [showForm, setShowForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -15,19 +27,90 @@ const FBRRegistration = () => {
     registrationType: '',
     message: ''
   });
+  const [formErrors, setFormErrors] = useState({});
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    if (formErrors[e.target.name]) {
+      setFormErrors({ ...formErrors, [e.target.name]: '' });
+    }
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.firstName || formData.firstName.trim().length < 2) errors.firstName = 'First name is required';
+    if (!formData.lastName || formData.lastName.trim().length < 2) errors.lastName = 'Last name is required';
+    if (!formData.companyName || formData.companyName.trim().length < 2) errors.companyName = 'Company name is required';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) errors.email = 'Valid email is required';
+    if (!formData.phone || formData.phone.trim().length < 7) errors.phone = 'Valid phone number is required';
+    if (!formData.registrationType) errors.registrationType = 'Please select a registration type';
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    // You can add API call here
+    if (!isAuthenticated) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Sign In Required',
+          message: 'Please log in to submit the FBR form.',
+        })
+      );
+      navigate('/get-started');
+      return;
+    }
+
+    if (!validateForm()) {
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'Please check the form for errors and try again.',
+        })
+      );
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const res = await apiMethods.submissions.submitPAKFBRRegistration({
+        ...formData,
+      });
+      const refId = res?.data?.data?._id || res?.data?._id;
+      dispatch(
+        addUiNotification({
+          type: 'success',
+          title: 'Submission Received',
+          message: `Your FBR registration request has been submitted${refId ? ` (Reference ID: ${refId})` : ''}.`,
+        })
+      );
+      setShowSuccessPopup(true);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        companyName: '',
+        email: '',
+        phone: '',
+        registrationType: '',
+        message: ''
+      });
+    } catch (error) {
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Submission Failed',
+          message: error?.response?.data?.message || 'Unable to submit FBR registration. Please try again.',
+        })
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -114,6 +197,9 @@ const FBRRegistration = () => {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your first name"
                       />
+                      {formErrors.firstName && (
+                        <p className="mt-1 text-sm text-red-600">{formErrors.firstName}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -128,6 +214,9 @@ const FBRRegistration = () => {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your last name"
                       />
+                      {formErrors.lastName && (
+                        <p className="mt-1 text-sm text-red-600">{formErrors.lastName}</p>
+                      )}
                     </div>
                   </div>
 
@@ -135,15 +224,18 @@ const FBRRegistration = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Company Name *
                     </label>
-                    <input
-                      type="text"
-                      name="companyName"
-                      value={formData.companyName}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      placeholder="Enter your company name"
-                    />
+                      <input
+                        type="text"
+                        name="companyName"
+                        value={formData.companyName}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        placeholder="Enter your company name"
+                      />
+                      {formErrors.companyName && (
+                        <p className="mt-1 text-sm text-red-600">{formErrors.companyName}</p>
+                      )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -160,6 +252,9 @@ const FBRRegistration = () => {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your email address"
                       />
+                      {formErrors.email && (
+                        <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -174,6 +269,9 @@ const FBRRegistration = () => {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your phone number"
                       />
+                      {formErrors.phone && (
+                        <p className="mt-1 text-sm text-red-600">{formErrors.phone}</p>
+                      )}
                     </div>
                   </div>
 
@@ -194,6 +292,9 @@ const FBRRegistration = () => {
                       <option value="Sales Tax">Sales Tax Registration</option>
                       <option value="Income Tax">Income Tax Registration</option>
                     </select>
+                    {formErrors.registrationType && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.registrationType}</p>
+                    )}
                   </div>
 
                   <div>
@@ -212,12 +313,13 @@ const FBRRegistration = () => {
 
                   <button
                     type="submit"
-                    className="w-full text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+                    disabled={isSubmitting}
+                    className={`w-full text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                     style={{
                       background: "linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)",
                     }}
                   >
-                    Submit FBR Registration Request
+                    {isSubmitting ? 'Submitting...' : 'Submit FBR Registration Request'}
                   </button>
                 </form>
               </div>
@@ -316,6 +418,35 @@ const FBRRegistration = () => {
 
       <Footer />
       <ChatWidget />
+
+      {/* Success Modal */}
+      <AnimatePresence>
+        {showSuccessPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-2xl"
+            >
+              <FiCheckCircle className="mx-auto text-green-600" size={48} />
+              <h3 className="mt-4 text-2xl font-bold text-gray-900">Submission Successful</h3>
+              <p className="mt-2 text-gray-600">We have received your FBR registration request. Our team will reach out soon.</p>
+              <button
+                onClick={() => setShowSuccessPopup(false)}
+                className="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -196,6 +196,10 @@ export const apiMethods = {
     submitUKVATReturn: (data) => api.post('/uk-vat-return-requests', data),
     submitUKBankAccount: (data) => api.post('/uk-bank-account-requests', data),
     submitUKVATRegistration: (data) => api.post('/uk-vat-registration-requests', data),
+    // Pakistan submissions
+    submitPAKSECPRegistration: (data) => api.post('/pak-secp-registration-requests', data),
+    submitPAKFBRRegistration: (data) => api.post('/pak-fbr-registration-requests', data),
+    submitPAKPSEBRegistration: (data) => api.post('/pak-pseb-registration-requests', data),
   },
 };
 
