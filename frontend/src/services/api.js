@@ -189,6 +189,8 @@ export const apiMethods = {
     submitUKAnnualAccounts: (data) => api.post('/uk-annual-accounts-requests', data),
     submitUKCompanyNameChange: (data) => api.post('/uk-company-name-change-requests', data),
     submitUKStructureChange: (data) => api.post('/uk-structure-change-requests', data),
+    // UAE submissions
+    submitUAESPCFreeZone: (data) => api.post('/uae-spc-free-requests', data),
     submitUKConfirmationStatement: (data) => api.post('/uk-confirmation-statement-requests', data),
     submitUKEoriApplication: (data) => api.post('/uk-eori-application-requests', data),
     submitAmazonEcommerceRequest: (data) => api.post('/amazon-ecommerce-requests', data),

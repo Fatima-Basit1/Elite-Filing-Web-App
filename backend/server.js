@@ -165,6 +165,9 @@ app.use('/api/uk-company-registration-requests', require('./routes/ukCompanyRegi
   app.use('/api/uk-bank-account-requests', require('./routes/ukBankAccountRequests'));
   app.use('/api/uk-vat-registration-requests', require('./routes/ukVatRegistrationRequests'));
 
+  // UAE submissions
+  app.use('/api/uae-spc-free-requests', require('./routes/uaeSpcFreeRequests'));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

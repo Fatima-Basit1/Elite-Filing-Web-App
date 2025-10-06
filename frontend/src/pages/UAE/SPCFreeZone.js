@@ -1,10 +1,25 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import useAuth from '../../hooks/useAuth';
+import { apiMethods } from '../../services/api';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
+import Navigation from '../../components/Navigation/Navigation';
+import Footer from '../../components/Footer/Footer';
+import ChatWidget from '../../components/ChatWidget/ChatWidget';
+import { FiCheckCircle } from 'react-icons/fi';
 import spc1 from '../../assets/spc1.jpg';
 import spc2 from '../../assets/spc2.jpg';
 
 const SPCFreeZone = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  // Allow viewing the page; redirect on submit if not logged in
+  const { isAuthenticated } = useAuth(false);
   const [showForm, setShowForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -15,6 +30,7 @@ const SPCFreeZone = () => {
     licenseType: '',
     message: ''
   });
+  const [formErrors, setFormErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,10 +40,81 @@ const SPCFreeZone = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.firstName?.trim()) errors.firstName = 'First name is required';
+    if (!formData.lastName?.trim()) errors.lastName = 'Last name is required';
+    if (!formData.companyProposedName?.trim()) errors.companyProposedName = 'Company proposed name is required';
+    if (!formData.email?.trim()) errors.email = 'Email is required';
+    if (!formData.phoneNumber?.trim()) errors.phoneNumber = 'Phone number is required';
+    if (!formData.businessActivity?.trim()) errors.businessActivity = 'Business activity is required';
+    if (!formData.licenseType?.trim()) errors.licenseType = 'License type is required';
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission logic here
+    // Redirect unauthenticated users to Get Started page on submit
+    if (!isAuthenticated) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Sign In Required',
+          message: 'Please log in to submit the SPC Free Zone form.',
+        })
+      );
+      navigate('/get-started');
+      return;
+    }
+
+    if (!validateForm()) {
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'Please check the form for errors and try again.',
+        })
+      );
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const res = await apiMethods.submissions.submitUAESPCFreeZone({
+        ...formData,
+      });
+      const refId = res?.data?.data?._id || res?.data?._id;
+      dispatch(
+        addUiNotification({
+          type: 'success',
+          title: 'Submission Received',
+          message: `Your UAE SPC Free Zone request has been submitted${refId ? ` (Reference ID: ${refId})` : ''}.`,
+        })
+      );
+      setShowSuccessPopup(true);
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        companyProposedName: '',
+        email: '',
+        phoneNumber: '',
+        businessActivity: '',
+        licenseType: '',
+        message: ''
+      });
+    } catch (error) {
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Submission Failed',
+          message: error?.response?.data?.message || 'Unable to submit SPC Free Zone request. Please try again.',
+        })
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const fadeInUp = {
@@ -51,6 +138,7 @@ const SPCFreeZone = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Navigation />
       {/* Hero Section */}
       <motion.section 
         className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white py-20 px-4 overflow-hidden"
@@ -77,7 +165,7 @@ const SPCFreeZone = () => {
 
       {/* Form Section */}
       <motion.section 
-        className="py-16 px-4 bg-gray-50"
+        className="py-16 px-4 bg-gray-50 pt-24"
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
@@ -123,6 +211,9 @@ const SPCFreeZone = () => {
                       className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-300"
                       placeholder="Enter your first name"
                     />
+                    {formErrors.firstName && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.firstName}</p>
+                    )}
                   </div>
                   
                   <div>
@@ -137,6 +228,9 @@ const SPCFreeZone = () => {
                       className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-300"
                       placeholder="Enter your last name"
                     />
+                    {formErrors.lastName && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.lastName}</p>
+                    )}
                   </div>
                 </div>
 
@@ -153,6 +247,9 @@ const SPCFreeZone = () => {
                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-300"
                     placeholder="Enter proposed company name"
                   />
+                  {formErrors.companyProposedName && (
+                    <p className="mt-1 text-sm text-red-600">{formErrors.companyProposedName}</p>
+                  )}
                 </div>
 
                 {/* Contact Fields */}
@@ -169,6 +266,9 @@ const SPCFreeZone = () => {
                       className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-300"
                       placeholder="Enter your email"
                     />
+                    {formErrors.email && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
+                    )}
                   </div>
                   
                   <div>
@@ -183,6 +283,9 @@ const SPCFreeZone = () => {
                       className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-300"
                       placeholder="Enter your phone number"
                     />
+                    {formErrors.phoneNumber && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.phoneNumber}</p>
+                    )}
                   </div>
                 </div>
 
@@ -200,6 +303,9 @@ const SPCFreeZone = () => {
                       className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-300"
                       placeholder="Describe your business activity"
                     />
+                    {formErrors.businessActivity && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.businessActivity}</p>
+                    )}
                   </div>
                   
                   <div>
@@ -218,6 +324,9 @@ const SPCFreeZone = () => {
                       <option value="industrial">Industrial License</option>
                       <option value="service">Service License</option>
                     </select>
+                    {formErrors.licenseType && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.licenseType}</p>
+                    )}
                   </div>
                 </div>
 
@@ -239,11 +348,12 @@ const SPCFreeZone = () => {
                 {/* Submit Button */}
                 <motion.button
                   type="submit"
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  disabled={isSubmitting}
+                  className={`w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  SUBMIT
+                  {isSubmitting ? 'Submitting...' : 'SUBMIT'}
                 </motion.button>
               </form>
             </motion.div>
@@ -376,6 +486,37 @@ const SPCFreeZone = () => {
           </div>
         </div>
       </motion.section>
+      <Footer />
+      <ChatWidget />
+
+      {/* Success Modal */}
+      <AnimatePresence>
+        {showSuccessPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-2xl"
+            >
+              <FiCheckCircle className="mx-auto text-green-600" size={48} />
+              <h3 className="mt-4 text-2xl font-bold text-gray-900">Submission Successful</h3>
+              <p className="mt-2 text-gray-600">We have received your UAE SPC Free Zone request. Our team will reach out soon.</p>
+              <button
+                onClick={() => setShowSuccessPopup(false)}
+                className="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
