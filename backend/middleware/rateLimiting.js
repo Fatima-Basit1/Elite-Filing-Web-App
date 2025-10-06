@@ -1,5 +1,29 @@
 const rateLimit = require('express-rate-limit');
 
+// Robust client IP resolver for rate limiting
+// - Prefers left-most IP from X-Forwarded-For when present
+// - Falls back to req.ip or socket remoteAddress
+// - Strips any port suffixes to avoid validation issues
+const ipKeyGenerator = (req) => {
+  try {
+    const xff = req.headers['x-forwarded-for'];
+    let ipCandidate = '';
+
+    if (typeof xff === 'string' && xff.length > 0) {
+      // Use left-most entry (closest to client)
+      ipCandidate = xff.split(',')[0].trim();
+    } else {
+      ipCandidate = req.ip || req.socket?.remoteAddress || '';
+    }
+
+    // Strip port from IPv4/IPv6 addresses if present
+    return ipCandidate.replace(/:\d+[^:]*$/, '');
+  } catch (e) {
+    // Fallback to req.ip on any parsing error
+    return (req.ip || '').replace(/:\d+[^:]*$/, '');
+  }
+};
+
 // General rate limiting
 const generalLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
@@ -11,6 +35,10 @@ const generalLimiter = rateLimit({
   },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  // Disable validation warning when X-Forwarded-For is present but trust proxy is not set
+  validate: { xForwardedForHeader: false },
+  // Use robust IP detection to ensure consistent limiting per client
+  keyGenerator: ipKeyGenerator,
   handler: (req, res) => {
     console.log(`Rate limit exceeded for IP: ${req.ip} on ${req.originalUrl}`);
     res.status(429).json({
@@ -33,6 +61,8 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true, // Don't count successful requests
+  validate: { xForwardedForHeader: false },
+  keyGenerator: ipKeyGenerator,
   handler: (req, res) => {
     console.log(`Auth rate limit exceeded for IP: ${req.ip} on ${req.originalUrl}`);
     res.status(429).json({
@@ -55,6 +85,8 @@ const signupLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true, // Don't count successful requests
+  validate: { xForwardedForHeader: false },
+  keyGenerator: ipKeyGenerator,
   handler: (req, res) => {
     console.log(`Signup rate limit exceeded for IP: ${req.ip} on ${req.originalUrl}`);
     res.status(429).json({
@@ -76,6 +108,8 @@ const passwordResetLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
+  keyGenerator: ipKeyGenerator,
   handler: (req, res) => {
     console.log(`Password reset rate limit exceeded for IP: ${req.ip}`);
     res.status(429).json({

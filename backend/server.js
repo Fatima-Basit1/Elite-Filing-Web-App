@@ -38,6 +38,27 @@ app.use(helmet({
   },
 }));
 
+// Configure trust proxy safely (do not use plain `true`)
+// Allows correct client IP detection behind known number of proxies
+// Set TRUST_PROXY to a number (e.g., 1 for single proxy like Cloudflare/Nginx)
+const TRUST_PROXY = process.env.TRUST_PROXY;
+if (typeof TRUST_PROXY !== 'undefined') {
+  let trustValue;
+  if (TRUST_PROXY === 'false') {
+    trustValue = false;
+  } else if (TRUST_PROXY === 'true') {
+    // Avoid permissive trust proxy; default to 1 if user sets true
+    trustValue = 1;
+  } else if (!isNaN(Number(TRUST_PROXY))) {
+    trustValue = Number(TRUST_PROXY);
+  } else {
+    // Accept specific subnet or IP strings per Express docs
+    trustValue = TRUST_PROXY;
+  }
+  app.set('trust proxy', trustValue);
+  console.log('Trust proxy configured:', trustValue);
+}
+
 // CORS configuration
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
@@ -134,6 +155,8 @@ app.use('/api/uk-company-registration-requests', require('./routes/ukCompanyRegi
   app.use('/api/uk-structure-change-requests', require('./routes/ukStructureChangeRequests'));
   app.use('/api/uk-confirmation-statement-requests', require('./routes/ukConfirmationStatementRequests'));
   app.use('/api/uk-eori-application-requests', require('./routes/ukEoriApplicationRequests'));
+  app.use('/api/amazon-ecommerce-requests', require('./routes/amazonEcommerceRequests'));
+  app.use('/api/walmart-ecommerce-requests', require('./routes/walmartEcommerceRequests'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

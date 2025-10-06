@@ -191,6 +191,8 @@ export const apiMethods = {
     submitUKStructureChange: (data) => api.post('/uk-structure-change-requests', data),
     submitUKConfirmationStatement: (data) => api.post('/uk-confirmation-statement-requests', data),
     submitUKEoriApplication: (data) => api.post('/uk-eori-application-requests', data),
+    submitAmazonEcommerceRequest: (data) => api.post('/amazon-ecommerce-requests', data),
+    submitWalmartEcommerceRequest: (data) => api.post('/walmart-ecommerce-requests', data),
   },
 };
 

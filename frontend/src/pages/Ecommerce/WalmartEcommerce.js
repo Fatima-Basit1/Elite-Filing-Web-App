@@ -1,17 +1,29 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
+import useAuth from '../../hooks/useAuth';
+import { apiMethods } from '../../services/api';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
 import bluebg from '../../assets/bluebg.jpg';
 
 const WalmartEcommerce = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useAuth(false);
   const [showForm, setShowForm] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     companyName: '',
     email: '',
-    phone: '',
+    phoneNumber: '',
     productType: '',
     businessRegistration: '',
     message: ''
@@ -24,11 +36,63 @@ const WalmartEcommerce = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    // You can add API call here
+
+    if (!isAuthenticated || !localStorage.getItem('token')) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Sign In Required',
+          message: 'Please log in to submit the Walmart E-commerce form.',
+        })
+      );
+      navigate('/get-started');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const payload = { ...formData };
+      const res = await apiMethods.submissions.submitWalmartEcommerceRequest(payload);
+      const refId = res?.data?.data?._id;
+
+      dispatch(
+        addUiNotification({
+          type: 'success',
+          title: 'Submission Received',
+          message: `Your Walmart request has been successfully submitted${refId ? ` (Reference ID: ${refId})` : ''}.`,
+        })
+      );
+
+      setShowSuccessPopup(true);
+      setTimeout(() => {
+        setFormData({
+          firstName: '',
+          lastName: '',
+          companyName: '',
+          email: '',
+          phoneNumber: '',
+          productType: '',
+          businessRegistration: '',
+          message: '',
+        });
+        setShowForm(false);
+        setShowSuccessPopup(false);
+      }, 3000);
+    } catch (error) {
+      const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.errors?.[0]?.message;
+      const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Submission Failed',
+          message,
+        })
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -72,7 +136,20 @@ const WalmartEcommerce = () => {
               </div>
             </div>
             <button
-              onClick={() => setShowForm(true)}
+              onClick={() => {
+                if (!isAuthenticated || !localStorage.getItem('token')) {
+                  dispatch(
+                    addUiNotification({
+                      type: 'warning',
+                      title: 'Sign In Required',
+                      message: 'Please log in to access the Walmart E-commerce form.',
+                    })
+                  );
+                  navigate('/get-started');
+                  return;
+                }
+                setShowForm(true);
+              }}
               className="flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 font-semibold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:from-yellow-500 hover:to-yellow-600"
             >
               Start Selling on Walmart
@@ -168,8 +245,8 @@ const WalmartEcommerce = () => {
                     </label>
                     <input
                       type="tel"
-                      name="phone"
-                      value={formData.phone}
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
@@ -233,7 +310,7 @@ const WalmartEcommerce = () => {
                       background: "linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)",
                     }}
                   >
-                    Start Your Walmart Journey
+                    {isSubmitting ? 'SUBMITTING...' : 'Start Your Walmart Journey'}
                   </button>
                 </form>
               </div>
@@ -323,7 +400,20 @@ const WalmartEcommerce = () => {
               </div>
             </div>
             <button 
-              onClick={() => setShowForm(true)}
+              onClick={() => {
+                if (!isAuthenticated || !localStorage.getItem('token')) {
+                  dispatch(
+                    addUiNotification({
+                      type: 'warning',
+                      title: 'Sign In Required',
+                      message: 'Please log in to access the Walmart E-commerce form.',
+                    })
+                  );
+                  navigate('/get-started');
+                  return;
+                }
+                setShowForm(true);
+              }}
               className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
             >
               Get Started Today
@@ -332,7 +422,39 @@ const WalmartEcommerce = () => {
         </div>
       </div>
 
-      
+      {/* Success Popup */}
+      <AnimatePresence>
+        {showSuccessPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              className="bg-white rounded-2xl p-8 flex flex-col items-center relative overflow-hidden max-w-md mx-auto text-center"
+            >
+              <div className="text-green-500 mb-4">
+                <FiCheckCircle className="w-16 h-16" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">Success!</h3>
+              <p className="text-gray-600 text-center mb-4">
+                Your Walmart E-commerce request has been submitted successfully.
+              </p>
+              {/* Progress bar */}
+              <motion.div
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 3 }}
+                className="absolute bottom-0 left-0 h-1 bg-green-500"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
       <ChatWidget />
