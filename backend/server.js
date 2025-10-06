@@ -161,6 +161,7 @@ app.use('/api/uk-company-registration-requests', require('./routes/ukCompanyRegi
   app.use('/api/uk-eori-application-requests', require('./routes/ukEoriApplicationRequests'));
   app.use('/api/amazon-ecommerce-requests', require('./routes/amazonEcommerceRequests'));
   app.use('/api/walmart-ecommerce-requests', require('./routes/walmartEcommerceRequests'));
+  app.use('/api/etsy-ecommerce-requests', require('./routes/etsyEcommerceRequests'));
   app.use('/api/uk-vat-return-requests', require('./routes/ukVatReturnRequests'));
   app.use('/api/uk-bank-account-requests', require('./routes/ukBankAccountRequests'));
   app.use('/api/uk-vat-registration-requests', require('./routes/ukVatRegistrationRequests'));

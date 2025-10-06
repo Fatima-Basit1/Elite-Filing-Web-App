@@ -1,11 +1,24 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
+import useAuth from '../../hooks/useAuth';
+import { apiMethods } from '../../services/api';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
 import bluebg from '../../assets/bluebg.jpg';
 
 const EtsyEcommerce = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useAuth(false);
   const [showForm, setShowForm] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -22,13 +35,121 @@ const EtsyEcommerce = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+    if (formErrors[e.target.name]) {
+      setFormErrors((prev) => ({ ...prev, [e.target.name]: null }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const errors = {};
+    const nameRegex = /^[a-zA-Z\s'-]{2,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[0-9+()\s-]{7,}$/;
+
+    if (!nameRegex.test(formData.firstName)) {
+      errors.firstName = 'Please enter a valid first name.';
+    }
+    if (!nameRegex.test(formData.lastName)) {
+      errors.lastName = 'Please enter a valid last name.';
+    }
+    if (!emailRegex.test(formData.email)) {
+      errors.email = 'Please enter a valid email address.';
+    }
+    if (!phoneRegex.test(formData.phone)) {
+      errors.phone = 'Please enter a valid phone number.';
+    }
+    if (!formData.companyName?.trim()) {
+      errors.companyName = 'Company name is required.';
+    }
+    if (!formData.sellingCountry?.trim()) {
+      errors.sellingCountry = 'Selling country is required.';
+    }
+    if (!formData.productCategory?.trim()) {
+      errors.productCategory = 'Product category is required.';
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    // You can add API call here
+
+    if (!isAuthenticated || !localStorage.getItem('token')) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Sign In Required',
+          message: 'Please log in to submit the Etsy E-commerce form.',
+        })
+      );
+      navigate('/get-started');
+      return;
+    }
+
+    const isValid = validateForm();
+    if (!isValid) {
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'Please correct the highlighted fields and try again.',
+        })
+      );
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phone,
+        companyName: formData.companyName,
+        sellingCountry: formData.sellingCountry,
+        productCategory: formData.productCategory,
+        message: formData.message,
+      };
+      const res = await apiMethods.submissions.submitEtsyEcommerceRequest(payload);
+      const refId = res?.data?.data?._id;
+
+      dispatch(
+        addUiNotification({
+          type: 'success',
+          title: 'Submission Received',
+          message: `Your Etsy request has been successfully submitted${refId ? ` (Reference ID: ${refId})` : ''}.`,
+        })
+      );
+
+      setShowSuccessPopup(true);
+      setTimeout(() => {
+        setFormData({
+          firstName: '',
+          lastName: '',
+          companyName: '',
+          email: '',
+          phone: '',
+          sellingCountry: '',
+          productCategory: '',
+          message: '',
+        });
+        setShowForm(false);
+        setShowSuccessPopup(false);
+      }, 3000);
+    } catch (error) {
+      const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.errors?.[0]?.message;
+      const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Submission Failed',
+          message,
+        })
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -115,6 +236,9 @@ const EtsyEcommerce = () => {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your first name"
                       />
+                      {formErrors.firstName && (
+                        <p className="text-red-600 text-sm mt-1">{formErrors.firstName}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -129,6 +253,9 @@ const EtsyEcommerce = () => {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your last name"
                       />
+                      {formErrors.lastName && (
+                        <p className="text-red-600 text-sm mt-1">{formErrors.lastName}</p>
+                      )}
                     </div>
                   </div>
 
@@ -145,6 +272,9 @@ const EtsyEcommerce = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                       placeholder="Enter your company name"
                     />
+                    {formErrors.companyName && (
+                      <p className="text-red-600 text-sm mt-1">{formErrors.companyName}</p>
+                    )}
                   </div>
 
                   <div>
@@ -160,6 +290,9 @@ const EtsyEcommerce = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                       placeholder="Enter your email address"
                     />
+                    {formErrors.email && (
+                      <p className="text-red-600 text-sm mt-1">{formErrors.email}</p>
+                    )}
                   </div>
 
                   <div>
@@ -175,6 +308,9 @@ const EtsyEcommerce = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                       placeholder="Enter your phone number"
                     />
+                    {formErrors.phone && (
+                      <p className="text-red-600 text-sm mt-1">{formErrors.phone}</p>
+                    )}
                   </div>
 
                   <div>
@@ -200,6 +336,9 @@ const EtsyEcommerce = () => {
                       <option value="Netherlands">Netherlands</option>
                       <option value="Other">Other</option>
                     </select>
+                    {formErrors.sellingCountry && (
+                      <p className="text-red-600 text-sm mt-1">{formErrors.sellingCountry}</p>
+                    )}
                   </div>
 
                   <div>
@@ -228,6 +367,9 @@ const EtsyEcommerce = () => {
                       <option value="Weddings">Weddings</option>
                       <option value="Other">Other</option>
                     </select>
+                    {formErrors.productCategory && (
+                      <p className="text-red-600 text-sm mt-1">{formErrors.productCategory}</p>
+                    )}
                   </div>
 
                   <div>
@@ -251,7 +393,7 @@ const EtsyEcommerce = () => {
                       background: "linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)",
                     }}
                   >
-                    Start Your Etsy Journey
+                    {isSubmitting ? 'SUBMITTING...' : 'Start Your Etsy Journey'}
                   </button>
                 </form>
               </div>
@@ -331,6 +473,40 @@ const EtsyEcommerce = () => {
 
       <Footer />
       <ChatWidget />
+
+      {/* Success Popup */}
+      <AnimatePresence>
+        {showSuccessPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              className="bg-white rounded-2xl p-8 flex flex-col items-center relative overflow-hidden max-w-md mx-auto text-center"
+            >
+              <div className="text-green-500 mb-4">
+                <FiCheckCircle className="w-16 h-16" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">Success!</h3>
+              <p className="text-gray-600 text-center mb-4">
+                Your Etsy E-commerce request has been submitted successfully.
+              </p>
+              {/* Progress bar */}
+              <motion.div
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 3 }}
+                className="absolute bottom-0 left-0 h-1 bg-green-500"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

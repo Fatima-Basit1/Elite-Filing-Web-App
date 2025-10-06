@@ -195,6 +195,7 @@ export const apiMethods = {
     submitUKEoriApplication: (data) => api.post('/uk-eori-application-requests', data),
     submitAmazonEcommerceRequest: (data) => api.post('/amazon-ecommerce-requests', data),
     submitWalmartEcommerceRequest: (data) => api.post('/walmart-ecommerce-requests', data),
+    submitEtsyEcommerceRequest: (data) => api.post('/etsy-ecommerce-requests', data),
     submitUKVATReturn: (data) => api.post('/uk-vat-return-requests', data),
     submitUKBankAccount: (data) => api.post('/uk-bank-account-requests', data),
     submitUKVATRegistration: (data) => api.post('/uk-vat-registration-requests', data),
