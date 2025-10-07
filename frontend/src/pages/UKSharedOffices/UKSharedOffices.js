@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import { markUKSharedOfficeSubmitted } from '../../store/slices/submissionsSlice';
 import { apiMethods } from '../../services/api';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
@@ -27,6 +28,9 @@ const UKSharedOffices = () => {
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
       useEffect(() => {
     window.scrollTo(0, 0);
@@ -55,16 +59,32 @@ const UKSharedOffices = () => {
     }
 
     try {
-      await apiMethods.submissions.submitUKSharedOffice(formData);
+      setIsSubmitting(true);
+      const res = await apiMethods.submissions.submitUKSharedOffice(formData);
+      const refId = res?.data?.data?._id;
       dispatch(
         addUiNotification({
           type: 'success',
           title: 'Submission Received',
-          message: 'Your UK shared office request has been submitted successfully.',
+          message: `Your UK shared office request has been submitted successfully${refId ? ` (Reference ID: ${refId})` : ''}.`,
         })
       );
       dispatch(markUKSharedOfficeSubmitted());
-      setFormData(initialFormData);
+      setShowSuccessPopup(true);
+      setProgress(0);
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          const next = prev + 5;
+          return next >= 100 ? 100 : next;
+        });
+      }, 150);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        setFormData(initialFormData);
+        setShowSuccessPopup(false);
+        setProgress(0);
+      }, 3000);
     } catch (error) {
       const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg;
       const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
@@ -75,8 +95,20 @@ const UKSharedOffices = () => {
           message,
         })
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    let timer;
+    if (showSuccessPopup) {
+      timer = setTimeout(() => setShowSuccessPopup(false), 3200);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [showSuccessPopup]);
 
   const scrollToForm = () => {
     document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
@@ -563,14 +595,15 @@ const UKSharedOffices = () => {
               {/* Submit Button */}
               <motion.button
                 type="submit"
-                className="w-full py-4 text-lg font-bold text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+                className={`w-full py-4 text-lg font-bold text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                 style={{
                   background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
                 }}
-                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(6, 30, 68, 0.3)" }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: isSubmitting ? 1 : 1.02, boxShadow: isSubmitting ? undefined : "0 20px 40px rgba(6, 30, 68, 0.3)" }}
+                whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+                disabled={isSubmitting}
               >
-                Submit Enquiry
+                {isSubmitting ? 'SUBMITTING...' : 'Submit Enquiry'}
               </motion.button>
             </form>
           </motion.div>
@@ -631,6 +664,40 @@ const UKSharedOffices = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Success Popup */}
+      <AnimatePresence>
+        {showSuccessPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center"
+            >
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                  <FiCheckCircle className="text-green-600 text-3xl" />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Submission Successful</h3>
+              <p className="text-gray-600 mb-6">We have received your UK shared office request. Our team will contact you shortly.</p>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-green-500 h-2 rounded-full transition-all"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
       <ChatWidget />

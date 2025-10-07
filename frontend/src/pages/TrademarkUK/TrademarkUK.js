@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import { markTrademarkUKSubmitted } from '../../store/slices/submissionsSlice';
 import { apiMethods } from '../../services/api';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
@@ -29,6 +30,9 @@ const TrademarkUK = () => {
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,16 +61,52 @@ const TrademarkUK = () => {
     }
 
     try {
-      await apiMethods.submissions.submitTrademarkUK(formData);
+      setIsSubmitting(true);
+      const normalizedType = (() => {
+        const t = String(formData.trademarkType || '').trim().toLowerCase();
+        if (['word', 'wordmark'].includes(t)) return 'Word';
+        if (t === 'logo') return 'Logo';
+        if (t === 'slogan') return 'Slogan';
+        return 'Other';
+      })();
+
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phone,
+        trademarkName: formData.companyName,
+        trademarkType: normalizedType,
+        jurisdiction: 'UK',
+        classOfGoods: formData.goodsServices || (formData.classNumber ? `Classes: ${formData.classNumber}` : ''),
+        message: formData.message,
+      };
+
+      const res = await apiMethods.submissions.submitTrademarkUK(payload);
+      const refId = res?.data?.data?._id;
       dispatch(
         addUiNotification({
           type: 'success',
           title: 'Submission Received',
-          message: 'Your UK trademark request has been submitted successfully.',
+          message: `Your UK trademark request has been submitted successfully${refId ? ` (Reference ID: ${refId})` : ''}.`,
         })
       );
       dispatch(markTrademarkUKSubmitted());
-      setFormData(initialFormData);
+      setShowSuccessPopup(true);
+      setProgress(0);
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          const next = prev + 5;
+          return next >= 100 ? 100 : next;
+        });
+      }, 150);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        setFormData(initialFormData);
+        setShowSuccessPopup(false);
+        setProgress(0);
+      }, 3000);
     } catch (error) {
       const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg;
       const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
@@ -77,8 +117,20 @@ const TrademarkUK = () => {
           message,
         })
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    let timer;
+    if (showSuccessPopup) {
+      timer = setTimeout(() => setShowSuccessPopup(false), 3200);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [showSuccessPopup]);
 
   // Animation variants
   const fadeInUp = {
@@ -543,14 +595,15 @@ const TrademarkUK = () => {
 
   <motion.button
     type="submit"
-    whileHover={{ scale: 1.02 }}
-    whileTap={{ scale: 0.98 }}
-    className="w-full text-white py-3 sm:py-4 px-6 sm:px-8 rounded-lg font-semibold text-base sm:text-lg transition-colors shadow-lg"
+    whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+    whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+    className={`w-full text-white py-3 sm:py-4 px-6 sm:px-8 rounded-lg font-semibold text-base sm:text-lg transition-colors shadow-lg ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
     style={{
       background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
     }}
+    disabled={isSubmitting}
   >
-    Submit Registration Request
+    {isSubmitting ? 'SUBMITTING...' : 'Submit Registration Request'}
   </motion.button>
 </form>
             </div>
@@ -602,6 +655,40 @@ const TrademarkUK = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Success Popup */}
+      <AnimatePresence>
+        {showSuccessPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center"
+            >
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                  <FiCheckCircle className="text-green-600 text-3xl" />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Submission Successful</h3>
+              <p className="text-gray-600 mb-6">We have received your UK trademark request. Our team will contact you shortly.</p>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-green-500 h-2 rounded-full transition-all"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
       <ChatWidget />
