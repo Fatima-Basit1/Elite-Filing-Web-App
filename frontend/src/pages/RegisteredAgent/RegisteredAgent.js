@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import { markRegisteredAgentSubmitted } from '../../store/slices/submissionsSlice';
 import { apiMethods } from '../../services/api';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheckCircle } from 'react-icons/fi';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
@@ -29,6 +30,7 @@ const RegisteredAgent = () => {
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -58,15 +60,12 @@ const RegisteredAgent = () => {
 
     try {
       await apiMethods.submissions.submitRegisteredAgent(formData);
-      dispatch(
-        addUiNotification({
-          type: 'success',
-          title: 'Submission Received',
-          message: 'Your registered agent request has been submitted successfully.',
-        })
-      );
+      setShowSuccessPopup(true);
       dispatch(markRegisteredAgentSubmitted());
-      setFormData(initialFormData);
+      setTimeout(() => {
+        setFormData(initialFormData);
+        setShowSuccessPopup(false);
+      }, 3000);
     } catch (error) {
       const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg;
       const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
@@ -109,6 +108,41 @@ const RegisteredAgent = () => {
   return (
     <div className="bg-white font-sans">
       <Navigation />
+      {/* Success Popup */}
+      <AnimatePresence>
+        {showSuccessPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              className="bg-white rounded-2xl p-8 flex flex-col items-center relative overflow-hidden"
+            >
+              <div className="text-green-500 mb-4">
+                <FiCheckCircle className="w-16 h-16" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                Success!
+              </h3>
+              <p className="text-gray-600 text-center mb-4">
+                Your registered agent request has been submitted successfully.
+              </p>
+              {/* Progress bar */}
+              <motion.div
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 3 }}
+                className="absolute bottom-0 left-0 h-1 bg-green-500"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Hero Section */}
       <div 

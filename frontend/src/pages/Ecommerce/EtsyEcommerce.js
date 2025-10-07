@@ -193,7 +193,20 @@ const EtsyEcommerce = () => {
               </div>
             </div>
             <button
-              onClick={() => setShowForm(true)}
+              onClick={() => {
+                if (!isAuthenticated || !localStorage.getItem('token')) {
+                  dispatch(
+                    addUiNotification({
+                      type: 'warning',
+                      title: 'Sign In Required',
+                      message: 'Please log in to access the Etsy E-commerce form.',
+                    })
+                  );
+                  navigate('/get-started');
+                  return;
+                }
+                setShowForm(true);
+              }}
               className="flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 font-semibold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:from-yellow-500 hover:to-yellow-600"
             >
               Start Selling on Etsy
@@ -462,7 +475,20 @@ const EtsyEcommerce = () => {
               Etsy is the go-to marketplace for unique and handmade products, reaching customers worldwide. Elite Filing helps you leverage Etsy's platform to maximize visibility and sales. Whether you're launching your first shop or scaling an existing one, we provide the expertise for setup, optimization, and advanced marketing. With our guidance, your creative business can thrive on Etsy.
             </p>
             <button 
-              onClick={() => setShowForm(true)}
+              onClick={() => {
+                if (!isAuthenticated || !localStorage.getItem('token')) {
+                  dispatch(
+                    addUiNotification({
+                      type: 'warning',
+                      title: 'Sign In Required',
+                      message: 'Please log in to access the Etsy E-commerce form.',
+                    })
+                  );
+                  navigate('/get-started');
+                  return;
+                }
+                setShowForm(true);
+              }}
               className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
             >
               Get Started Today
