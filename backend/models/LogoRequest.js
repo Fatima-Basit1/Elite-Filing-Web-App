@@ -33,6 +33,10 @@ const logoRequestSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  serviceIndustry: {
+    type: String,
+    trim: true
+  },
   logoStyle: {
     type: String,
     trim: true

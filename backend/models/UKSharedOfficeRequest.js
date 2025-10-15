@@ -11,9 +11,9 @@ const UKSharedOfficeRequestSchema = new mongoose.Schema({
   lastName: { type: String, required: true, trim: true },
   email: { type: String, required: true, trim: true, lowercase: true },
   phoneNumber: { type: String, required: true, trim: true },
-  officeLocation: { type: String, required: true, trim: true },
-  businessType: { type: String, trim: true },
-  duration: { type: String, trim: true },
+  officeLocation: { type: String, trim: true },
+  businessType: { type: String, required: true, trim: true },
+  duration: { type: String, required: true, trim: true },
   message: { type: String, trim: true },
   status: {
     type: String,

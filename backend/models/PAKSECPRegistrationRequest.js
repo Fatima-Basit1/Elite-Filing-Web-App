@@ -6,6 +6,8 @@ const PAKSECPRegistrationRequestSchema = new mongoose.Schema(
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
     companyProposedName: { type: String, required: true, trim: true },
+    companyProposedName2: { type: String, trim: true },
+    companyProposedName3: { type: String, trim: true },
     email: { type: String, required: true, trim: true, lowercase: true },
     phone: { type: String, required: true, trim: true },
     registrationType: {

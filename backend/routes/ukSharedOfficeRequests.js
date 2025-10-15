@@ -24,7 +24,8 @@ const ukSharedOfficeValidationRules = [
     return true;
   }),
   body('phoneNumber').notEmpty().withMessage('Phone number is required'),
-  body('officeLocation').notEmpty().withMessage('Office location is required'),
+  body('businessType').notEmpty().withMessage('Type of use is required'),
+  body('duration').notEmpty().withMessage('Contact time is required'),
 ];
 
 // Create a UK shared office request

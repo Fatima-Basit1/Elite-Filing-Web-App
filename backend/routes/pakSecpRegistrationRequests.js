@@ -25,6 +25,8 @@ const validationRules = [
   }),
   body('phone').trim().notEmpty().withMessage('Phone is required'),
   body('companyProposedName').trim().notEmpty().withMessage('Company proposed name is required'),
+  body('companyProposedName2').optional().trim().isLength({ min: 3 }).withMessage('Company proposed name 2 must be at least 3 characters'),
+  body('companyProposedName3').optional().trim().isLength({ min: 3 }).withMessage('Company proposed name 3 must be at least 3 characters'),
   body('registrationType').isIn(['Private Limited', 'Sole Proprietor', 'Partnership']).withMessage('Invalid registration type'),
   body('message').optional().isString().isLength({ max: 1000 }).withMessage('Message too long'),
 ];
@@ -49,6 +51,8 @@ router.post('/', auth, validationRules, handleValidationErrors, async (req, res)
           'Email': created.email,
           'Phone': created.phone,
           'Company Proposed Name': created.companyProposedName,
+          'Company Proposed Name 2': created.companyProposedName2 || 'None',
+          'Company Proposed Name 3': created.companyProposedName3 || 'None',
           'Registration Type': created.registrationType,
           'Message': created.message || 'None',
           'Reference ID': created._id,

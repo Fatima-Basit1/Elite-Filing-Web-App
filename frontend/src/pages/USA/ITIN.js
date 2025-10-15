@@ -25,7 +25,7 @@ const ITIN = () => {
         phoneNumber: '',
         reasonForITIN: '',
         nationality: '',
-        passportNumber: '',
+        passportScans: [],
         message: ''
     });
     const [formErrors, setFormErrors] = useState({});
@@ -103,10 +103,25 @@ const ITIN = () => {
             errors.nationality = 'Nationality can only contain letters, spaces, hyphens, and apostrophes';
         }
 
-        // Passport validation
-        if (!formData.passportNumber.trim()) {
-            errors.passportNumber = 'Passport number is required';
+    // Passport scans validation (images only, 1-2 files, each max 10MB)
+    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const maxSizeBytes = 10 * 1024 * 1024; // 10MB
+    if (!formData.passportScans || formData.passportScans.length === 0) {
+        errors.passportScans = 'Please upload at least 1 passport image';
+    } else if (formData.passportScans.length > 2) {
+        errors.passportScans = 'You can upload at most 2 images';
+    } else {
+        for (const file of formData.passportScans) {
+            if (!allowedImageTypes.includes(file.type)) {
+                errors.passportScans = 'Only image files (JPEG, PNG, GIF, WEBP) are allowed';
+                break;
+            }
+            if (file.size > maxSizeBytes) {
+                errors.passportScans = 'Each file must be under 10MB';
+                break;
+            }
         }
+    }
 
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
@@ -146,7 +161,22 @@ const ITIN = () => {
             console.log('Making API call to submit ITIN request');
             console.log('API URL:', process.env.REACT_APP_API_URL || 'http://localhost:5000/api');
             console.log('Token:', localStorage.getItem('token'));
-            const res = await apiMethods.submissions.submitITINRequest(formData);
+            // Build multipart form data for file upload
+            const formDataToSend = new FormData();
+            formDataToSend.append('firstName', formData.firstName);
+            formDataToSend.append('lastName', formData.lastName);
+            formDataToSend.append('email', formData.email);
+            formDataToSend.append('phoneNumber', formData.phoneNumber);
+            formDataToSend.append('reasonForITIN', formData.reasonForITIN);
+            formDataToSend.append('nationality', formData.nationality);
+            formDataToSend.append('message', formData.message || '');
+            if (formData.passportScans && formData.passportScans.length > 0) {
+                formData.passportScans.slice(0, 2).forEach((file) => {
+                    formDataToSend.append('passportScans', file);
+                });
+            }
+
+            const res = await apiMethods.submissions.submitITINRequest(formDataToSend);
             console.log('API response:', res);
             console.log('Response data:', res?.data);
             const refId = res?.data?.data?._id;
@@ -172,7 +202,7 @@ const ITIN = () => {
                     phoneNumber: '',
                     reasonForITIN: '',
                     nationality: '',
-                    passportNumber: '',
+                    passportScans: [],
                     message: ''
                 });
                 setShowForm(false);
@@ -484,21 +514,27 @@ const ITIN = () => {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Passport Number *
+                                            Passport Scans (up to 2 images) *
                                         </label>
                                         <input
-                                            type="text"
-                                            name="passportNumber"
-                                            value={formData.passportNumber}
-                                            onChange={handleInputChange}
+                                            type="file"
+                                            name="passportScans"
+                                            accept="image/*"
+                                            multiple
+                                            onChange={(e) => {
+                                                const files = e.target.files ? Array.from(e.target.files).slice(0, 2) : [];
+                                                setFormData(prev => ({ ...prev, passportScans: files }));
+                                                if (formErrors.passportScans) {
+                                                    setFormErrors(prev => ({ ...prev, passportScans: '' }));
+                                                }
+                                            }}
                                             required
-                                            placeholder="Enter your passport number"
                                             className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300 ${
-                                                formErrors.passportNumber ? 'border-red-500' : 'border-gray-300'
+                                                formErrors.passportScans ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                         />
-                                        {formErrors.passportNumber && (
-                                            <p className="mt-1 text-sm text-red-500">{formErrors.passportNumber}</p>
+                                        {formErrors.passportScans && (
+                                            <p className="mt-1 text-sm text-red-500">{formErrors.passportScans}</p>
                                         )}
                                     </div>
 

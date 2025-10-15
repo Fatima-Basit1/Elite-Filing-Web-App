@@ -28,6 +28,7 @@ const trademarkValidationRules = [
   body('trademarkType').notEmpty().withMessage('Trademark type is required')
     .isIn(['Word', 'Logo', 'Slogan', 'Other']).withMessage('Invalid trademark type'),
   body('jurisdiction').notEmpty().withMessage('Jurisdiction is required'),
+  body('state').optional().isString().isLength({ min: 2, max: 100 }).withMessage('State must be between 2 and 100 characters'),
   body('classOfGoods').notEmpty().withMessage('Class of goods/services is required')
 ];
 
@@ -52,6 +53,7 @@ router.post('/', auth, trademarkValidationRules, handleValidationErrors, async (
           'Phone Number': request.phoneNumber,
           'Trademark Name': request.trademarkName,
           'Trademark Type': request.trademarkType,
+          'State': request.state || 'N/A',
           'Jurisdiction': request.jurisdiction,
           'Class of Goods/Services': request.classOfGoods,
           'Additional Message': request.message || 'None provided'

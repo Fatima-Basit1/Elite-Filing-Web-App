@@ -318,51 +318,31 @@ const UKSharedOffices = () => {
             </p>
           </motion.div>
           
-          {/* Recommended Plan */}
-          <div className="flex justify-center">
+          {/* Package Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* BASIC PACKAGE */}
             <motion.div
-              className="relative max-w-2xl w-full"
+              className="bg-white rounded-3xl shadow-2xl p-8 md:p-10 border-2 border-gray-200 hover:-translate-y-1 hover:shadow-3xl transition-all"
               initial="hidden"
               whileInView="show"
               viewport={{ once: true }}
               variants={scaleIn}
             >
-            {/* Recommended Badge */}
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-              <span className="bg-yellow-400 px-6 py-2 rounded-full text-sm font-bold shadow-lg" style={{
-                color: 'rgba(6,30,68,1)'
-              }}>
-                RECOMMENDED
-              </span>
-            </div>
-            
-            <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border-2 border-yellow-400">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Satellite Office Package
-                </h3>
-                <div className="flex items-center justify-center mb-4">
-                  <span className="text-5xl font-bold" style={{
-                  color: 'rgba(6,30,68,1)'
-                }}>PKR 47,723</span>
-                  <span className="text-xl text-gray-600 ml-2">/month</span>
-                </div>
-                <p className="text-gray-600">
-                  Perfect for small businesses and startups
-                </p>
+              <div className="mb-6 text-center">
+                <h3 className="text-xl font-bold text-gray-900">BASIC PACKAGE — £199</h3>
               </div>
-              
-              {/* Features List */}
+                <p className="text-gray-700 text-sm mb-6 text-center">
+                  Ideal for freelancers or startups needing a registered UK business address. <br></br>
+                  Includes:
+                </p>
               <div className="space-y-4 mb-8">
                 {[
-                  'Work from Business Lounge (restrictions apply)',
-                  'Access by appointment only',
-                  'Use address for your Business (Terms apply)',
-                  'Receive mail and mail forwarding via scan to email',
-                  'Business Rates included',
-                  'License agreement in personal name',
-                  'Free UK Multi Currency Bank Accounts & International Transfers',
-                  'Free 24/7 call answering and free phone line (1500 mins)'
+                  'Shared office business address in the UK',
+                  'Mail handling and forwarding (10 items/month)',
+                  'Registered office for Companies House',
+                  'Government and tax mail notifications',
+                  'Email support during business hours',
+                  '35% service fee included in price'
                 ].map((feature, index) => (
                   <motion.div
                     key={index}
@@ -370,7 +350,7 @@ const UKSharedOffices = () => {
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    transition={{ duration: 0.4, delay: index * 0.08 }}
                   >
                     <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                       <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -381,21 +361,139 @@ const UKSharedOffices = () => {
                   </motion.div>
                 ))}
               </div>
-              
-              {/* CTA Button */}
               <motion.button
                 onClick={scrollToForm}
-                className="w-full py-4 text-lg font-bold text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+                className="w-full py-3 text-sm font-semibold text-white rounded-xl shadow-lg"
                 style={{
                   background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
                 }}
-                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(6, 30, 68, 0.3)" }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Get Started Now
+                Choose This Package
               </motion.button>
-            </div>
             </motion.div>
+              
+             {/* PREMIUM PACKAGE */}
+<motion.div
+  className="relative bg-gradient-to-b from-white to-gray-50 rounded-3xl shadow-2xl p-8 md:p-10 border-2 border-yellow-400 hover:shadow-yellow-300/50 hover:scale-[1.02] transition-all duration-300"
+  initial="hidden"
+  whileInView="show"
+  viewport={{ once: true }}
+  variants={scaleIn}
+>
+  {/* Optional Highlight Badge */}
+  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+    Most Popular
+  </div>
+
+  <div className="mb-6 text-center">
+    <h3 className="text-xl font-bold text-gray-900">PREMIUM PACKAGE — £345</h3>
+  </div>
+
+  <p className="text-gray-700 text-sm mb-6 text-center">
+    Best for established businesses or international entrepreneurs needing full UK office representation.
+  </p>
+
+  <div className="space-y-4 mb-8">
+    {[
+      'Unlimited mail forwarding & dedicated phone line with call forwarding',
+      'Virtual office certificate for international clients',
+      'Access to meeting room (10 hours/month)',
+      'Company formation consultation & compliance/tax reminder service',
+      'VIP email and WhatsApp support',
+      '35% service fee included in price'
+    ].map((feature, index) => (
+      <motion.div
+        key={index}
+        className="flex items-start space-x-3"
+        initial={{ opacity: 0, x: -20 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: index * 0.08 }}
+      >
+        <div className="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+          <svg
+            className="w-4 h-4 text-yellow-600"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
+        <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
+      </motion.div>
+    ))}
+  </div>
+
+  <motion.button
+    onClick={scrollToForm}
+    className="w-full py-3 text-sm font-semibold text-white rounded-xl shadow-lg bg-gradient-to-b from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 transition-all"
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.98 }}
+  >
+    Choose This Package
+  </motion.button>
+</motion.div>
+
+
+            {/* STANDARD PACKAGE */}
+            <motion.div
+              className="bg-white rounded-3xl shadow-2xl p-8 md:p-10 border-2 border-gray-200 hover:-translate-y-1 hover:shadow-3xl transition-all"
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              variants={scaleIn}
+            >
+              <div className="mb-6 text-center">
+                <h3 className="text-xl font-bold text-gray-900">STANDARD PACKAGE — £285</h3>
+              </div>
+              <p className="text-gray-700 text-sm mb-6 text-center">
+                Perfect for small companies seeking flexibility and enhanced features. Includes everything in Basic, plus:</p>
+              <div className="space-y-4 mb-8">
+                {[
+                  'Dedicated mail forwarding (25 items/month)',
+                  'Business call answering (with company name)',
+                  'Access to meeting room (4 hours/month)',
+                  'Business phone number registration',
+                  'Priority document forwarding service',
+                  '35% service fee included in price'
+                ].map((feature, index) => (
+                  <motion.div
+                    key={index}
+                    className="flex items-start space-x-3"
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.08 }}
+                  >
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
+                  </motion.div>
+                ))}
+              </div>
+              <motion.button
+                onClick={scrollToForm}
+                className="w-full py-3 text-sm font-semibold text-white rounded-xl shadow-lg"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Choose This Package
+              </motion.button>
+            </motion.div>
+
+           
           </div>
         </div>
       </section>
@@ -508,22 +606,6 @@ const UKSharedOffices = () => {
                   />
                 </div>
               </div>
-
-              {/* Preferred Office Location */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                 Office Location *
-                </label>
-                <input
-                  type="text"
-                  name="officeLocation"
-                  value={formData.officeLocation}
-                  onChange={handleInputChange}
-                  placeholder="Preferred Office Location in UK"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                  required
-                />
-              </div>
              
               
               {/* Business Type and Duration */}
@@ -543,6 +625,7 @@ const UKSharedOffices = () => {
                     required
                   >
                     <option value="">Select Type</option>
+                     <option value="Mail Receiving">Mail Receiving</option>
                     <option value="Mail Forwarding">Mail Forwarding</option>
                     <option value="Physical Office Space">Physical Office Space</option>
                     <option value="Meeting Rooms">Meeting Rooms</option>
@@ -552,7 +635,7 @@ const UKSharedOffices = () => {
                 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Duration Required *
+                    Contact Time *
                   </label>
                   <select
                     name="duration"
@@ -565,8 +648,7 @@ const UKSharedOffices = () => {
                     required
                   >
                     <option value="">Select Duration</option>
-                    <option value="Monthly">Monthly</option>
-                    <option value="Yearly">Yearly</option>
+                    <option value="3-Months">3 Months</option>
                     
                   </select>
                 </div>

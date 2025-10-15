@@ -23,6 +23,8 @@ const SECPRegistration = () => {
     firstName: '',
     lastName: '',
     companyProposedName: '',
+    companyProposedName2: '',
+    companyProposedName3: '',
     email: '',
     phone: '',
     registrationType: '',
@@ -45,6 +47,8 @@ const SECPRegistration = () => {
     if (!formData.firstName || formData.firstName.trim().length < 2) errors.firstName = 'First name is required';
     if (!formData.lastName || formData.lastName.trim().length < 2) errors.lastName = 'Last name is required';
     if (!formData.companyProposedName || formData.companyProposedName.trim().length < 3) errors.companyProposedName = 'Company proposed name is required';
+    if (formData.companyProposedName2 && formData.companyProposedName2.trim().length < 3) errors.companyProposedName2 = 'Company proposed name 2 must be at least 3 characters';
+    if (formData.companyProposedName3 && formData.companyProposedName3.trim().length < 3) errors.companyProposedName3 = 'Company proposed name 3 must be at least 3 characters';
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email || !emailRegex.test(formData.email)) errors.email = 'Valid email is required';
     if (!formData.phone || formData.phone.trim().length < 7) errors.phone = 'Valid phone number is required';
@@ -98,6 +102,8 @@ const SECPRegistration = () => {
         firstName: '',
         lastName: '',
         companyProposedName: '',
+        companyProposedName2: '',
+        companyProposedName3: '',
         email: '',
         phone: '',
         registrationType: '',
@@ -238,6 +244,40 @@ const SECPRegistration = () => {
                     />
                     {formErrors.companyProposedName && (
                       <p className="mt-1 text-sm text-red-600">{formErrors.companyProposedName}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Company Proposed Name 2 (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="companyProposedName2"
+                      value={formData.companyProposedName2}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      placeholder="Enter alternative proposed company name (optional)"
+                    />
+                    {formErrors.companyProposedName2 && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.companyProposedName2}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Company Proposed Name 3 (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="companyProposedName3"
+                      value={formData.companyProposedName3}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      placeholder="Enter alternative proposed company name (optional)"
+                    />
+                    {formErrors.companyProposedName3 && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.companyProposedName3}</p>
                     )}
                   </div>
 

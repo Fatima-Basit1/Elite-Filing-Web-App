@@ -25,6 +25,7 @@ const validationRules = [
   }),
   body('phone').trim().notEmpty().withMessage('Phone is required'),
   body('companyName').trim().notEmpty().withMessage('Company name is required'),
+  body('businessActivity').optional().isString().isLength({ max: 1000 }).withMessage('Business activity too long'),
   body('registrationType').isIn(['NTN', 'STRN', 'Sales Tax', 'Income Tax']).withMessage('Invalid registration type'),
   body('message').optional().isString().isLength({ max: 1000 }).withMessage('Message too long'),
 ];
@@ -49,6 +50,7 @@ router.post('/', auth, validationRules, handleValidationErrors, async (req, res)
           'Email': created.email,
           'Phone': created.phone,
           'Company Name': created.companyName,
+          'Business Activity': created.businessActivity || 'None',
           'Registration Type': created.registrationType,
           'Message': created.message || 'None',
           'Reference ID': created._id,

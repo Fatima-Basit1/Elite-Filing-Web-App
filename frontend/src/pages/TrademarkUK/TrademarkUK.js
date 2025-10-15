@@ -21,6 +21,7 @@ const TrademarkUK = () => {
     lastName: '',
     email: '',
     phone: '',
+    state: '',
     companyName: '',
     trademarkType: '',
     goodsServices: '',
@@ -80,6 +81,7 @@ const TrademarkUK = () => {
         jurisdiction: 'UK',
         classOfGoods: formData.goodsServices || (formData.classNumber ? `Classes: ${formData.classNumber}` : ''),
         message: formData.message,
+        ...(formData.state ? { state: formData.state } : {})
       };
 
       const res = await apiMethods.submissions.submitTrademarkUK(payload);
@@ -506,6 +508,73 @@ const TrademarkUK = () => {
         }}
         required
       />
+    </div>
+
+    {/* State (USA) - Optional */}
+    <div>
+      <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+        State (USA)
+      </label>
+      <select
+        name="state"
+        value={formData.state}
+        onChange={handleInputChange}
+        className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
+        style={{ '--tw-ring-color': 'rgba(6,30,68,1)' }}
+      >
+        <option value="">Select State (optional)</option>
+        <option>Alabama</option>
+        <option>Alaska</option>
+        <option>Arizona</option>
+        <option>Arkansas</option>
+        <option>California</option>
+        <option>Colorado</option>
+        <option>Connecticut</option>
+        <option>Delaware</option>
+        <option>Florida</option>
+        <option>Georgia</option>
+        <option>Hawaii</option>
+        <option>Idaho</option>
+        <option>Illinois</option>
+        <option>Indiana</option>
+        <option>Iowa</option>
+        <option>Kansas</option>
+        <option>Kentucky</option>
+        <option>Louisiana</option>
+        <option>Maine</option>
+        <option>Maryland</option>
+        <option>Massachusetts</option>
+        <option>Michigan</option>
+        <option>Minnesota</option>
+        <option>Mississippi</option>
+        <option>Missouri</option>
+        <option>Montana</option>
+        <option>Nebraska</option>
+        <option>Nevada</option>
+        <option>New Hampshire</option>
+        <option>New Jersey</option>
+        <option>New Mexico</option>
+        <option>New York</option>
+        <option>North Carolina</option>
+        <option>North Dakota</option>
+        <option>Ohio</option>
+        <option>Oklahoma</option>
+        <option>Oregon</option>
+        <option>Pennsylvania</option>
+        <option>Rhode Island</option>
+        <option>South Carolina</option>
+        <option>South Dakota</option>
+        <option>Tennessee</option>
+        <option>Texas</option>
+        <option>Utah</option>
+        <option>Vermont</option>
+        <option>Virginia</option>
+        <option>Washington</option>
+        <option>West Virginia</option>
+        <option>Wisconsin</option>
+        <option>Wyoming</option>
+      </select>
+      <p className="text-xs sm:text-sm text-gray-500 mt-2">Optional: select your US state if applicable.</p>
     </div>
 
     {/* Fourth Row */}

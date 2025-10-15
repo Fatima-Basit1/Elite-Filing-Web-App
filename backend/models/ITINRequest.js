@@ -39,11 +39,17 @@ const ITINRequestSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  passportNumber: {
-    type: String,
-    required: true,
-    trim: true
-  },
+  passportScans: [{
+    filename: String,
+    originalName: String,
+    mimetype: String,
+    size: Number,
+    path: String,
+    uploadDate: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   message: {
     type: String,
     trim: true

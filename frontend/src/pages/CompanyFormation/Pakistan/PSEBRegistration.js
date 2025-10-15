@@ -23,6 +23,7 @@ const PSEBRegistration = () => {
     lastName: '',
     residentialAddress: '',
     companyName: '',
+    secpNumber: '',
     email: '',
     phone: '',
     natureOfBusiness: '',
@@ -47,6 +48,7 @@ const PSEBRegistration = () => {
     if (!formData.lastName || formData.lastName.trim().length < 2) errors.lastName = 'Last name is required';
     if (!formData.residentialAddress || formData.residentialAddress.trim().length < 5) errors.residentialAddress = 'Residential address is required';
     if (!formData.companyName || formData.companyName.trim().length < 2) errors.companyName = 'Company name is required';
+    if (!formData.secpNumber || formData.secpNumber.trim().length < 1) errors.secpNumber = 'SECP number is required';
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email || !emailRegex.test(formData.email)) errors.email = 'Valid email is required';
     if (!formData.phone || formData.phone.trim().length < 7) errors.phone = 'Valid phone number is required';
@@ -100,6 +102,7 @@ const PSEBRegistration = () => {
         lastName: '',
         residentialAddress: '',
         companyName: '',
+        secpNumber: '',
         email: '',
         phone: '',
         natureOfBusiness: '',
@@ -259,6 +262,24 @@ const PSEBRegistration = () => {
                     />
                     {formErrors.companyName && (
                       <p className="mt-1 text-sm text-red-600">{formErrors.companyName}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      SECP Number *
+                    </label>
+                    <input
+                      type="text"
+                      name="secpNumber"
+                      value={formData.secpNumber}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      placeholder="Enter your SECP registration number"
+                    />
+                    {formErrors.secpNumber && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.secpNumber}</p>
                     )}
                   </div>
 

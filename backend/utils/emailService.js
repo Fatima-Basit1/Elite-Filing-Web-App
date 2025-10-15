@@ -36,6 +36,7 @@ const sendLogoRequestEmail = async (formData, referenceImages, recipientEmailOve
       email,
       phoneNumber,
       businessName,
+      serviceIndustry,
       logoStyle,
       colorPreferences,
       symbolsElements,
@@ -128,6 +129,11 @@ const sendLogoRequestEmail = async (formData, referenceImages, recipientEmailOve
           <div class="field">
             <strong>Business Name:</strong> ${businessName}
           </div>
+          ${serviceIndustry ? `
+          <div class="field">
+            <strong>Service Industry:</strong> ${serviceIndustry}
+          </div>
+          ` : ''}
         </div>
         
         <div class="section">

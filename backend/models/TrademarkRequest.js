@@ -14,6 +14,7 @@ const TrademarkRequestSchema = new mongoose.Schema({
   trademarkName: { type: String, required: true, trim: true },
   trademarkType: { type: String, required: true, trim: true },
   jurisdiction: { type: String, required: true, trim: true },
+  state: { type: String, trim: true },
   classOfGoods: { type: String, required: true, trim: true },
   message: { type: String, trim: true },
   status: {

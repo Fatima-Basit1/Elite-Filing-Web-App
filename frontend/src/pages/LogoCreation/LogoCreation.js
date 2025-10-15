@@ -18,6 +18,7 @@ const LogoCreation = () => {
     email: '',
     phoneNumber: '',
     businessName: '',
+    serviceIndustry: '',
     logoStyle: '',
     colorPreferences: '',
     symbolsElements: '',
@@ -133,6 +134,7 @@ const LogoCreation = () => {
             lastName: '',
             phoneNumber: '',
             businessName: '',
+            serviceIndustry: '',
             logoStyle: '',
             colorPreferences: '',
             symbolsElements: '',
@@ -487,6 +489,21 @@ const LogoCreation = () => {
                   required
                 />
                 <p className="text-xs text-gray-500 mt-1">What name the logo should represent</p>
+              </motion.div>
+
+              <motion.div variants={fadeUp}>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Service Industry (optional)
+                </label>
+                <input
+                  type="text"
+                  name="serviceIndustry"
+                  value={formData.serviceIndustry}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                  placeholder="e.g., Restaurant, Tech, Legal, Healthcare"
+                />
+                <p className="text-xs text-gray-500 mt-1">Helps our designers understand your market and audience</p>
               </motion.div>
               
               <motion.div variants={fadeUp}>
