@@ -11,10 +11,8 @@ const UKSharedOfficeRequestSchema = new mongoose.Schema({
   lastName: { type: String, required: true, trim: true },
   email: { type: String, required: true, trim: true, lowercase: true },
   phoneNumber: { type: String, required: true, trim: true },
-  officeLocation: { type: String, trim: true },
-  businessType: { type: String, required: true, trim: true },
-  duration: { type: String, required: true, trim: true },
-  message: { type: String, trim: true },
+  selectedPackage: { type: String, required: true, enum: ['Basic', 'Standard', 'Premium'] },
+  duration: { type: String, required: true, enum: ['3 months', '6 months', '9 months', '12 months'] },
   status: {
     type: String,
     enum: ['pending', 'in-progress', 'completed', 'cancelled'],

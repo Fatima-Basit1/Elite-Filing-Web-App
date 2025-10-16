@@ -21,20 +21,15 @@ const UKSharedOffices = () => {
     lastName: '',
     email: '',
     phoneNumber: '',
-    officeLocation: '',
-    businessType: '',
-    duration: '',
-    message: ''
+    duration: ''
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  const [selectedPackage, setSelectedPackage] = useState('');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-      useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -46,31 +41,60 @@ const UKSharedOffices = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!isAuthenticated || !token) {
+    // Validate required fields
+    if (!selectedPackage) {
       dispatch(
         addUiNotification({
           type: 'warning',
-          title: 'Sign In Required',
-          message: 'Please log in to request a UK shared office.',
+          title: 'Package Required',
+          message: 'Please select a package before submitting.',
         })
       );
-      navigate('/get-started');
+      return;
+    }
+
+    if (!formData.duration) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Duration Required',
+          message: 'Please select a duration before submitting.',
+        })
+      );
       return;
     }
 
     try {
       setIsSubmitting(true);
-      const res = await apiMethods.submissions.submitUKSharedOffice(formData);
-      const refId = res?.data?.data?._id;
+
+      // Prepare the payload with all required fields
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        duration: formData.duration,
+        selectedPackage: selectedPackage
+      };
+
+      // Submit the form
+      const response = await apiMethods.submissions.submitUKSharedOffice(payload);
+
+      // Handle successful submission
       dispatch(
         addUiNotification({
           type: 'success',
-          title: 'Submission Received',
-          message: `Your UK shared office request has been submitted successfully${refId ? ` (Reference ID: ${refId})` : ''}.`,
+          title: 'Form Submitted',
+          message: 'Your UK shared office request has been submitted successfully.',
         })
       );
-      dispatch(markUKSharedOfficeSubmitted());
+
+      // Reset form
+      setFormData(initialFormData);
+      setSelectedPackage('');
       setShowSuccessPopup(true);
+
+      // Start progress animation
       setProgress(0);
       const interval = setInterval(() => {
         setProgress((prev) => {
@@ -79,20 +103,34 @@ const UKSharedOffices = () => {
         });
       }, 150);
 
+      // Clean up after animation
       setTimeout(() => {
         clearInterval(interval);
-        setFormData(initialFormData);
         setShowSuccessPopup(false);
         setProgress(0);
       }, 3000);
+
     } catch (error) {
-      const firstErrorMsg = error?.response?.data?.errors?.[0]?.msg;
-      const message = firstErrorMsg || error?.response?.data?.message || 'Unable to submit your request. Please try again.';
+      // Handle submission errors
+      const errorMessage = error?.response?.data?.message || 'Failed to submit the form. Please try again.';
+      
+      if (error?.response?.status === 401) {
+        dispatch(
+          addUiNotification({
+            type: 'warning',
+            title: 'Authentication Required',
+            message: 'Please sign in to submit your request.',
+          })
+        );
+        navigate('/get-started');
+        return;
+      }
+
       dispatch(
         addUiNotification({
           type: 'error',
-          title: 'Submission Failed',
-          message,
+          title: 'Submission Error',
+          message: errorMessage,
         })
       );
     } finally {
@@ -112,6 +150,12 @@ const UKSharedOffices = () => {
 
   const scrollToForm = () => {
     document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const choosePackage = (pkg) => {
+    setSelectedPackage(pkg);
+    const el = document.getElementById('contact-form');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
   // Animation variants
@@ -187,7 +231,10 @@ const UKSharedOffices = () => {
               </div>
             </div>
             <button
-              onClick={scrollToForm}
+              onClick={() => {
+                const el = document.getElementById('packages');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 font-semibold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:from-yellow-500 hover:to-yellow-600"
             >
               Get Started Today
@@ -319,7 +366,7 @@ const UKSharedOffices = () => {
           </motion.div>
           
           {/* Package Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div id="packages" className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* BASIC PACKAGE */}
             <motion.div
               className="bg-white rounded-3xl shadow-2xl p-8 md:p-10 border-2 border-gray-200 hover:-translate-y-1 hover:shadow-3xl transition-all"
@@ -362,7 +409,7 @@ const UKSharedOffices = () => {
                 ))}
               </div>
               <motion.button
-                onClick={scrollToForm}
+                onClick={() => choosePackage('Basic')}
                 className="w-full py-3 text-sm font-semibold text-white rounded-xl shadow-lg"
                 style={{
                   background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
@@ -431,7 +478,7 @@ const UKSharedOffices = () => {
   </div>
 
   <motion.button
-    onClick={scrollToForm}
+    onClick={() => choosePackage('Premium')}
     className="w-full py-3 text-sm font-semibold text-white rounded-xl shadow-lg bg-gradient-to-b from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 transition-all"
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.98 }}
@@ -481,7 +528,7 @@ const UKSharedOffices = () => {
                 ))}
               </div>
               <motion.button
-                onClick={scrollToForm}
+                onClick={() => choosePackage('Standard')}
                 className="w-full py-3 text-sm font-semibold text-white rounded-xl shadow-lg"
                 style={{
                   background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
@@ -519,9 +566,15 @@ const UKSharedOffices = () => {
               UK Shared Offices Form
 
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Get started with your UK office setup today. Fill out the form below and we'll contact you within 24 hours.
-            </p>
+            {selectedPackage ? (
+              <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+                Selected Package: <span className="font-semibold">{selectedPackage}</span>
+              </p>
+            ) : (
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Please select a package above to open the form.
+              </p>
+            )}
           </motion.div>
           
           <motion.div
@@ -532,7 +585,30 @@ const UKSharedOffices = () => {
             variants={scaleIn}
           >
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
+              {/* Package Selection */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Package *
+                  </label>
+                  <select
+                    name="selectedPackage"
+                    value={selectedPackage || ''}
+                    onChange={(e) => setSelectedPackage(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 bg-white"
+                    style={{
+                      '--tw-ring-color': 'rgba(6,30,68,1)'
+                    }}
+                    required
+                  >
+                    <option value="">Select Package</option>
+                    <option value="Basic">Basic Package (£199)</option>
+                    <option value="Standard">Standard Package (£285)</option>
+                    <option value="Premium">Premium Package (£345)</option>
+                  </select>
+                </div>
+              </div>
               {/* Name Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -608,38 +684,15 @@ const UKSharedOffices = () => {
               </div>
              
               
-              {/* Business Type and Duration */}
+              {/* Duration */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Type of Use *
-                  </label>
-                  <select
-                    name="businessType"
-                    value={formData.businessType}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 bg-white"
-                    style={{
-                      '--tw-ring-color': 'rgba(6,30,68,1)'
-                    }}
-                    required
-                  >
-                    <option value="">Select Type</option>
-                     <option value="Mail Receiving">Mail Receiving</option>
-                    <option value="Mail Forwarding">Mail Forwarding</option>
-                    <option value="Physical Office Space">Physical Office Space</option>
-                    <option value="Meeting Rooms">Meeting Rooms</option>
-                    
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Contact Time *
+                    Duration *
                   </label>
                   <select
                     name="duration"
-                    value={formData.duration}
+                    value={formData.duration || ''}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 bg-white"
                     style={{
@@ -648,31 +701,17 @@ const UKSharedOffices = () => {
                     required
                   >
                     <option value="">Select Duration</option>
-                    <option value="3-Months">3 Months</option>
-                    
+                    <option value="3 months">3 Months</option>
+                    <option value="6 months">6 Months</option>
+                    <option value="9 months">9 Months</option>
+                    <option value="12 months">12 Months</option>
                   </select>
                 </div>
               </div>
               
               
               
-              {/* Message */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Additional Message
-                </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 resize-none bg-white"
-                  style={{
-                    '--tw-ring-color': 'rgba(6,30,68,1)'
-                  }}
-                  placeholder="Any additional information or questions..."
-                />
-              </div>
+              
               
               {/* Submit Button */}
               <motion.button

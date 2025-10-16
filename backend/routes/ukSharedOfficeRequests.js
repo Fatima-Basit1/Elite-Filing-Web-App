@@ -24,8 +24,8 @@ const ukSharedOfficeValidationRules = [
     return true;
   }),
   body('phoneNumber').notEmpty().withMessage('Phone number is required'),
-  body('businessType').notEmpty().withMessage('Type of use is required'),
-  body('duration').notEmpty().withMessage('Contact time is required'),
+  body('selectedPackage').isIn(['Basic', 'Standard', 'Premium']).withMessage('Please select a valid package'),
+  body('duration').isIn(['3 months', '6 months', '9 months', '12 months']).withMessage('Please select a valid duration'),
 ];
 
 // Create a UK shared office request
