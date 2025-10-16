@@ -192,6 +192,11 @@ const sanitizeInput = (data) => {
   if (typeof data === 'string') {
     return data.trim().replace(/[<>]/g, '');
   }
+
+  // Preserve arrays and sanitize each element recursively
+  if (Array.isArray(data)) {
+    return data.map((item) => sanitizeInput(item));
+  }
   
   if (typeof data === 'object' && data !== null) {
     const sanitized = {};

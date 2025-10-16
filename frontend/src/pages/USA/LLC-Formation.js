@@ -24,9 +24,10 @@ const LLCFormation = () => {
         phoneNumber: '',
         companyProposedName: '',
         state: '',
-        numberOfMembers: '',
-        businessPurpose: '',
-        duration: 'perpetual',
+        numberOfMembers: '1',
+        businessIndustry: '',
+        members: [],
+        services: [],
         message: ''
     });
 
@@ -45,10 +46,64 @@ const LLCFormation = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        // Special handling for numberOfMembers to size the members array
+        if (name === 'numberOfMembers') {
+            const count = Math.max(parseInt(value, 10) || 1, 1);
+            setFormData(prev => {
+                const additionalCount = Math.max(count - 1, 0);
+                const nextMembers = [...prev.members];
+                // Grow or shrink members array to match additionalCount
+                if (nextMembers.length < additionalCount) {
+                    while (nextMembers.length < additionalCount) {
+                        nextMembers.push({ firstName: '', lastName: '', address: '' });
+                    }
+                } else if (nextMembers.length > additionalCount) {
+                    nextMembers.length = additionalCount;
+                }
+                return {
+                    ...prev,
+                    [name]: value,
+                    members: nextMembers
+                };
+            });
+            return;
+        }
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
+    };
+
+    const handleMemberFieldChange = (index, field, value) => {
+        setFormData(prev => {
+            const members = [...prev.members];
+            if (!members[index]) members[index] = { firstName: '', lastName: '', address: '' };
+            members[index] = { ...members[index], [field]: value };
+            return { ...prev, members };
+        });
+    };
+
+    const serviceOptions = [
+        { value: 'LLC formation', label: 'LLC formation' },
+        { value: 'EIN registration', label: 'EIN registration (470 USD)' },
+        { value: 'Registered Agent Service', label: 'Register Agent Service (300 USD)' },
+        { value: 'Bank Account', label: 'Bank Account (95 USD)' },
+        { value: 'Business Address', label: 'Business Address (499 USD)' },
+        { value: 'Phone Number', label: 'Phone Number (90 USD)' },
+        { value: 'Complete Package', label: 'Complete Package (10% off)' },
+        { value: 'Resale Certificate', label: 'Resale Certificate (70 USD)' },
+    ];
+
+    const toggleService = (serviceValue) => {
+        setFormData(prev => {
+            const already = prev.services.includes(serviceValue);
+            return {
+                ...prev,
+                services: already
+                    ? prev.services.filter(s => s !== serviceValue)
+                    : [...prev.services, serviceValue]
+            };
+        });
     };
 
     const handleSubmit = async (e) => {
@@ -69,8 +124,11 @@ const LLCFormation = () => {
         const payload = {
             ...formData,
             numberOfMembers: parseInt(formData.numberOfMembers, 10) || 1,
-            duration: formData.duration,
         };
+        if (payload.numberOfMembers <= 1) {
+            // Avoid sending empty members array when single-member LLC
+            delete payload.members;
+        }
 
         try {
             const res = await apiMethods.submissions.submitUSLLCFormation(payload);
@@ -95,8 +153,9 @@ const LLCFormation = () => {
                     companyProposedName: '',
                     state: '',
                     numberOfMembers: '',
-                    businessPurpose: '',
-                    duration: 'perpetual',
+                    businessIndustry: '',
+                    members: [],
+                    services: [],
                     message: ''
                 });
                 setShowForm(false);
@@ -377,11 +436,11 @@ const LLCFormation = () => {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Business Purpose *
+                                            Business Industry *
                                         </label>
                                         <textarea
-                                            name="businessPurpose"
-                                            value={formData.businessPurpose}
+                                            name="businessIndustry"
+                                            value={formData.businessIndustry}
                                             onChange={handleInputChange}
                                             required
                                             rows={4}
@@ -389,33 +448,71 @@ const LLCFormation = () => {
                                         />
                                     </div>
 
+                                    {/* Additional Members Section */}
+                                    {parseInt(formData.numberOfMembers, 10) > 1 && (
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Additional Members Details
+                                            </label>
+                                            <div className="space-y-6">
+                                                {formData.members.map((member, index) => (
+                                                    <div key={index} className="border border-gray-200 rounded-lg p-4">
+                                                        <h4 className="text-sm font-semibold text-gray-700 mb-4">Member {index + 2}</h4>
+                                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                            <div>
+                                                                <label className="block text-sm text-gray-700 mb-2">First Name *</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={member.firstName}
+                                                                    onChange={(e) => handleMemberFieldChange(index, 'firstName', e.target.value)}
+                                                                    required
+                                                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent"
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <label className="block text-sm text-gray-700 mb-2">Last Name *</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={member.lastName}
+                                                                    onChange={(e) => handleMemberFieldChange(index, 'lastName', e.target.value)}
+                                                                    required
+                                                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent"
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <label className="block text-sm text-gray-700 mb-2">Address *</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={member.address}
+                                                                    onChange={(e) => handleMemberFieldChange(index, 'address', e.target.value)}
+                                                                    required
+                                                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Services Multi-select */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-4">
-                                            Duration *
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Services (select as many as you want)
                                         </label>
-                                        <div className="space-y-3">
-                                            <label className="flex items-center">
-                                                <input
-                                                    type="radio"
-                                                    name="duration"
-                                                    value="perpetual"
-                                                    checked={formData.duration === 'perpetual'}
-                                                    onChange={handleInputChange}
-                                                    className="mr-3 text-[#1e3a8a] focus:ring-[#1e3a8a]"
-                                                />
-                                                <span className="text-gray-700">Perpetual</span>
-                                            </label>
-                                            <label className="flex items-center">
-                                                <input
-                                                    type="radio"
-                                                    name="duration"
-                                                    value="fixed"
-                                                    checked={formData.duration === 'fixed'}
-                                                    onChange={handleInputChange}
-                                                    className="mr-3 text-[#1e3a8a] focus:ring-[#1e3a8a]"
-                                                />
-                                                <span className="text-gray-700">Fixed</span>
-                                            </label>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {serviceOptions.map(opt => (
+                                                <label key={opt.value} className="flex items-center p-3 border border-gray-200 rounded-lg">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.services.includes(opt.value)}
+                                                        onChange={() => toggleService(opt.value)}
+                                                        className="mr-3 text-[#1e3a8a] focus:ring-[#1e3a8a]"
+                                                    />
+                                                    <span className="text-gray-700">{opt.label}</span>
+                                                </label>
+                                            ))}
                                         </div>
                                     </div>
 

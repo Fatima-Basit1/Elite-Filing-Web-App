@@ -29,8 +29,38 @@ const llcValidationRules = [
   body('companyProposedName').notEmpty().withMessage('Company proposed name is required'),
   body('state').notEmpty().withMessage('State is required'),
   body('numberOfMembers').isInt({ min: 1 }).withMessage('Number of members must be at least 1'),
-  body('businessPurpose').notEmpty().withMessage('Business purpose is required'),
-  body('duration').isIn(['perpetual', 'fixed']).withMessage('Duration must be either perpetual or fixed'),
+  body('businessIndustry').notEmpty().withMessage('Business industry is required'),
+  // Members validation: if numberOfMembers > 1, require members array with details
+  body('members').custom((value, { req }) => {
+    const count = parseInt(req.body.numberOfMembers, 10) || 1;
+    if (count <= 1) return true;
+    if (!Array.isArray(value)) throw new Error('Members must be an array');
+    const requiredLength = Math.max(count - 1, 0);
+    if (value.length < requiredLength) throw new Error(`Provide at least ${requiredLength} additional member(s)`);
+    for (let i = 0; i < requiredLength; i++) {
+      const m = value[i] || {};
+      const f = validateName(m.firstName || '');
+      const l = validateName(m.lastName || '');
+      if (!f.isValid) throw new Error(`Member ${i + 2} first name: ${f.errors.join(', ')}`);
+      if (!l.isValid) throw new Error(`Member ${i + 2} last name: ${l.errors.join(', ')}`);
+      if (!m.address || typeof m.address !== 'string' || !m.address.trim()) {
+        throw new Error(`Member ${i + 2} address is required`);
+      }
+    }
+    return true;
+  }),
+  // Services validation: if provided, ensure allowed values
+  body('services').optional().isArray().withMessage('Services must be an array'),
+  body('services.*').optional().isIn([
+    'LLC formation',
+    'EIN registration',
+    'Registered Agent Service',
+    'Bank Account',
+    'Business Address',
+    'Phone Number',
+    'Complete Package',
+    'Resale Certificate',
+  ]).withMessage('Invalid service selected'),
 ];
 
 // Create US LLC Formation request
