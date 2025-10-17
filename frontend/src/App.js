@@ -47,7 +47,7 @@ import SPCFreeZone from './pages/UAE/SPCFreeZone';
 import CompanyFormationHome from './pages/CompanyFormation/CompanyFormationHome';
 import USAFormationHome from './pages/CompanyFormation/USAFormationHome';
 import UKFormationHome from './pages/CompanyFormation/UKFormationHome';
-import LLCPayment from './pages/USA/LLCPayment';
+import Payment from './pages/USA/Payment';
 
 import AllFormsSuccessModal from './components/UI/AllFormsSuccessModal';
 
@@ -108,7 +108,7 @@ function App() {
         <Route path="/blogs/company-filing-uk" element={<UKCompanyFiling />} />
         <Route path="/blogs/digital-marketing" element={<DigitalMarketing />} />
         <Route path="/USA/LLC-Formation" element={<LLCFormation />} />
-        <Route path="/USA/LLC-Formation/payment" element={<LLCPayment />} />
+        <Route path="/USA/LLC-Formation/payment" element={<Payment />} />
         <Route path="/USA/Tax" element={<Tax />} />
         <Route path="/USA/ITIN" element={<ITIN />} />
         <Route path="/USA/Trademark" element={<Trademark />} />

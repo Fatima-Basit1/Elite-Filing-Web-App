@@ -129,6 +129,21 @@ const Tax = () => {
         setShowForm(true);
     };
 
+    const goToPayment = () => {
+        if (!isAuthenticated || !token) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to proceed to payment.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
+        navigate('/USA/LLC-Formation/payment', { state: { formType: 'USA Tax Filing', backPath: '/USA/Tax' } });
+    };
+
     const services = [
         {
             icon: (
@@ -464,10 +479,11 @@ const Tax = () => {
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        type="submit"
+                                        type="button"
+                                        onClick={goToPayment}
                                         className="w-full bg-[#1e3a8a] hover:bg-[#facc15] text-white hover:text-[#1e3a8a] py-4 px-6 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
                                     >
-                                        Submit Tax Filing Request
+                                        Proceed To Payment
                                     </motion.button>
                                 </form>
                             </motion.div>

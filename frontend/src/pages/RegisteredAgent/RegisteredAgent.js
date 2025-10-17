@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import { markRegisteredAgentSubmitted } from '../../store/slices/submissionsSlice';
 import { apiMethods } from '../../services/api';
@@ -15,6 +15,7 @@ import bluebg from '../../assets/bluebg.jpg';
 const RegisteredAgent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, token } = useSelector((state) => state.auth);
 
   const initialFormData = {
@@ -35,12 +36,49 @@ const RegisteredAgent = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Restore form state if coming back from Payment
+  useEffect(() => {
+    const restored = location.state?.payload?.formData;
+    if (restored) {
+      setFormData(prev => ({ ...prev, ...restored }));
+    }
+  }, [location.state]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+  };
+
+  const goToPayment = () => {
+    if (!isAuthenticated || !token) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Sign In Required',
+          message: 'Please log in to proceed to payment.',
+        })
+      );
+      navigate('/get-started');
+      return;
+    }
+
+    const safeFormData = { ...formData };
+
+    navigate('/USA/LLC-Formation/payment', {
+      state: {
+        formType: 'Registered Agent Service',
+        backPath: '/business-solutions/registered-agent',
+        currency: 'USD',
+        items: [
+          { id: 'registered-agent', label: 'Registered Agent Service', price: 300, qty: 1 },
+        ],
+        payload: { formData: safeFormData },
+      },
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -659,9 +697,10 @@ const RegisteredAgent = () => {
                 />
               </div>
               
-              {/* Submit Button */}
+              {/* Payment Button */}
               <motion.button
-  type="submit"
+  type="button"
+  onClick={goToPayment}
   className="w-full py-4 text-lg font-bold text-white rounded-2xl shadow-lg hover:text-black transition-all duration-300"
   style={{
     background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
@@ -673,7 +712,7 @@ const RegisteredAgent = () => {
   }}
   whileTap={{ scale: 0.98 }}
 >
-  Submit Application
+  Proceed To Payment
 </motion.button>
             </form>
             </motion.div>
