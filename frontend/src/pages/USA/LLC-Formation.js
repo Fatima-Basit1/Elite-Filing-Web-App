@@ -241,6 +241,44 @@ const LLCFormation = () => {
         setShowForm(true);
     };
 
+    const goToPayment = () => {
+        if (!isAuthenticated || !token) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to proceed to payment.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
+        const selected = formData.services || [];
+        if (!selected.length) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Select Services',
+                    message: 'Please select at least one service to proceed to payment.',
+                })
+            );
+            return;
+        }
+        const hasComplete = selected.includes(completePackageValue);
+        const hasIndividuals = selected.some((s) => individualServiceValues.includes(s));
+        if (hasComplete && hasIndividuals) {
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Invalid Service Selection',
+                    message: 'Please choose either the Complete Package or individual services, not both.',
+                })
+            );
+            return;
+        }
+        navigate('/USA/LLC-Formation/payment', { state: { services: selected } });
+    };
+
     const services = [
         {
             icon: (
@@ -614,10 +652,11 @@ const LLCFormation = () => {
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        type="submit"
+                                        type="button"
+                                        onClick={goToPayment}
                                         className="w-full bg-[#1e3a8a] hover:bg-[#facc15] text-white hover:text-[#1e3a8a] py-4 px-6 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
                                     >
-                                        Submit LLC Formation Request
+                                        Proceed To Payment
                                     </motion.button>
                                 </form>
                             </motion.div>
