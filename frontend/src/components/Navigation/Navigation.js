@@ -197,7 +197,8 @@ const Navigation = () => {
           subItems: [
             { name: 'SECP', href: '/company-formation/pakistan/secp' },
             { name: 'PSEB', href: '/company-formation/pakistan/pseb' },
-            { name: 'FBR', href: '/company-formation/pakistan/fbr' }
+            { name: 'FBR', href: '/company-formation/pakistan/fbr' },
+            { name: 'Complete Package', href: '/company-formation/pakistan/complete-package' }
           ]
         },
         {

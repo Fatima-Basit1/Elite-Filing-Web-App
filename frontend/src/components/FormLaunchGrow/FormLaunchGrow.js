@@ -14,7 +14,7 @@ const FormLaunchGrow = () => {
       id: 1,
       title: "Web Development",
       subtitle: "Professional Website Solutions",
-      description: "Elite Filing offers fast, reliable, and affordable website design and development services. As a trusted digital partner, we ensure a seamless online presence through our fully customized, data-driven, and high-performance websites.",
+      description: "Elite Filing offers fast, reliable, and affordable website design and development services. As a trusted digital partner, we ensure a seamless online presence through our fully customized, data-driven websites.",
       image: wdImage,
       variant: "yellow"
     },
@@ -22,7 +22,7 @@ const FormLaunchGrow = () => {
       id: 2,
       title: "Search Engine Optimization",
       subtitle: "Boost Your Online Visibility",
-      description: "Elite Filing offers fast, reliable, and affordable SEO optimization services. As a trusted digital partner, we ensure a seamless ranking boost through our fully customized, data-driven, and high-performance strategies.",
+      description: "Elite Filing offers fast, reliable, and affordable SEO optimization services. As a trusted digital partner, we ensure a seamless ranking boost through our fully customized, data-driven strategies.",
       image: seoImage,
       variant: "blue"
     },
@@ -46,7 +46,7 @@ const FormLaunchGrow = () => {
       id: 5,
       title: "Digital Marketing",
       subtitle: "Grow Your Digital Presence",
-      description: "Elite Filing offers fast, reliable, and affordable digital marketing services. As a trusted growth partner, we ensure a seamless brand presence through our fully customized, data-driven, and high-performance campaigns.",
+      description: "Elite Filing offers fast, reliable, and affordable digital marketing services. As a trusted growth partner, we ensure a seamless brand presence through our fully customized, data-driven campaigns.",
       image: dimImage,
       variant: "yellow"
     },

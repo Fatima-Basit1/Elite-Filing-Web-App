@@ -191,6 +191,7 @@ export const apiMethods = {
     submitUKStructureChange: (data) => api.post('/uk-structure-change-requests', data),
     // UAE submissions
     submitUAESPCFreeZone: (data) => api.post('/uae-spc-free-requests', data),
+    submitUAESPCFreeZonePackage: (data) => api.post('/uae-spc-free-requests/package', data),
     submitUKConfirmationStatement: (data) => api.post('/uk-confirmation-statement-requests', data),
     submitUKEoriApplication: (data) => api.post('/uk-eori-application-requests', data),
     submitAmazonEcommerceRequest: (data) => api.post('/amazon-ecommerce-requests', data),
@@ -203,6 +204,7 @@ export const apiMethods = {
     submitPAKSECPRegistration: (data) => api.post('/pak-secp-registration-requests', data),
     submitPAKFBRRegistration: (data) => api.post('/pak-fbr-registration-requests', data),
     submitPAKPSEBRegistration: (data) => api.post('/pak-pseb-registration-requests', data),
+    submitPakistanCompletePackage: (data) => api.post('/pakistan-complete-package-requests', data),
   },
 };
 

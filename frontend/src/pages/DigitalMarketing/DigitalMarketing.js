@@ -154,52 +154,92 @@ const DigitalMarketing = () => {
       
       {/* Hero Section */}
       <motion.section 
-        className="relative bg-gradient-to-br from-[#041e72] via-[#0a2d8a] to-[#1e40af] text-white py-20 overflow-hidden"
+        className="relative text-white py-24 lg:py-32 overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #0c1a3a 0%, #1a237e 50%, #283593 100%)' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        {/* Animated background elements */}
+        {/* Professional background pattern */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#f8bd0a] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-40 left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundRepeat: 'repeat'
+            }}></div>
+          </div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#f8bd0a] to-transparent opacity-10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-blue-400 to-transparent opacity-10 rounded-full blur-3xl"></div>
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <motion.h1 
-              className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent"
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <motion.div 
+              className="space-y-8"
               variants={fadeInUp}
               initial="initial"
               animate="animate"
             >
-              DIGITAL MARKETING
-            </motion.h1>
-            <motion.h2 
-              className="text-2xl md:text-4xl font-bold mb-8 text-[#f8bd0a]"
-              variants={fadeInUp}
+              {/* Breadcrumb */}
+              <nav className="flex items-center space-x-2 text-sm text-blue-200">
+                <a href="/" className="hover:text-white transition-colors">Home</a>
+                <span>/</span>
+                <span className="text-white">Digital Marketing</span>
+              </nav>
+
+              {/* Main Title */}
+              <div>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                  <span className="text-white">Digital</span>
+                  <br />
+                  <span className="text-[#f8bd0a]">Marketing</span>
+                </h1>
+              </div>
+
+              {/* Subtitle */}
+              <h2 className="text-xl md:text-2xl font-semibold text-blue-100 leading-relaxed">
+                Driving Growth in the Digital Age
+              </h2>
+
+              {/* Description */}
+              <div className="space-y-4">
+                <p className="text-lg text-blue-100 leading-relaxed">
+                  In today's fast-paced business world, digital marketing and promotion have become essential for brands looking to stand out, attract customers, and achieve sustainable growth.
+                </p>
+                <p className="text-lg text-blue-100 leading-relaxed">
+                  With billions of people spending time online daily, businesses that fail to invest in <span className="text-[#f8bd0a] font-semibold">digital strategies</span> risk losing visibility, credibility, and market share compared to their competitors.
+                </p>
+              </div>
+
+              
+            </motion.div>
+
+            {/* Right Content - Stats */}
+            <motion.div 
+              className="space-y-3 mt-12"
+              variants={staggerContainer}
               initial="initial"
               animate="animate"
             >
-              DRIVING GROWTH IN THE DIGITAL AGE
-            </motion.h2>
-            <motion.p 
-              className="text-xl md:text-2xl mb-12 text-blue-100 max-w-4xl mx-auto leading-relaxed"
-              variants={fadeInUp}
-              initial="initial"
-              animate="animate"
-            >
-              In today's fast-paced business world, <span className="text-[#f8bd0a] font-semibold">digital marketing and promotion</span> have become essential for brands looking to stand out, attract customers, and achieve sustainable growth. With billions of people spending time online daily, businesses that fail to invest in digital strategies risk losing visibility, credibility, and market share compared to their competitors.
-            </motion.p>
-            <motion.p 
-              className="text-lg md:text-xl mb-12 text-blue-100 max-w-4xl mx-auto"
-              variants={fadeInUp}
-              initial="initial"
-              animate="animate"
-            >
-              At its core, digital marketing is more than just running ads—it's about <span className="text-[#f8bd0a] font-semibold">building meaningful connections</span> with the right audience, at the right time, on the right platforms.
-            </motion.p>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="text-2xl font-bold text-[#f8bd0a] mb-1">7+</div>
+                <div className="text-sm text-white font-medium mb-1">Key Components</div>
+                <div className="text-xs text-blue-200">SEO, SMM, PPC, Content, Email, Analytics, Affiliate</div>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="text-2xl font-bold text-[#f8bd0a] mb-1">Global</div>
+                <div className="text-sm text-white font-medium mb-1">Reach</div>
+                <div className="text-xs text-blue-200">Connect with audiences across borders at fraction of cost</div>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="text-2xl font-bold text-[#f8bd0a] mb-1">ROI</div>
+                <div className="text-sm text-white font-medium mb-1">Measurable</div>
+                <div className="text-xs text-blue-200">Track clicks, leads, conversions in real-time</div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </motion.section>
@@ -592,7 +632,7 @@ const DigitalMarketing = () => {
 
       {/* CTA Section */}
       <motion.section 
-        className="py-20 bg-gradient-to-r from-[#041e72] to-[#1e40af]"
+        className="py-20 bg-gradient-to-r from-[#0c1a3a] to-[#1a237e]"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}

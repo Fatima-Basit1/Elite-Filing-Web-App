@@ -38,7 +38,14 @@ const generalLimiter = rateLimit({
   // Disable validation warning when X-Forwarded-For is present but trust proxy is not set
   validate: { xForwardedForHeader: false },
   // Use robust IP detection to ensure consistent limiting per client
-  keyGenerator: ipKeyGenerator,
+  keyGenerator: (req) => {
+    try {
+      return ipKeyGenerator(req);
+    } catch (error) {
+      // Fallback to simple IP-based key generation
+      return req.ip || req.connection.remoteAddress || 'unknown';
+    }
+  },
   handler: (req, res) => {
     console.log(`Rate limit exceeded for IP: ${req.ip} on ${req.originalUrl}`);
     res.status(429).json({
@@ -62,7 +69,13 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
   skipSuccessfulRequests: true, // Don't count successful requests
   validate: { xForwardedForHeader: false },
-  keyGenerator: ipKeyGenerator,
+  keyGenerator: (req) => {
+    try {
+      return ipKeyGenerator(req);
+    } catch (error) {
+      return req.ip || req.connection.remoteAddress || 'unknown';
+    }
+  },
   handler: (req, res) => {
     console.log(`Auth rate limit exceeded for IP: ${req.ip} on ${req.originalUrl}`);
     res.status(429).json({
@@ -86,7 +99,13 @@ const signupLimiter = rateLimit({
   legacyHeaders: false,
   skipSuccessfulRequests: true, // Don't count successful requests
   validate: { xForwardedForHeader: false },
-  keyGenerator: ipKeyGenerator,
+  keyGenerator: (req) => {
+    try {
+      return ipKeyGenerator(req);
+    } catch (error) {
+      return req.ip || req.connection.remoteAddress || 'unknown';
+    }
+  },
   handler: (req, res) => {
     console.log(`Signup rate limit exceeded for IP: ${req.ip} on ${req.originalUrl}`);
     res.status(429).json({
@@ -109,7 +128,13 @@ const passwordResetLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   validate: { xForwardedForHeader: false },
-  keyGenerator: ipKeyGenerator,
+  keyGenerator: (req) => {
+    try {
+      return ipKeyGenerator(req);
+    } catch (error) {
+      return req.ip || req.connection.remoteAddress || 'unknown';
+    }
+  },
   handler: (req, res) => {
     console.log(`Password reset rate limit exceeded for IP: ${req.ip}`);
     res.status(429).json({

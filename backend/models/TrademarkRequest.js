@@ -16,6 +16,8 @@ const TrademarkRequestSchema = new mongoose.Schema({
   jurisdiction: { type: String, required: true, trim: true },
   state: { type: String, trim: true },
   classOfGoods: { type: String, required: true, trim: true },
+  numberOfClasses: { type: Number, required: true, min: 1, max: 45 },
+  estimatedCost: { type: Number, required: true, min: 0 },
   message: { type: String, trim: true },
   status: {
     type: String,

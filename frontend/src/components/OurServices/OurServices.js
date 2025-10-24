@@ -60,7 +60,7 @@ const OurServices = () => {
     {
       id: 1,
       title: "Company Incorporation",
-      description: "Launching your business in the USA, UK, or Canada has never been simpler. At Elite Filing, we streamline the entire process of company incorporation, managing all legal requirements with precision and efficiency.",
+      description: "Launching your business in the USA, UK, or Canada has never been simpler. At Elite Filing, we streamline the entire process of company incorporation, managing all legal requirements.",
       icon: BuildingOfficeIcon,
       gradient: "from-blue-50 to-blue-100",
       hoverGradient: "from-blue-100 to-blue-200",
@@ -72,7 +72,7 @@ const OurServices = () => {
     {
       id: 2,
       title: "ITIN Services",
-      description: "Need an ITIN? We've got you covered. Our streamlined process makes obtaining your Individual Taxpayer Identification Number quick and efficient, ensuring your needs are met promptly.",
+      description: "Need an ITIN? We've got you covered. Our streamlined process makes obtaining your Individual Taxpayer Identification Number quick and efficient, ensuring your needs are met.",
       icon: DocumentTextIcon,
       gradient: "from-gray-50 to-gray-100",
       hoverGradient: "from-gray-100 to-gray-200",
@@ -96,7 +96,7 @@ const OurServices = () => {
     {
       id: 4,
       title: "UK Services",
-      description: "Elite Filing simplifies UK business incorporation. We support incorporation, tax services, and compliance. Tailored for entrepreneurs, we ensure seamless market entry while maintaining sustainable growth.",
+      description: "Elite Filing simplifies UK business incorporation. We support incorporation, tax services, and compliance. Tailored for entrepreneurs, we ensure seamless market entry and sustainable growth.",
       icon: GlobeEuropeAfricaIcon,
       gradient: "from-gray-50 to-gray-100",
       hoverGradient: "from-gray-100 to-gray-200",
@@ -120,7 +120,7 @@ const OurServices = () => {
     {
       id: 6,
       title: "Trademark Registration",
-      description: "Safeguard your brand with Elite Filing's trademark registration services. Our team protects your business name, logo, and identity from infringement, ensuring long-term security and peace of mind.",
+      description: "Safeguard your brand with Elite Filing's trademark registration services. Our team protects your business name, logo, and identity from infringement, ensuring long-term security.",
       icon: ShieldCheckIcon,
       gradient: "from-gray-50 to-gray-100",
       hoverGradient: "from-gray-100 to-gray-200",

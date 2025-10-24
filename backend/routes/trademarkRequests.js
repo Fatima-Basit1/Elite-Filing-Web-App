@@ -29,14 +29,18 @@ const trademarkValidationRules = [
     .isIn(['Word', 'Logo', 'Slogan', 'Other']).withMessage('Invalid trademark type'),
   body('jurisdiction').notEmpty().withMessage('Jurisdiction is required'),
   body('state').optional().isString().isLength({ min: 2, max: 100 }).withMessage('State must be between 2 and 100 characters'),
-  body('classOfGoods').notEmpty().withMessage('Class of goods/services is required')
+  body('classOfGoods').notEmpty().withMessage('Class of goods/services is required'),
+  body('numberOfClasses').isInt({ min: 1, max: 45 }).withMessage('Number of classes must be between 1 and 45'),
+  body('estimatedCost').isNumeric().withMessage('Estimated cost must be a valid number')
 ];
 
 // Create a trademark request
 router.post('/', auth, trademarkValidationRules, handleValidationErrors, async (req, res) => {
   try {
+    console.log('Received trademark request data:', req.body);
     const sanitized = sanitizeInput(req.body);
     const payload = { ...sanitized, userId: req.user._id };
+    console.log('Payload to save:', payload);
     const request = await TrademarkRequest.create(payload);
 
     // Send detailed email notification
@@ -56,6 +60,8 @@ router.post('/', auth, trademarkValidationRules, handleValidationErrors, async (
           'State': request.state || 'N/A',
           'Jurisdiction': request.jurisdiction,
           'Class of Goods/Services': request.classOfGoods,
+          'Number of Classes': request.numberOfClasses,
+          'Estimated Cost': `$${request.estimatedCost.toLocaleString()} USD`,
           'Additional Message': request.message || 'None provided'
         }
       });

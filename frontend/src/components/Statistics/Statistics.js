@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 // Import the service images
-import cfImage from '../../assets/cf.png';
+import cfImage from '../../assets/cf1.jpeg';
 import voImage from '../../assets/vo.jpg';
 import mcImage from '../../assets/mc.jpg';
 import acImage from '../../assets/ac.jpg';

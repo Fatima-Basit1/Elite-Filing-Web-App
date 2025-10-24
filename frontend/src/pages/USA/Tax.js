@@ -17,6 +17,9 @@ const Tax = () => {
 
     const [showForm, setShowForm] = useState(false);
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+    const [hasItin, setHasItin] = useState(null); // null = not asked, true = has ITIN, false = needs ITIN
+    const [needsItinService, setNeedsItinService] = useState(false);
+    const [needsEinService, setNeedsEinService] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -377,33 +380,169 @@ const Tax = () => {
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            SSN/ITIN *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="ssnOrItin"
-                                            value={formData.ssnOrItin}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
-                                        />
-                                    </div>
+                                    {/* ITIN Condition Check - Only for Individual Filing */}
+                                    {formData.filingType === 'individual' && (
+                                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                                            <h4 className="text-lg font-semibold text-blue-900 mb-4">ITIN Requirement Check</h4>
+                                            <p className="text-blue-700 mb-4">
+                                                Do you already have an ITIN (Individual Taxpayer Identification Number)?
+                                            </p>
+                                            
+                                            <div className="space-y-3">
+                                                <label className="flex items-center space-x-3 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="hasItin"
+                                                        value="yes"
+                                                        checked={hasItin === true}
+                                                        onChange={(e) => {
+                                                            setHasItin(true);
+                                                            setNeedsItinService(false);
+                                                        }}
+                                                        className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                                                    />
+                                                    <span className="text-blue-900 font-medium">Yes, I have an ITIN</span>
+                                                </label>
+                                                
+                                                <label className="flex items-center space-x-3 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="hasItin"
+                                                        value="no"
+                                                        checked={hasItin === false}
+                                                        onChange={(e) => {
+                                                            setHasItin(false);
+                                                            setNeedsItinService(true);
+                                                        }}
+                                                        className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                                                    />
+                                                    <span className="text-blue-900 font-medium">No, I need an ITIN</span>
+                                                </label>
+                                            </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            EIN (Optional)
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="ein"
-                                            value={formData.ein}
-                                            onChange={handleInputChange}
-                                            placeholder="Enter EIN (optional)"
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
-                                        />
-                                    </div>
+                                            {/* ITIN Service Option */}
+                                            {needsItinService && (
+                                                <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="font-semibold text-yellow-900">ITIN Service Required</span>
+                                                        <span className="text-xl font-bold text-yellow-600">$250 USD</span>
+                                                    </div>
+                                                    <p className="text-sm text-yellow-700 mb-2">
+                                                        We help you apply for an ITIN through the IRS. This service includes:
+                                                    </p>
+                                                    <ul className="text-xs text-yellow-700 mb-3 ml-4 space-y-1">
+                                                        <li>• Form W-7 application assistance</li>
+                                                        <li>• Document preparation guidance</li>
+                                                        <li>• IRS submission and follow-up</li>
+                                                        <li>• Processing support until approval</li>
+                                                    </ul>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => navigate('/usa/itin')}
+                                                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300"
+                                                    >
+                                                        Get ITIN Service ($250)
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* EIN Service Check - Only for Business Filings */}
+                                    {(formData.filingType === 'llc' || formData.filingType === 'corp' || formData.filingType === 'partnership') && (
+                                        <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                                            <h4 className="text-lg font-semibold text-green-900 mb-4">EIN Requirement Check</h4>
+                                            <p className="text-green-700 mb-4">
+                                                Do you already have an EIN (Employer Identification Number)?
+                                            </p>
+                                            
+                                            <div className="space-y-3">
+                                                <label className="flex items-center space-x-3 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="hasEin"
+                                                        value="yes"
+                                                        checked={!needsEinService}
+                                                        onChange={(e) => setNeedsEinService(false)}
+                                                        className="w-4 h-4 text-green-600 focus:ring-green-500"
+                                                    />
+                                                    <span className="text-green-900 font-medium">Yes, I have an EIN</span>
+                                                </label>
+                                                
+                                                <label className="flex items-center space-x-3 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="hasEin"
+                                                        value="no"
+                                                        checked={needsEinService}
+                                                        onChange={(e) => setNeedsEinService(true)}
+                                                        className="w-4 h-4 text-green-600 focus:ring-green-500"
+                                                    />
+                                                    <span className="text-green-900 font-medium">No, I need an EIN</span>
+                                                </label>
+                                            </div>
+
+                                            {/* EIN Service Option */}
+                                            {needsEinService && (
+                                                <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="font-semibold text-orange-900">EIN Service Required</span>
+                                                        <span className="text-xl font-bold text-orange-600">$470 USD</span>
+                                                    </div>
+                                                    <p className="text-sm text-orange-700 mb-2">
+                                                        We help you apply for an EIN through the IRS. This service includes:
+                                                    </p>
+                                                    <ul className="text-xs text-orange-700 mb-3 ml-4 space-y-1">
+                                                        <li>• Form SS-4 application assistance</li>
+                                                        <li>• Business information preparation</li>
+                                                        <li>• IRS submission and follow-up</li>
+                                                        <li>• EIN retrieval and delivery</li>
+                                                    </ul>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => navigate('/usa/ein')}
+                                                        className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300"
+                                                    >
+                                                        Get EIN Service ($470)
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Conditional ID fields based on filing type */}
+                                    {formData.filingType === 'individual' && (
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                SSN/ITIN *
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="ssnOrItin"
+                                                value={formData.ssnOrItin}
+                                                onChange={handleInputChange}
+                                                required
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {(formData.filingType === 'llc' || formData.filingType === 'corp' || formData.filingType === 'partnership') && (
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                EIN (Employer Identification Number) *
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="ein"
+                                                value={formData.ein}
+                                                onChange={handleInputChange}
+                                                required
+                                                placeholder="Enter EIN"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            />
+                                        </div>
+                                    )}
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -459,6 +598,45 @@ const Tax = () => {
                                             placeholder="Please provide any additional information about your tax filing needs..."
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
                                         />
+                                    </div>
+
+                                    {/* Pricing Summary */}
+                                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                                        <h4 className="text-lg font-semibold text-gray-900 mb-4">Service Pricing Summary</h4>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-700">Tax Filing Service:</span>
+                                                <span className="font-medium text-gray-900">Included</span>
+                                            </div>
+                                            
+                                            {needsItinService && (
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-700">ITIN Service:</span>
+                                                    <span className="font-medium text-gray-900">$250 USD</span>
+                                                </div>
+                                            )}
+                                            
+                                            {needsEinService && (
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-700">EIN Service:</span>
+                                                    <span className="font-medium text-gray-900">$470 USD</span>
+                                                </div>
+                                            )}
+                                            
+                                            <div className="border-t border-gray-300 pt-2">
+                                                <div className="flex justify-between font-semibold text-lg">
+                                                    <span className="text-gray-900">Total Estimated Cost:</span>
+                                                    <span className="text-gray-900">
+                                                        {(() => {
+                                                            let total = 0;
+                                                            if (needsItinService) total += 250;
+                                                            if (needsEinService) total += 470;
+                                                            return total > 0 ? `$${total} USD` : 'Free';
+                                                        })()}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <motion.button

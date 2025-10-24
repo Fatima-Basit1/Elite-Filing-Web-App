@@ -23,6 +23,7 @@ const Trademark = () => {
         trademarkType: '',
         jurisdiction: '',
         classOfGoods: '',
+        numberOfClasses: 1,
         message: ''
     });
 
@@ -41,6 +42,15 @@ const Trademark = () => {
         }));
     };
 
+    // Calculate pricing based on number of classes
+    const calculatePrice = (numberOfClasses) => {
+        if (numberOfClasses <= 0) return 0;
+        if (numberOfClasses === 1) return 700;
+        return 700 + (210 * (numberOfClasses - 1));
+    };
+
+    const currentPrice = calculatePrice(parseInt(formData.numberOfClasses) || 1);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Redirect unauthenticated users to Get Started page on submit
@@ -49,17 +59,26 @@ const Trademark = () => {
             return;
         }
         try {
+            // Include estimated cost in the submission
+            const submissionData = {
+                ...formData,
+                numberOfClasses: parseInt(formData.numberOfClasses),
+                estimatedCost: currentPrice
+            };
+            
             const response = await fetch('/api/trademark-requests', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(submissionData)
             });
 
             if (!response.ok) {
-                throw new Error('Failed to submit trademark request');
+                const errorData = await response.json();
+                console.error('Server error:', errorData);
+                throw new Error(errorData.message || 'Failed to submit trademark request');
             }
 
             // Show success popup
@@ -76,6 +95,7 @@ const Trademark = () => {
                     trademarkType: '',
                     jurisdiction: '',
                     classOfGoods: '',
+                    numberOfClasses: 1,
                     message: ''
                 });
                 setShowForm(false);
@@ -354,19 +374,87 @@ const Trademark = () => {
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Class of Goods/Services *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="classOfGoods"
-                                            value={formData.classOfGoods}
-                                            onChange={handleInputChange}
-                                            required
-                                            placeholder="e.g., Class 35 - Advertising and business services"
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
-                                        />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Number of Classes *
+                                            </label>
+                                            <input
+                                                type="number"
+                                                name="numberOfClasses"
+                                                value={formData.numberOfClasses}
+                                                onChange={handleInputChange}
+                                                min="1"
+                                                max="45"
+                                                required
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Minimum 1 class required
+                                            </p>
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Class of Goods/Services *
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="classOfGoods"
+                                                value={formData.classOfGoods}
+                                                onChange={handleInputChange}
+                                                required
+                                                placeholder="e.g., Class 35 - Advertising and business services"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all duration-300"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Pricing Display */}
+                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <div>
+                                                <h4 className="text-lg font-semibold text-blue-900">Estimated Cost</h4>
+                                                <p className="text-sm text-blue-700">
+                                                    {formData.numberOfClasses === 1 
+                                                        ? 'Base fee for 1 class' 
+                                                        : `Base fee + $210 for each additional class (${formData.numberOfClasses - 1} additional)`
+                                                    }
+                                                </p>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="text-2xl font-bold text-blue-900">
+                                                    ${currentPrice.toLocaleString()}
+                                                </div>
+                                                <div className="text-sm text-blue-600">
+                                                    USD
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Pricing Breakdown */}
+                                        <div className="border-t border-blue-200 pt-3">
+                                            <div className="space-y-1 text-sm">
+                                                <div className="flex justify-between">
+                                                    <span className="text-blue-700">Base fee (1st class):</span>
+                                                    <span className="font-medium text-blue-900">$700</span>
+                                                </div>
+                                                {formData.numberOfClasses > 1 && (
+                                                    <div className="flex justify-between">
+                                                        <span className="text-blue-700">
+                                                            Additional classes ({formData.numberOfClasses - 1} × $210):
+                                                        </span>
+                                                        <span className="font-medium text-blue-900">
+                                                            ${(210 * (formData.numberOfClasses - 1)).toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                <div className="flex justify-between border-t border-blue-200 pt-1 font-semibold">
+                                                    <span className="text-blue-900">Total:</span>
+                                                    <span className="text-blue-900">${currentPrice.toLocaleString()}</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div>
@@ -389,7 +477,7 @@ const Trademark = () => {
                                         type="submit"
                                         className="w-full bg-[#1e3a8a] hover:bg-[#facc15] text-white hover:text-[#1e3a8a] py-4 px-6 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
                                     >
-                                        Submit Trademark Registration
+                                        Submit Trademark Registration (${currentPrice.toLocaleString()})
                                     </motion.button>
                                 </form>
                             </motion.div>

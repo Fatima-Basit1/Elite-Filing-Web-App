@@ -18,6 +18,7 @@ import EtsyEcommerce from './pages/Ecommerce/EtsyEcommerce';
 import SECPRegistration from './pages/CompanyFormation/Pakistan/SECPRegistration';
 import PSEBRegistration from './pages/CompanyFormation/Pakistan/PSEBRegistration';
 import FBRRegistration from './pages/CompanyFormation/Pakistan/FBRRegistration';
+import PakistanCompletePackage from './pages/CompanyFormation/Pakistan/CompletePackage';
 import Contact from './pages/Contact/Contact';
 import About from './pages/About/About';
 import SignIn from './pages/Auth/SignIn';
@@ -97,6 +98,7 @@ function App() {
         <Route path="/company-formation/pakistan/secp" element={<SECPRegistration />} />
         <Route path="/company-formation/pakistan/pseb" element={<PSEBRegistration />} />
         <Route path="/company-formation/pakistan/fbr" element={<FBRRegistration />} />
+        <Route path="/company-formation/pakistan/complete-package" element={<PakistanCompletePackage />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/get-started" element={<SignIn />} />

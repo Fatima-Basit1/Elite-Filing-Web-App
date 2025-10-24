@@ -29,7 +29,7 @@ const Blogs = () => {
     {
       id: 3,
       title: "DIGITAL MARKETING",
-      subtitle: "Digital Marketing and Promotion: Driving Growth in the Digital...",
+      subtitle: "Driving Growth in the Digital Marketing",
       image: DigitalMarketingImg,
       date: "December 24, 2024",
       readMore: "Read More",

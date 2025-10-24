@@ -152,6 +152,7 @@ app.use('/api/itin-requests', require('./routes/itinRequests'));
 app.use('/api/pak-secp-registration-requests', require('./routes/pakSecpRegistrationRequests'));
 app.use('/api/pak-fbr-registration-requests', require('./routes/pakFbrRegistrationRequests'));
 app.use('/api/pak-pseb-registration-requests', require('./routes/pakPsebRegistrationRequests'));
+app.use('/api/pakistan-complete-package-requests', require('./routes/pakistanCompletePackageRequests'));
 app.use('/api/us-complete-package-requests', require('./routes/usCompletePackageRequests'));
 app.use('/api/uk-company-registration-requests', require('./routes/ukCompanyRegistrationRequests'));
   app.use('/api/uk-annual-accounts-requests', require('./routes/ukAnnualAccountsRequests'));

@@ -221,54 +221,109 @@ const USCompanyFiling = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      {/* Hero Section */}
-      <motion.section 
-        className="relative bg-gradient-to-br from-[#041e72] via-[#0a2d8a] to-[#1e40af] text-white py-20 overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
-        {/* Animated background elements */}
+          {/* Hero Section */}
+          <motion.section 
+            className="relative text-white py-24 lg:py-32 overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, #0c1a3a 0%, #1a237e 50%, #283593 100%)' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          >
+        {/* Professional background pattern */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#f8bd0a] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-40 left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundRepeat: 'repeat'
+            }}></div>
+          </div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#f8bd0a] to-transparent opacity-10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-blue-400 to-transparent opacity-10 rounded-full blur-3xl"></div>
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <motion.h1 
-              className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent"
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <motion.div 
+              className="space-y-8"
               variants={fadeInUp}
               initial="initial"
               animate="animate"
             >
-              COMPANY FILING IN US
-            </motion.h1>
-            <motion.h2 
-              className="text-2xl md:text-4xl font-bold mb-8 text-[#f8bd0a]"
-              variants={fadeInUp}
+              {/* Breadcrumb */}
+              <nav className="flex items-center space-x-2 text-sm text-blue-200">
+                <Link to="/" className="hover:text-white transition-colors">Home</Link>
+                <span>/</span>
+                
+                <span className="text-white">Company Filing US</span>
+              </nav>
+
+              {/* Main Title */}
+              <div>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                  <span className="text-white">Company Filing</span>
+                  <br />
+                  <span className="text-[#f8bd0a]">in the US</span>
+                </h1>
+              </div>
+
+              {/* Subtitle */}
+              <h2 className="text-xl md:text-2xl font-semibold text-blue-100 leading-relaxed">
+                The Complete Guide to Business Formation in the United States
+              </h2>
+
+              {/* Description */}
+              <div className="space-y-4">
+                <p className="text-lg text-blue-100 leading-relaxed">
+                  Starting a business in the US opens doors to the world's largest economy, offering unparalleled opportunities for growth and success.
+                </p>
+                <p className="text-lg text-blue-100 leading-relaxed">
+                  Before you can operate legally, you need to <span className="text-[#f8bd0a] font-semibold">properly form your business entity</span> with the appropriate state authorities.
+                </p>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Link 
+                  to="/company-formation/usa" 
+                  className="bg-[#f8bd0a] hover:bg-yellow-500 text-[#041e72] font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-center"
+                >
+                  USA Company Formation
+                </Link>
+                <Link 
+                  to="/contact" 
+                  className="border-2 border-white text-white hover:bg-white hover:text-[#041e72] font-bold py-3 px-6 rounded-lg transition-all duration-300 text-center"
+                >
+                  Get Consultation
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Right Content - Stats */}
+            <motion.div 
+              className="space-y-3"
+              variants={staggerContainer}
               initial="initial"
               animate="animate"
             >
-              THE COMPLETE GUIDE TO BUSINESS FORMATION IN THE US
-            </motion.h2>
-            <motion.p 
-              className="text-xl md:text-2xl mb-12 text-blue-100 max-w-4xl mx-auto leading-relaxed"
-              variants={fadeInUp}
-              initial="initial"
-              animate="animate"
-            >
-              Starting a business in the US opens doors to the world's largest economy, offering unparalleled opportunities for growth and success. The United States provides a robust legal framework, diverse funding options, and access to global markets. But before you can operate legally, you need to <span className="text-[#f8bd0a] font-semibold">properly form your business entity</span> with the appropriate state authorities.
-            </motion.p>
-            <motion.p 
-              className="text-lg md:text-xl mb-12 text-blue-100 max-w-4xl mx-auto"
-              variants={fadeInUp}
-              initial="initial"
-              animate="animate"
-            >
-              This comprehensive guide will walk you through everything you need to know about <span className="text-[#f8bd0a] font-semibold">business formation in the US</span>, including entity types, filing processes, state requirements, costs, and ongoing compliance obligations.
-            </motion.p>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="text-2xl font-bold text-[#f8bd0a] mb-1">50+</div>
+                <div className="text-sm text-white font-medium mb-1">States Covered</div>
+                <div className="text-xs text-blue-200">Complete coverage across all US states</div>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="text-2xl font-bold text-[#f8bd0a] mb-1">5</div>
+                <div className="text-sm text-white font-medium mb-1">Entity Types</div>
+                <div className="text-xs text-blue-200">LLC, Corporation, S-Corp, Partnership, Sole Proprietorship</div>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="text-2xl font-bold text-[#f8bd0a] mb-1">$99</div>
+                <div className="text-sm text-white font-medium mb-1">Starting Price</div>
+                <div className="text-xs text-blue-200">Professional formation services with ongoing support</div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </motion.section>
@@ -824,7 +879,7 @@ const USCompanyFiling = () => {
 
       {/* CTA Section */}
       <motion.section 
-        className="bg-gradient-to-r from-[#041e72] to-[#0a2d8a] text-white py-20"
+        className="bg-gradient-to-r from-[#0c1a3a] to-[#1a237e] text-white py-20"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.5 }}

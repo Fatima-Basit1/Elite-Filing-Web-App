@@ -30,7 +30,17 @@ const SPCFreeZone = () => {
     licenseType: '',
     message: ''
   });
+  const [packageFormData, setPackageFormData] = useState({
+    fullName: '',
+    email: '',
+    contact: '',
+    dateOfBirth: '',
+    selectedPackage: ''
+  });
   const [formErrors, setFormErrors] = useState({});
+  const [packageFormErrors, setPackageFormErrors] = useState({});
+  const [showPackageForm, setShowPackageForm] = useState(false);
+  const [isPackageSubmitting, setIsPackageSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -38,6 +48,36 @@ const SPCFreeZone = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handlePackageInputChange = (e) => {
+    const { name, value } = e.target;
+    setPackageFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handlePackageSelect = (packageName) => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Authentication Required',
+          message: 'Please log in first to access our package services.',
+        })
+      );
+      // Redirect to login page
+      navigate('/auth/login');
+      return;
+    }
+    
+    setPackageFormData(prev => ({
+      ...prev,
+      selectedPackage: packageName
+    }));
+    setShowPackageForm(true);
   };
 
   const validateForm = () => {
@@ -50,6 +90,16 @@ const SPCFreeZone = () => {
     if (!formData.businessActivity?.trim()) errors.businessActivity = 'Business activity is required';
     if (!formData.licenseType?.trim()) errors.licenseType = 'License type is required';
     setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const validatePackageForm = () => {
+    const errors = {};
+    if (!packageFormData.fullName?.trim()) errors.fullName = 'Full name is required';
+    if (!packageFormData.email?.trim()) errors.email = 'Email is required';
+    if (!packageFormData.contact?.trim()) errors.contact = 'Contact number is required';
+    if (!packageFormData.dateOfBirth?.trim()) errors.dateOfBirth = 'Date of birth is required';
+    setPackageFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
@@ -114,6 +164,61 @@ const SPCFreeZone = () => {
       );
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handlePackageSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validatePackageForm()) {
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'Please check the form for errors and try again.',
+        })
+      );
+      return;
+    }
+
+    try {
+      setIsPackageSubmitting(true);
+      // Save package selection data to database with sub-collection structure
+      const res = await apiMethods.submissions.submitUAESPCFreeZonePackage({
+        ...packageFormData,
+        packageType: packageFormData.selectedPackage,
+        subCollection: 'spc-package',
+        submissionType: 'package-selection'
+      });
+      
+      dispatch(
+        addUiNotification({
+          type: 'success',
+          title: 'Package Selected',
+          message: `Your ${packageFormData.selectedPackage} package has been selected. Redirecting to payment...`,
+        })
+      );
+      
+      // Navigate to payment page
+      setTimeout(() => {
+        navigate('/payment', { 
+          state: { 
+            packageData: packageFormData,
+            packageType: packageFormData.selectedPackage
+          }
+        });
+      }, 1500);
+      
+    } catch (error) {
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Submission Failed',
+          message: error?.response?.data?.message || 'Unable to process package selection. Please try again.',
+        })
+      );
+    } finally {
+      setIsPackageSubmitting(false);
     }
   };
 
@@ -361,6 +466,252 @@ const SPCFreeZone = () => {
         </div>
       </motion.section>
 
+      {/* Packages Section */}
+      <motion.section 
+        className="py-16 px-4 bg-gray-50"
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        variants={staggerContainer}
+      >
+        <div className="max-w-7xl mx-auto">
+          <motion.div 
+            className="text-center mb-12"
+            variants={fadeInUp}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-[#041e72] mb-4">
+              Choose Your Package
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
+              Select the perfect package for your business needs. All packages include comprehensive support and professional guidance.
+            </p>
+            {!isAuthenticated && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto">
+                <div className="flex items-center justify-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-yellow-800">
+                      <strong>Login Required:</strong> Please log in to access our package services and proceed with your selection.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Basic Package */}
+            <motion.div 
+              className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 hover:border-yellow-400 transition-all duration-300 transform hover:scale-105 flex flex-col"
+              variants={fadeInUp}
+            >
+              <div className="p-8 flex flex-col flex-grow">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-[#041e72] mb-2">Basic Package</h3>
+                  <div className="text-4xl font-bold text-yellow-500 mb-2">AED 7,762.50</div>
+                  <p className="text-gray-600">No Visa</p>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-gray-700 text-sm mb-4">
+                    <strong className="text-[#041e72]">Ideal for:</strong> Freelancers, consultants, or small business owners who don't need a UAE visa.
+                  </p>
+                  
+                  <h4 className="font-semibold text-[#041e72] mb-3">Basic Features:</h4>
+                  <ul className="space-y-2 text-sm text-gray-600 min-h-[280px]">
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      1-year SPC Free Zone Trade/Service License
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Business name reservation & registration
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      E-License (Digital Copy), no office required
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Free Zone documentation support
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Bank account assistance (UAE banks)
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Dedicated account manager (1 month)
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Customer support via email/WhatsApp
+                    </li>
+                  </ul>
+                </div>
+                
+                <button 
+                  onClick={() => handlePackageSelect('Basic Package')}
+                  className={`w-full text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 ${
+                    isAuthenticated 
+                      ? 'bg-yellow-500 hover:bg-yellow-600' 
+                      : 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed'
+                  }`}
+                  disabled={!isAuthenticated}
+                >
+                  {isAuthenticated ? 'Choose Basic Package' : 'Login Required'}
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Standard Package */}
+            <motion.div 
+              className="bg-white rounded-2xl shadow-xl border-2 border-yellow-400 hover:border-yellow-500 transition-all duration-300 transform hover:scale-105 relative flex flex-col"
+              variants={fadeInUp}
+            >
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span className="bg-yellow-500 text-white px-4 py-1 rounded-full text-sm font-bold">
+                  Most Popular
+                </span>
+              </div>
+              <div className="p-8 flex flex-col flex-grow">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-[#041e72] mb-2">Standard Package</h3>
+                  <div className="text-4xl font-bold text-yellow-500 mb-2">AED 12,487.50</div>
+                  <p className="text-gray-600">1 Visa Quota</p>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-gray-700 text-sm mb-4">
+                    <strong className="text-[#041e72]">Ideal for:</strong> Entrepreneurs or single-member startups who need a UAE residence visa.
+                  </p>
+                  
+                  <h4 className="font-semibold text-[#041e72] mb-3">Basic Features, plus:</h4>
+                  <ul className="space-y-2 text-sm text-gray-600 min-h-[280px]">
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      1 residence visa quota under SPC Free Zone
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      E-channel registration & setup for visa
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Medical & Emirates ID assistance
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Company establishment card
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      UAE address & virtual desk
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Bank account opening support (premium)
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      One-time business consultation (operations)
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Renewal reminder & compliance guidance
+                    </li>
+                  </ul>
+                </div>
+                
+                <button 
+                  onClick={() => handlePackageSelect('Standard Package')}
+                  className={`w-full text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 ${
+                    isAuthenticated 
+                      ? 'bg-yellow-500 hover:bg-yellow-600' 
+                      : 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed'
+                  }`}
+                  disabled={!isAuthenticated}
+                >
+                  {isAuthenticated ? 'Choose Standard Package' : 'Login Required'}
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Premium Package */}
+            <motion.div 
+              className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 hover:border-yellow-400 transition-all duration-300 transform hover:scale-105 flex flex-col"
+              variants={fadeInUp}
+            >
+              <div className="p-8 flex flex-col flex-grow">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-[#041e72] mb-2">Premium Package</h3>
+                  <div className="text-4xl font-bold text-yellow-500 mb-2">AED 14,647.50</div>
+                  <p className="text-gray-600">5 Visa Quota</p>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-gray-700 text-sm mb-4">
+                    <strong className="text-[#041e72]">Ideal for:</strong> Small teams, business partners, or companies planning local operations.
+                  </p>
+                  
+                  <h4 className="font-semibold text-[#041e72] mb-3">Standard Package, plus:</h4>
+                  <ul className="space-y-2 text-sm text-gray-600 min-h-[280px]">
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      5 residence visa quotas under SPC Free Zone
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Partner & staff visa processing support
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Document attestation & notarization
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Business plan assistance (bank & visa)
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Tax registration advisory (VAT)
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Full-year business support (renewals)
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Co-working or virtual office space
+                    </li>
+                    <li className="flex items-start">
+                      <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      Quarterly business review sessions
+                    </li>
+                  </ul>
+                </div>
+                
+                <button 
+                  onClick={() => handlePackageSelect('Premium Package')}
+                  className={`w-full text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 ${
+                    isAuthenticated 
+                      ? 'bg-yellow-500 hover:bg-yellow-600' 
+                      : 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed'
+                  }`}
+                  disabled={!isAuthenticated}
+                >
+                  {isAuthenticated ? 'Choose Premium Package' : 'Login Required'}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.section>
+
       {/* Content Section */}
       <motion.section 
         className="py-16 px-4"
@@ -488,6 +839,125 @@ const SPCFreeZone = () => {
       </motion.section>
       <Footer />
       <ChatWidget />
+
+      {/* Package Form Modal */}
+      <AnimatePresence>
+        {showPackageForm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl"
+            >
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-[#041e72] mb-2">
+                  Complete Your Package Selection
+                </h3>
+                <p className="text-gray-600">
+                  Selected: <span className="font-semibold text-yellow-600">{packageFormData.selectedPackage}</span>
+                </p>
+              </div>
+
+              <form onSubmit={handlePackageSubmit} className="space-y-4">
+                {/* Full Name */}
+                <div>
+                  <label className="block text-sm font-semibold text-[#041e72] mb-2">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={packageFormData.fullName}
+                    onChange={handlePackageInputChange}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-300"
+                    placeholder="Enter your full name"
+                  />
+                  {packageFormErrors.fullName && (
+                    <p className="mt-1 text-sm text-red-600">{packageFormErrors.fullName}</p>
+                  )}
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-semibold text-[#041e72] mb-2">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={packageFormData.email}
+                    onChange={handlePackageInputChange}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-300"
+                    placeholder="Enter your email address"
+                  />
+                  {packageFormErrors.email && (
+                    <p className="mt-1 text-sm text-red-600">{packageFormErrors.email}</p>
+                  )}
+                </div>
+
+                {/* Contact */}
+                <div>
+                  <label className="block text-sm font-semibold text-[#041e72] mb-2">
+                    Contact Number *
+                  </label>
+                  <input
+                    type="tel"
+                    name="contact"
+                    value={packageFormData.contact}
+                    onChange={handlePackageInputChange}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-300"
+                    placeholder="Enter your contact number"
+                  />
+                  {packageFormErrors.contact && (
+                    <p className="mt-1 text-sm text-red-600">{packageFormErrors.contact}</p>
+                  )}
+                </div>
+
+                {/* Date of Birth */}
+                <div>
+                  <label className="block text-sm font-semibold text-[#041e72] mb-2">
+                    Date of Birth *
+                  </label>
+                  <input
+                    type="date"
+                    name="dateOfBirth"
+                    value={packageFormData.dateOfBirth}
+                    onChange={handlePackageInputChange}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-300"
+                  />
+                  {packageFormErrors.dateOfBirth && (
+                    <p className="mt-1 text-sm text-red-600">{packageFormErrors.dateOfBirth}</p>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowPackageForm(false)}
+                    className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isPackageSubmitting}
+                    className={`flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg ${isPackageSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                  >
+                    {isPackageSubmitting ? 'Processing...' : 'Proceed to Checkout'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Success Modal */}
       <AnimatePresence>
