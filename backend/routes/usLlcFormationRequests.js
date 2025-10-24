@@ -49,18 +49,37 @@ const llcValidationRules = [
     }
     return true;
   }),
-  // Services validation: if provided, ensure allowed values
-  body('services').optional().isArray().withMessage('Services must be an array'),
-  body('services.*').optional().isIn([
-    'LLC formation',
-    'EIN registration',
-    'Registered Agent Service',
-    'Bank Account',
-    'Business Address',
-    'Phone Number',
-    'Complete Package',
-    'Resale Certificate',
-  ]).withMessage('Invalid service selected'),
+  // Services validation: if provided, ensure allowed values and mutual exclusivity
+  body('services')
+    .optional()
+    .isArray()
+    .withMessage('Services must be an array')
+    .custom((value) => {
+      if (!Array.isArray(value)) return true;
+      const hasComplete = value.includes('Complete Package');
+      const others = value.filter((s) => s !== 'Complete Package');
+      if (hasComplete && others.length > 0) {
+        throw new Error('"Complete Package" cannot be selected with individual services');
+      }
+      const uniqueCount = new Set(value).size;
+      if (uniqueCount !== value.length) {
+        throw new Error('Duplicate services are not allowed');
+      }
+      return true;
+    }),
+  body('services.*')
+    .optional()
+    .isIn([
+      'LLC formation',
+      'EIN registration',
+      'Registered Agent Service',
+      'Bank Account',
+      'Business Address',
+      'Phone Number',
+      'Complete Package',
+      'Resale Certificate',
+    ])
+    .withMessage('Invalid service selected'),
 ];
 
 // Create US LLC Formation request
@@ -68,6 +87,23 @@ router.post('/', auth, llcValidationRules, handleValidationErrors, async (req, r
   try {
     const sanitized = sanitizeInput(req.body);
     const payload = { ...sanitized, userId: req.user._id };
+
+    // Enforce mutual exclusivity and uniqueness server-side (defensive)
+    const services = Array.isArray(payload.services) ? payload.services : [];
+    const hasComplete = services.includes('Complete Package');
+    const others = services.filter((s) => s !== 'Complete Package');
+    const uniqueCount = new Set(services).size;
+    if ((hasComplete && others.length > 0) || uniqueCount !== services.length) {
+      const errors = [];
+      if (hasComplete && others.length > 0) {
+        errors.push({ field: 'services', message: '"Complete Package" cannot be selected with individual services', value: services });
+      }
+      if (uniqueCount !== services.length) {
+        errors.push({ field: 'services', message: 'Duplicate services are not allowed', value: services });
+      }
+      return res.status(400).json({ message: 'Validation failed', errors, code: 'VALIDATION_ERROR' });
+    }
+
     const request = await USLLCFormationRequest.create(payload);
 
     // Send email notification to logged-in user

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import { markUKSharedOfficeSubmitted } from '../../store/slices/submissionsSlice';
 import { apiMethods } from '../../services/api';
@@ -14,6 +14,7 @@ import bluebg from '../../assets/bluebg.jpg';
 const UKSharedOffices = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, token } = useSelector((state) => state.auth);
 
   const initialFormData = {
@@ -29,6 +30,9 @@ const UKSharedOffices = () => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const PACKAGE_PRICES = { Basic: 199, Standard: 285, Premium: 345 };
+  const selectedPrice = PACKAGE_PRICES[selectedPackage] || null;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -138,6 +142,82 @@ const UKSharedOffices = () => {
     }
   };
 
+  // Navigate to Payment with preserved data
+  const goToPayment = (e) => {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+    if (!selectedPackage) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Package Required',
+          message: 'Please select a package before proceeding to payment.',
+        })
+      );
+      const el = document.getElementById('packages');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    if (!formData.duration) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Duration Required',
+          message: 'Please select a duration before proceeding to payment.',
+        })
+      );
+      return;
+    }
+
+    const price = PACKAGE_PRICES[selectedPackage];
+    if (!price) {
+      dispatch(
+        addUiNotification({
+          type: 'error',
+          title: 'Invalid Package',
+          message: 'Selected package is invalid. Please choose again.',
+        })
+      );
+      return;
+    }
+
+    const currency = '';
+    const itemLabel = `UK Shared Offices — ${selectedPackage} Package`;
+    const itemId = `uk-shared-offices-${selectedPackage.toLowerCase()}`;
+
+    const statePayload = {
+      formType: 'UK Shared Offices',
+      currency,
+      currencySymbol: '£',
+      items: [{ id: itemId, label: itemLabel, price, qty: 1 }],
+      backPath: '/business-solutions/uk-shared-offices',
+      payload: {
+        formData,
+        selectedPackage,
+      },
+    };
+
+    if (!isAuthenticated) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Authentication Required',
+          message: 'Please sign in to proceed with payment.',
+        })
+      );
+      navigate('/get-started', {
+        state: {
+          redirectTo: '/USA/LLC-Formation/payment',
+          payload: statePayload,
+        },
+      });
+      return;
+    }
+
+    navigate('/USA/LLC-Formation/payment', { state: statePayload });
+  };
+
   useEffect(() => {
     let timer;
     if (showSuccessPopup) {
@@ -147,6 +227,17 @@ const UKSharedOffices = () => {
       if (timer) clearTimeout(timer);
     };
   }, [showSuccessPopup]);
+
+  // Restore state when coming back from Payment
+  useEffect(() => {
+    const payload = location?.state?.payload;
+    if (payload?.formData) {
+      setFormData((prev) => ({ ...prev, ...payload.formData }));
+    }
+    if (payload?.selectedPackage) {
+      setSelectedPackage(payload.selectedPackage);
+    }
+  }, [location?.state]);
 
   const scrollToForm = () => {
     document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
@@ -376,7 +467,7 @@ const UKSharedOffices = () => {
               variants={scaleIn}
             >
               <div className="mb-6 text-center">
-                <h3 className="text-xl font-bold text-gray-900">BASIC PACKAGE — £199</h3>
+                <h3 className="text-xl font-bold text-gray-900">BASIC PACKAGE: £199</h3>
               </div>
                 <p className="text-gray-700 text-sm mb-6 text-center">
                   Ideal for freelancers or startups needing a registered UK business address. <br></br>
@@ -435,7 +526,7 @@ const UKSharedOffices = () => {
   </div>
 
   <div className="mb-6 text-center">
-    <h3 className="text-xl font-bold text-gray-900">PREMIUM PACKAGE — £345</h3>
+    <h3 className="text-xl font-bold text-gray-900">PREMIUM PACKAGE: £345</h3>
   </div>
 
   <p className="text-gray-700 text-sm mb-6 text-center">
@@ -497,7 +588,7 @@ const UKSharedOffices = () => {
               variants={scaleIn}
             >
               <div className="mb-6 text-center">
-                <h3 className="text-xl font-bold text-gray-900">STANDARD PACKAGE — £285</h3>
+                <h3 className="text-xl font-bold text-gray-900">STANDARD PACKAGE: £285</h3>
               </div>
               <p className="text-gray-700 text-sm mb-6 text-center">
                 Perfect for small companies seeking flexibility and enhanced features. Includes everything in Basic, plus:</p>
@@ -592,21 +683,31 @@ const UKSharedOffices = () => {
                   <label className="block text-sm font-bold text-gray-700 mb-2">
                     Package *
                   </label>
-                  <select
-                    name="selectedPackage"
-                    value={selectedPackage || ''}
-                    onChange={(e) => setSelectedPackage(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 bg-white"
-                    style={{
-                      '--tw-ring-color': 'rgba(6,30,68,1)'
-                    }}
-                    required
-                  >
-                    <option value="">Select Package</option>
-                    <option value="Basic">Basic Package (£199)</option>
-                    <option value="Standard">Standard Package (£285)</option>
-                    <option value="Premium">Premium Package (£345)</option>
-                  </select>
+                  <div className="relative">
+  <select
+    name="selectedPackage"
+    value={selectedPackage || ''}
+    onChange={(e) => setSelectedPackage(e.target.value)}
+    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent transition-all duration-300 bg-white appearance-none pr-10"
+    style={{
+      '--tw-ring-color': 'rgba(6,30,68,1)',
+    }}
+    required
+  >
+    <option value="">Select Package</option>
+    <option value="Basic">Basic Package (£199)</option>
+    <option value="Standard">Standard Package (£285)</option>
+    <option value="Premium">Premium Package (£345)</option>
+  </select>
+
+  {/* custom arrow */}
+  <span className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-600 transition-colors duration-200 peer-hover:text-yellow-400">
+    <svg className="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+    </svg>
+  </span>
+</div>
+
                 </div>
               </div>
               {/* Name Fields */}
@@ -715,7 +816,8 @@ const UKSharedOffices = () => {
               
               {/* Submit Button */}
               <motion.button
-                type="submit"
+                type="button"
+                onClick={goToPayment}
                 className={`w-full py-4 text-lg font-bold text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                 style={{
                   background: 'linear-gradient(180deg, rgba(6,30,68,1) 0%, rgba(10,40,90,1) 100%)'
@@ -724,7 +826,11 @@ const UKSharedOffices = () => {
                 whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'SUBMITTING...' : 'Submit Enquiry'}
+                {isSubmitting
+                  ? 'SUBMITTING...'
+                  : selectedPrice
+                    ? `Proceed To Payment`
+                    : 'Proceed To Payment'}
               </motion.button>
             </form>
           </motion.div>

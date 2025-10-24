@@ -94,15 +94,53 @@ const LLCFormation = () => {
         { value: 'Resale Certificate', label: 'Resale Certificate (70 USD)' },
     ];
 
+    // Services selection grouping and exclusivity helpers
+    const completePackageValue = 'Complete Package';
+    const individualServiceValues = [
+        'LLC formation',
+        'EIN registration',
+        'Registered Agent Service',
+        'Business Address',
+        'Bank Account',
+        'Phone Number',
+        'Resale Certificate',
+    ];
+    const individualServiceOptions = [
+        { value: 'LLC formation', label: 'LLC formation' },
+        { value: 'EIN registration', label: 'EIN registration (470 USD)' },
+        { value: 'Registered Agent Service', label: 'Register Agent Service (300 USD)' },
+        { value: 'Business Address', label: 'Business Address (499 USD)' },
+        { value: 'Bank Account', label: 'Bank Account (95 USD)' },
+        { value: 'Phone Number', label: 'Phone Number (90 USD)' },
+        { value: 'Resale Certificate', label: 'Resale Certificate (70 USD)' },
+    ];
+    const isCompleteSelected = formData.services.includes(completePackageValue);
+    const anyIndividualSelected = formData.services.some(s => individualServiceValues.includes(s));
     const toggleService = (serviceValue) => {
         setFormData(prev => {
-            const already = prev.services.includes(serviceValue);
-            return {
-                ...prev,
-                services: already
-                    ? prev.services.filter(s => s !== serviceValue)
-                    : [...prev.services, serviceValue]
-            };
+            const isIndividual = individualServiceValues.includes(serviceValue);
+            let nextServices = [...prev.services];
+    
+            if (serviceValue === completePackageValue) {
+                // Toggling Complete Package
+                if (nextServices.includes(completePackageValue)) {
+                    // Uncheck Complete Package -> re-enable individuals
+                    nextServices = nextServices.filter(s => s !== completePackageValue);
+                } else {
+                    // Select Complete Package -> clear individuals and select only the package
+                    nextServices = [completePackageValue];
+                }
+            } else if (isIndividual) {
+                // Toggling individual service -> ensure Complete Package is unchecked
+                nextServices = nextServices.filter(s => s !== completePackageValue);
+                if (nextServices.includes(serviceValue)) {
+                    nextServices = nextServices.filter(s => s !== serviceValue);
+                } else {
+                    nextServices.push(serviceValue);
+                }
+            }
+    
+            return { ...prev, services: nextServices };
         });
     };
 
@@ -118,6 +156,20 @@ const LLCFormation = () => {
                 })
             );
             navigate('/get-started');
+            return;
+        }
+
+        // Validate service selection: cannot select Complete Package together with individuals
+        const hasComplete = formData.services.includes(completePackageValue);
+        const hasIndividuals = formData.services.some(s => individualServiceValues.includes(s));
+        if (hasComplete && hasIndividuals) {
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Invalid Service Selection',
+                    message: 'Please choose either the Complete Package or individual services, not both.',
+                })
+            );
             return;
         }
 
@@ -187,6 +239,44 @@ const LLCFormation = () => {
             return;
         }
         setShowForm(true);
+    };
+
+    const goToPayment = () => {
+        if (!isAuthenticated || !token) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Sign In Required',
+                    message: 'Please log in to proceed to payment.',
+                })
+            );
+            navigate('/get-started');
+            return;
+        }
+        const selected = formData.services || [];
+        if (!selected.length) {
+            dispatch(
+                addUiNotification({
+                    type: 'warning',
+                    title: 'Select Services',
+                    message: 'Please select at least one service to proceed to payment.',
+                })
+            );
+            return;
+        }
+        const hasComplete = selected.includes(completePackageValue);
+        const hasIndividuals = selected.some((s) => individualServiceValues.includes(s));
+        if (hasComplete && hasIndividuals) {
+            dispatch(
+                addUiNotification({
+                    type: 'error',
+                    title: 'Invalid Service Selection',
+                    message: 'Please choose either the Complete Package or individual services, not both.',
+                })
+            );
+            return;
+        }
+        navigate('/USA/LLC-Formation/payment', { state: { services: selected } });
     };
 
     const services = [
@@ -502,12 +592,16 @@ const LLCFormation = () => {
                                             Services (select as many as you want)
                                         </label>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                            {serviceOptions.map(opt => (
-                                                <label key={opt.value} className="flex items-center p-3 border border-gray-200 rounded-lg">
+                                            {individualServiceOptions.map(opt => (
+                                                <label
+                                                    key={opt.value}
+                                                    className={`flex items-center p-3 border border-gray-200 rounded-lg ${isCompleteSelected ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                >
                                                     <input
                                                         type="checkbox"
                                                         checked={formData.services.includes(opt.value)}
                                                         onChange={() => toggleService(opt.value)}
+                                                        disabled={isCompleteSelected}
                                                         className="mr-3 text-[#1e3a8a] focus:ring-[#1e3a8a]"
                                                     />
                                                     <span className="text-gray-700">{opt.label}</span>
@@ -515,6 +609,32 @@ const LLCFormation = () => {
                                             ))}
                                         </div>
                                     </div>
+
+                                    {/* Divider */}
+                                    <div className="flex items-center my-4">
+                                        <div className="flex-1 border-t border-gray-200"></div>
+                                        <span className="px-3 text-sm text-gray-500">OR</span>
+                                        <div className="flex-1 border-t border-gray-200"></div>
+                                    </div>
+
+                                    {/* Complete Package */}
+                                    <label
+                                        className={`flex items-start p-3 border border-gray-200 rounded-lg ${anyIndividualSelected ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.services.includes(completePackageValue)}
+                                            onChange={() => toggleService(completePackageValue)}
+                                            disabled={anyIndividualSelected}
+                                            className="mr-3 mt-1 text-[#1e3a8a] focus:ring-[#1e3a8a]"
+                                        />
+                                        <div>
+                                            <span className="text-gray-700">Complete Package (10% off all above)</span>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Includes all services above with a 10% discount. Selecting this will disable individual options.
+                                            </p>
+                                        </div>
+                                    </label>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -532,10 +652,11 @@ const LLCFormation = () => {
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        type="submit"
+                                        type="button"
+                                        onClick={goToPayment}
                                         className="w-full bg-[#1e3a8a] hover:bg-[#facc15] text-white hover:text-[#1e3a8a] py-4 px-6 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
                                     >
-                                        Submit LLC Formation Request
+                                        Proceed To Payment
                                     </motion.button>
                                 </form>
                             </motion.div>

@@ -38,6 +38,16 @@ const USLLCFormationRequestSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
+// Enforce mutual exclusivity and uniqueness for services
+USLLCFormationRequestSchema.path('services').validate(function(services) {
+  if (!Array.isArray(services) || services.length === 0) return true;
+  const hasComplete = services.includes('Complete Package');
+  const others = services.filter((s) => s !== 'Complete Package');
+  if (hasComplete && others.length > 0) return false;
+  const uniqueCount = new Set(services).size;
+  return uniqueCount === services.length;
+}, 'Services selection invalid: "Complete Package" cannot be combined with other services or duplicates.');
+
 USLLCFormationRequestSchema.pre('save', function(next) {
   this.updatedAt = new Date();
   next();

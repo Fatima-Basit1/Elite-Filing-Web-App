@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCheckCircle } from 'react-icons/fi';
 import Navigation from '../../components/Navigation/Navigation';
@@ -8,9 +8,11 @@ import Footer from '../../components/Footer/Footer';
 import ChatWidget from '../../components/ChatWidget/ChatWidget';
 import bluebg from '../../assets/bluebg.jpg';
 import { markLogoRequestSubmitted } from '../../store/slices/submissionsSlice';
+import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 
 const LogoCreation = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, token, user } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -33,6 +35,16 @@ const LogoCreation = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Restore form state if coming back from Payment
+  useEffect(() => {
+    if (location.state?.payload?.formData) {
+      setFormData(prev => ({
+        ...prev,
+        ...location.state.payload.formData,
+      }));
+    }
+  }, [location.state]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -83,6 +95,35 @@ const LogoCreation = () => {
   };
 
   const dispatch = useDispatch();
+
+  // Navigate to Payment with 50 GBP and carry form data
+  const goToPayment = () => {
+    if (!isAuthenticated || !token) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Sign In Required',
+          message: 'Please log in to proceed to payment.',
+        })
+      );
+      navigate('/get-started');
+      return;
+    }
+
+    const safeFormData = { ...formData };
+
+    navigate('/USA/LLC-Formation/payment', {
+      state: {
+        formType: 'Company Logo Creation',
+        backPath: '/business-solutions/logo-creation',
+        currency: 'GBP',
+        items: [
+          { id: 'logo-creation', label: 'Logo Creation', price: 50, qty: 1 },
+        ],
+        payload: { formData: safeFormData },
+      },
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -663,7 +704,8 @@ const LogoCreation = () => {
                 variants={fadeUp}
               >
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={goToPayment}
                   disabled={isSubmitting}
                   className={`w-full text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl ${
                     isSubmitting 
@@ -683,7 +725,7 @@ const LogoCreation = () => {
                       <span>Submitting...</span>
                     </div>
                   ) : (
-                    'Submit Logo Request'
+                    'Proceed To Payment'
                   )}
                 </button>
               </motion.div>

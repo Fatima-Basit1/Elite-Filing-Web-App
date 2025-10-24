@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { addNotification as addUiNotification } from '../../store/slices/uiSlice';
 import { markTrademarkUKSubmitted } from '../../store/slices/submissionsSlice';
 import { apiMethods } from '../../services/api';
@@ -14,6 +14,7 @@ import bluebg from '../../assets/bluebg.jpg';
 const TrademarkUK = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, token } = useSelector((state) => state.auth);
 
   const initialFormData = {
@@ -38,12 +39,49 @@ const TrademarkUK = () => {
     useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Restore form state if coming back from Payment
+  useEffect(() => {
+    const restored = location.state?.payload?.formData;
+    if (restored) {
+      setFormData(prev => ({ ...prev, ...restored }));
+    }
+  }, [location.state]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+  };
+
+  const goToPayment = () => {
+    if (!isAuthenticated || !token) {
+      dispatch(
+        addUiNotification({
+          type: 'warning',
+          title: 'Sign In Required',
+          message: 'Please log in to proceed to payment.',
+        })
+      );
+      navigate('/get-started');
+      return;
+    }
+
+    const safeFormData = { ...formData };
+
+    navigate('/USA/LLC-Formation/payment', {
+      state: {
+        formType: 'UK Trademark Registration',
+        backPath: '/business-solutions/trademark-uk',
+        currency: 'GBP',
+        items: [
+          { id: 'trademark-uk', label: 'UK Trademark Registration', price: 450, qty: 1 },
+        ],
+        payload: { formData: safeFormData },
+      },
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -663,7 +701,8 @@ const TrademarkUK = () => {
   </div>
 
   <motion.button
-    type="submit"
+    type="button"
+    onClick={goToPayment}
     whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
     whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
     className={`w-full text-white py-3 sm:py-4 px-6 sm:px-8 rounded-lg font-semibold text-base sm:text-lg transition-colors shadow-lg ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
@@ -672,7 +711,7 @@ const TrademarkUK = () => {
     }}
     disabled={isSubmitting}
   >
-    {isSubmitting ? 'SUBMITTING...' : 'Submit Registration Request'}
+    Proceed To Payment 
   </motion.button>
 </form>
             </div>
