@@ -391,7 +391,7 @@ const ConfirmationStatement = () => {
                             className="relative"
                         >
                             <img
-                                src={cs2}
+                                src={cs1}
                                 alt="UK Annual Accounts - Professional Services"
                                 className="rounded-2xl shadow-2xl w-full h-auto"
                             />
@@ -412,7 +412,7 @@ const ConfirmationStatement = () => {
                             className="relative"
                         >
                             <img
-                                src={cs1}
+                                src={cs2}
                                 alt="UK Annual Accounts - Compliance Benefits"
                                 className="rounded-2xl shadow-2xl w-full h-auto"
                             />

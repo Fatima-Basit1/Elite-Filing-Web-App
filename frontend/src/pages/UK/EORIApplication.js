@@ -5,7 +5,7 @@ import { FiCheckCircle } from 'react-icons/fi';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
-import eori1 from '../../assets/eori1.jpg';
+import eori1 from '../../assets/eori1.png';
 import eori2 from '../../assets/eori2.jpg';
 import useAuth from '../../hooks/useAuth';
 import { apiMethods } from '../../services/api';

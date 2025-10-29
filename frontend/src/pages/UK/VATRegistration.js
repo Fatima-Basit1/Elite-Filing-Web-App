@@ -10,7 +10,7 @@ import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
 import vat1 from '../../assets/vat1.jpg';
-import vat2 from '../../assets/vat2.jpg';
+import vat2 from '../../assets/vat2.jpeg';
 
 const VATRegistration = () => {
     const navigate = useNavigate();

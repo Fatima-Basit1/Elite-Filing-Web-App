@@ -9,8 +9,8 @@ import { addNotification as addUiNotification } from '../../store/slices/uiSlice
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import bluebg from '../../assets/bluebg.jpg';
-import b1 from '../../assets/b1.jpg';
-import b2 from '../../assets/b2.png';
+import b1 from '../../assets/b1.jpeg';
+import b2 from '../../assets/b2.jpg';
 
 const BankAccounts = () => {
     const [showForm, setShowForm] = useState(false);
