@@ -11,6 +11,7 @@ import ChatWidget from '../../components/ChatWidget/ChatWidget';
 import { FiCheckCircle } from 'react-icons/fi';
 import spc1 from '../../assets/spc1.jpg';
 import spc2 from '../../assets/spc2.jpg';
+import bluebg from '../../assets/bluebg.jpg';
 
 const SPCFreeZone = () => {
   const navigate = useNavigate();
@@ -245,61 +246,75 @@ const SPCFreeZone = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       {/* Hero Section */}
-      <motion.section 
-        className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white py-20 px-4 overflow-hidden"
-        initial="hidden"
-        animate="show"
-        variants={fadeInUp}
+      <section
+        className="pt-32 pb-20 relative overflow-hidden"
+        style={{
+          backgroundImage: `url(${bluebg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
       >
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="relative max-w-7xl mx-auto text-center">
-          <motion.h1 
-            className="text-5xl md:text-7xl font-bold mb-6 text-yellow-400"
-            variants={fadeInUp}
-          >
-            SPC FREE ZONE
-          </motion.h1>
-          <motion.p 
-            className="text-xl md:text-2xl mb-8 max-w-4xl mx-auto leading-relaxed"
-            variants={fadeInUp}
-          >
-            At Elite Filing ES, we provide a wide range of tailored business services designed to help you establish and grow your enterprise in the UAE SPC (Special Purpose Companies) Free Zone.
-          </motion.p>
+        {/* Animated glowing background dots */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 animate-pulse"></div>
         </div>
-      </motion.section>
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
+          >
+            <h1 className="text-4xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-200 mb-6">
+              SPC FREE ZONE
+            </h1>
+            <p className="text-lg md:text-2xl text-white/90 max-w-4xl mx-auto mb-10 leading-relaxed">
+              At Elite Filing ES, we provide a wide range of tailored business services designed to help you establish and grow your enterprise in the UAE SPC (Special Purpose Companies) Free Zone.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Form Section */}
-      <motion.section 
-        className="py-16 px-4 bg-gray-50 pt-24"
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
-        variants={staggerContainer}
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.h2 
-            className="text-4xl md:text-5xl font-bold text-yellow-500 mb-8"
-            variants={fadeInUp}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-center mb-12"
           >
-            SPC FREE ZONE FORM
-          </motion.h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1e3a8a] mb-6">
+              SPC FREE ZONE FORM
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Complete the form below to get started with your SPC Free Zone application
+            </p>
+          </motion.div>
           
           {!showForm ? (
-            <motion.button
-              onClick={() => setShowForm(true)}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
-              variants={fadeInUp}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Start Your Application
-            </motion.button>
-          ) : (
             <motion.div
-              className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border-4 border-yellow-400"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
+              transition={{ delay: 0.4 }}
+              className="text-center"
+            >
+              <motion.button
+                onClick={() => setShowForm(true)}
+                className="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-900 font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Start Your Application
+              </motion.button>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white rounded-2xl shadow-xl p-8"
             >
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name Fields */}
@@ -464,22 +479,19 @@ const SPCFreeZone = () => {
             </motion.div>
           )}
         </div>
-      </motion.section>
+      </section>
 
       {/* Packages Section */}
-      <motion.section 
-        className="py-16 px-4 bg-gray-50"
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
-        variants={staggerContainer}
-      >
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
             className="text-center mb-12"
-            variants={fadeInUp}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-[#041e72] mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1e3a8a] mb-6">
               Choose Your Package
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
@@ -506,22 +518,25 @@ const SPCFreeZone = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Basic Package */}
             <motion.div 
-              className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 hover:border-yellow-400 transition-all duration-300 transform hover:scale-105 flex flex-col"
-              variants={fadeInUp}
+              className="bg-white rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
             >
               <div className="p-8 flex flex-col flex-grow">
                 <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-[#041e72] mb-2">Basic Package</h3>
+                  <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">Basic Package</h3>
                   <div className="text-4xl font-bold text-yellow-500 mb-2">AED 7,762.50</div>
                   <p className="text-gray-600">No Visa</p>
                 </div>
                 
                 <div className="mb-6">
                   <p className="text-gray-700 text-sm mb-4">
-                    <strong className="text-[#041e72]">Ideal for:</strong> Freelancers, consultants, or small business owners who don't need a UAE visa.
+                    <strong className="text-[#1e3a8a]">Ideal for:</strong> Freelancers, consultants, or small business owners who don't need a UAE visa.
                   </p>
                   
-                  <h4 className="font-semibold text-[#041e72] mb-3">Basic Features:</h4>
+                  <h4 className="font-semibold text-[#1e3a8a] mb-3">Basic Features:</h4>
                   <ul className="space-y-2 text-sm text-gray-600 min-h-[280px]">
                     <li className="flex items-start">
                       <FiCheckCircle className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
@@ -710,7 +725,7 @@ const SPCFreeZone = () => {
             </motion.div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Content Section */}
       <motion.section 
